@@ -1,0 +1,11 @@
+baseURL = 'http://kuldeep.tech/'
+languageCode = 'en-us'
+title = 'Kuldeep'
+theme = 'DoIt'
+
+enableEmoji = true
+
+# Permalinks
+[Permalinks]
+# posts = ":year/:month/:filename"
+posts = "posts/:filename"
