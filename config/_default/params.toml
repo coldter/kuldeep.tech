@@ -168,13 +168,13 @@ linkToSource = false
 # "https://github.com/user/repo/blob/main/{path}"
 # DoIt NEW | 0.2.13 configure the link to edit the post
 # <3
-# linkToEdit = "https://github.com/user/repo/edit/main/{path}"
+# linkToEdit = "https://github.com/coldter/kuldeep.tech/edit/main/{path}"
 # "https://github.com/user/repo/edit/main/{path}"
 # "https://gitlab.com/user/repo/-/edit/main/{path}"
 # "https://bitbucket.org/user/repo/src/main/{path}?mode=edit"
 # DoIt NEW | 0.2.14 configure the link to report issue for the post
 # <3
-# linkToReport = "https://github.com/coldter/pymupdf_test/issues/new?title=[bug]%20{title}&body=|Field|Value|%0A|-|-|%0A|Title|{title}|%0A|Url|{url}|%0A|Filename|https://github.com/user/repo/blob/main/{path}|"
+linkToReport = "https://github.com/coldter/kuldeep.tech/issues/new?title=[bug]%20{title}&body=|Field|Value|%0A|-|-|%0A|Title|{title}|%0A|Url|{url}|%0A|Filename|https://github.com/user/repo/blob/main/{path}|"
 # "https://github.com/user/repo/issues/new?title=[bug]%20{title}&body=|Field|Value|%0A|-|-|%0A|Title|{title}|%0A|Url|{url}|%0A|Filename|https://github.com/user/repo/blob/main/{path}|"
 # DoIt NEW | 0.2.4 whether to show the full text content in RSS
 rssFullText = false
@@ -255,7 +255,7 @@ enable = true
 [page.comment.utterances]
 enable = true
 # owner/repo
-repo = "coldter/pymupdf_test"
+repo = "coldter/kuldeep.tech"
 issueTerm = "pathname"
 label = "comment"
 lightTheme = "github-light"

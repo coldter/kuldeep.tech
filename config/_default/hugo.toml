@@ -8,32 +8,48 @@ defaultContentLanguage = "en"
 
 [menu]
 [[menu.main]]
+identifier = "about"
+pre = ""
+post = ""
+name = "~/about"
+url = "/about/"
+title = ""
+weight = 1
+[[menu.main]]
+identifier = "now"
+pre = ""
+post = ""
+name = "~/now"
+url = "/now/"
+title = ""
+weight = 2
+[[menu.main]]
 identifier = "posts"
 # you can add extra information before the name (HTML format is supported), such as icons
 pre = ""
 # you can add extra information after the name (HTML format is supported), such as icons
 post = ""
-name = "Posts"
+name = "~/posts"
 url = "/posts/"
 # title will be shown when you hover on this menu link
 title = ""
-weight = 1
+weight = 3
 [[menu.main]]
 identifier = "tags"
 pre = ""
 post = ""
-name = "Tags"
+name = "~/tags"
 url = "/tags/"
 title = ""
-weight = 2
+weight = 4
 [[menu.main]]
 identifier = "categories"
 pre = ""
 post = ""
-name = "Categories"
+name = "~/categories"
 url = "/categories/"
 title = ""
-weight = 3
+weight = 5
 
 
 # Permalinks
@@ -75,7 +91,7 @@ endLevel = 6
 [author]
 name = "Kuldeep"
 email = "hi@kuldeep.tech"
-avatar = "./images/profile-gb.png"
+avatar = "/images/profile-gb.png"
 link = "https://kuldeep.tech"
 
 # Sitemap config
