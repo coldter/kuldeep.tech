@@ -141,6 +141,305 @@ disclaimer = "Keep it simple, stupid.<br>simple != easy"
 enable = true
 # special amount of posts in each home posts page
 paginate = 6
-# # DoIt DELETED | 0.2.0 replaced with hiddenFromHomePage in params.page
+# # DoIt DELETED | 0.2.0 replaced with hiddenFromHomePage in page
 # # default behavior when you don't set "hiddenFromHomePage" in front matter
 # defaultHiddenFromHomePage = false
+
+
+[page]
+# DoIt NEW | 0.2.0 whether to hide a page from home page
+hiddenFromHomePage = false
+# DoIt NEW | 0.2.0 whether to hide a page from search results
+hiddenFromSearch = false
+# DoIt NEW | 0.2.0 whether to enable twemoji
+twemoji = false
+# whether to enable lightgallery
+lightgallery = true
+# DoIt NEW | 0.2.0 whether to enable the ruby extended syntax
+ruby = true
+# DoIt NEW | 0.2.0 whether to enable the fraction extended syntax
+fraction = true
+# DoIt NEW | 0.2.0 whether to enable the fontawesome extended syntax
+fontawesome = true
+# whether to show link to Raw Markdown content of the content
+linkToMarkdown = false
+# DoIt NEW | 0.2.14 configure the link to the source file of the post
+linkToSource = false
+# "https://github.com/user/repo/blob/main/{path}"
+# DoIt NEW | 0.2.13 configure the link to edit the post
+# <3
+# linkToEdit = "https://github.com/user/repo/edit/main/{path}"
+# "https://github.com/user/repo/edit/main/{path}"
+# "https://gitlab.com/user/repo/-/edit/main/{path}"
+# "https://bitbucket.org/user/repo/src/main/{path}?mode=edit"
+# DoIt NEW | 0.2.14 configure the link to report issue for the post
+# <3
+# linkToReport = "https://github.com/coldter/pymupdf_test/issues/new?title=[bug]%20{title}&body=|Field|Value|%0A|-|-|%0A|Title|{title}|%0A|Url|{url}|%0A|Filename|https://github.com/user/repo/blob/main/{path}|"
+# "https://github.com/user/repo/issues/new?title=[bug]%20{title}&body=|Field|Value|%0A|-|-|%0A|Title|{title}|%0A|Url|{url}|%0A|Filename|https://github.com/user/repo/blob/main/{path}|"
+# DoIt NEW | 0.2.4 whether to show the full text content in RSS
+rssFullText = false
+# DoIt NEW | 0.2.13 whether to enable series navigation
+seriesNavigation = true
+# whether to enable last modified time
+enableLastMod = true
+# whether to enable word count
+enableWordCount = true
+# whether to enable reading time estimation
+enableReadingTime = true
+# DoIt NEW | 0.2.13 outdated article reminder config
+[page.outdatedArticleReminder]
+enable = false
+# Display the reminder if the last modified time is more than 90 days ago.
+reminder = 90
+# Display warning if the last modified time is more than 180 days ago.
+warning = 180
+# DoIt NEW | 0.2.0 Table of the contents config
+[page.toc]
+# whether to enable the table of the contents
+enable = true
+# whether to keep the static table of the contents in front of the post
+keepStatic = false
+# whether to make the table of the contents in the sidebar automatically collapsed
+auto = true
+# DoIt CHANGED | 0.2.0 KaTeX mathematical formulas
+[page.math]
+enable = true
+# default block delimiter is $$ ... $$ and \\[ ... \\]
+blockLeftDelimiter = ""
+blockRightDelimiter = ""
+# default inline delimiter is $ ... $ and \\( ... \\)
+inlineLeftDelimiter = ""
+inlineRightDelimiter = ""
+# KaTeX extension copy_tex
+copyTex = true
+# KaTeX extension mhchem
+mhchem = true
+# DoIt NEW | 0.2.0 Code config
+[page.code]
+# whether to show the copy button of the code block
+copy = true
+# the maximum number of lines of displayed code by default
+maxShownLines = 10
+# DoIt NEW | 0.2.14 Table config
+[page.table]
+# whether to enable sorting in the tables
+sort = true
+# DoIt NEW | 0.2.0 Mapbox GL JS config
+[page.mapbox]
+# access token of Mapbox GL JS
+accessToken = ""
+# style for the light theme
+lightStyle = "mapbox://styles/mapbox/light-v9"
+# style for the dark theme
+darkStyle = "mapbox://styles/mapbox/dark-v9"
+# whether to add NavigationControl
+navigation = true
+# whether to add GeolocateControl
+geolocate = true
+# whether to add ScaleControl
+scale = true
+# whether to add FullscreenControl
+fullscreen = true
+# DoIt CHANGED | 0.2.0 social share links in post page
+[page.share]
+enable = true
+Whatsapp = true
+Twitter = true
+Linkedin = true
+HackerNews = true
+Mastodon = true
+# DoIt CHANGED | 0.2.0 Comment config
+[page.comment]
+enable = true
+# <3
+[page.comment.utterances]
+enable = true
+# owner/repo
+repo = "coldter/pymupdf_test"
+issueTerm = "pathname"
+label = "comment"
+lightTheme = "github-light"
+darkTheme = "github-dark"
+
+# Disqus comment config
+[page.comment.disqus]
+# DoIt NEW | 0.1.1
+enable = false
+# Disqus shortname to use Disqus in posts
+shortname = ""
+# Gitalk comment config
+[page.comment.gitalk]
+# DoIt NEW | 0.1.1
+enable = false
+owner = ""
+repo = ""
+clientId = ""
+clientSecret = ""
+# Valine comment config
+[page.comment.valine]
+enable = false
+appId = ""
+appKey = ""
+placeholder = ""
+avatar = "mp"
+meta = ""
+pageSize = 10
+lang = ""
+visitor = true
+recordIP = true
+highlight = true
+enableQQ = false
+serverURLs = ""
+# DoIt NEW | 0.2.6 emoji data file name, default is "google.yml"
+# ("apple.yml", "google.yml", "facebook.yml", "twitter.yml")
+# located in "themes/DoIt/assets/data/emoji/" directory
+# you can store your own data files in the same path under your project:
+# "assets/data/emoji/"
+emoji = ""
+# Waline comment config
+[page.comment.waline]
+# DoIt CHANGED | 0.2.14
+enable = false
+serverURL = ""
+pageview = true
+comment = true
+# emoji = ['https://cdn.jsdelivr.net/gh/walinejs/emojis/weibo']
+# meta = ['nick', 'mail', 'link']
+# requiredMeta = []
+# login = 'enable'
+# wordLimit = 0
+# pageSize = 10
+# imageUploader = false
+# highlighter = false
+# texRenderer = false
+# Facebook comment config
+[page.comment.telegram]
+enable = false
+siteID = ""
+limit = 5
+height = ""
+color = ""
+colorful = true
+dislikes = false
+outlined = false
+dark = false
+# DoIt NEW | 0.2.0 Commento comment config
+[page.comment.giscus]
+enable = false
+# owner/repo
+dataRepo = ""
+dataRepoId = ""
+dataCategory = ""
+dataCategoryId = ""
+dataMapping = "pathname"
+dataReactionsEnabled = "1"
+dataEmitMetadata = "0"
+dataInputPosition = "bottom"
+lightTheme = "light"
+darkTheme = "dark"
+dataLang = "en"
+# artalk comment config
+[page.comment.artalk]
+enable = false
+server = ""
+site = ""
+lite = false
+katex = false
+lightbox = false
+pageview = true
+commentCount = true
+# DoIt NEW | 0.2.7 Third-party library config
+
+[page.library]
+[page.library.css]
+# someCSS = "some.css"
+# DoIt NEW | 0.2.14 Enhance third-party library config
+# [page.library.css.someOtherCSS]
+#   src = "someOther.css"
+#   defer = true
+#   attr = "customAttribute"
+# located in "assets/"
+# Or
+# someCSS = "https://cdn.example.com/some.css"
+[page.library.js]
+# someJavaScript = "some.js"
+# DoIt NEW | 0.2.14 Enhance third-party library config
+# [page.library.js.someOtherJavaScript]
+#   src = "someOther.js"
+#   defer = false
+#   async = true
+#   attr = "customAttribute"
+# located in "assets/"
+# Or
+# someJavaScript = "https://cdn.example.com/some.js"
+# DoIt CHANGED | 0.2.10 Page SEO config
+[page.seo]
+# image URL
+images = []
+# Publisher info
+[page.seo.publisher]
+name = "kuldeep"
+logoUrl = "./images/profile-gb.png"
+# DoIt NEW | 0.2.14 Related content config
+[page.related]
+enable = true
+count = 5
+
+
+# # Site verification code config for Google/Bing/Yandex/Pinterest/Baidu
+# [verification]
+# google = ""
+# bing = ""
+# yandex = ""
+# pinterest = ""
+# baidu = ""
+# so = ""        # 360 search
+# sogou = ""
+
+# DoIt NEW | 0.2.10 Site SEO config
+[seo]
+# image URL
+image = ""
+# thumbnail URL
+thumbnailUrl = ""
+
+# DoIt NEW | 0.2.0 Analytics config
+[analytics]
+enable = false
+# Google Analytics
+[analytics.google]
+id = ""
+# whether to anonymize IP
+anonymizeIP = true
+# Fathom Analytics
+[analytics.plausible]
+data_domain = ""
+src = ""
+# DoIt NEW | 0.2.14 Cloudflare Analytics
+[analytics.cloudflare]
+token = ""
+
+# # DoIt NEW | 0.2.7 Cookie consent config
+# [cookieconsent]
+# enable = true
+# # text strings used for Cookie consent banner
+# [cookieconsent.content]
+# message = ""
+# dismiss = ""
+# link = ""
+
+# # DoIt CHANGED | 0.2.7 CDN config for third-party library files
+# [cdn]
+# # CDN data file name, disabled by default
+# # ("jsdelivr.yml")
+# # located in "themes/DoIt/assets/data/cdn/" directory
+# # you can store your own data files in the same path under your project:
+# # "assets/data/cdn/"
+# data = ""
+
+# DoIt NEW | 0.2.8 Compatibility config
+[compatibility]
+# whether to use Polyfill.io to be compatible with older browsers
+polyfill = false
+# whether to use object-fit-images to be compatible with older browsers
+objectFit = false

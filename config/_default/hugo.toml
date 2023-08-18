@@ -1,11 +1,104 @@
 baseURL = 'http://kuldeep.tech/'
-languageCode = 'en-us'
+languageCode = 'en'
 title = 'Kuldeep'
 theme = 'DoIt'
 
 enableEmoji = true
+defaultContentLanguage = "en"
+
+[menu]
+[[menu.main]]
+identifier = "posts"
+# you can add extra information before the name (HTML format is supported), such as icons
+pre = ""
+# you can add extra information after the name (HTML format is supported), such as icons
+post = ""
+name = "Posts"
+url = "/posts/"
+# title will be shown when you hover on this menu link
+title = ""
+weight = 1
+[[menu.main]]
+identifier = "tags"
+pre = ""
+post = ""
+name = "Tags"
+url = "/tags/"
+title = ""
+weight = 2
+[[menu.main]]
+identifier = "categories"
+pre = ""
+post = ""
+name = "Categories"
+url = "/categories/"
+title = ""
+weight = 3
+
 
 # Permalinks
 [Permalinks]
 # posts = ":year/:month/:filename"
 posts = "posts/:filename"
+
+
+# Markup related config in Hugo
+[markup]
+# Syntax Highlighting
+[markup.highlight]
+codeFences = true
+guessSyntax = true
+lineNos = true
+lineNumbersInTable = true
+# false is a necessary configuration
+# (https://github.com/dillonzq/LoveIt/issues/158)
+noClasses = false
+# Goldmark is from Hugo 0.60 the default library used for Markdown
+[markup.goldmark]
+[markup.goldmark.extensions]
+definitionList = true
+footnote = true
+linkify = true
+strikethrough = true
+table = true
+taskList = true
+typographer = true
+[markup.goldmark.renderer]
+# whether to use HTML tags directly in the document
+unsafe = true
+# Table Of Contents settings
+[markup.tableOfContents]
+startLevel = 2
+endLevel = 6
+
+# Author config
+[author]
+name = "Kuldeep"
+email = "hi@kuldeep.tech"
+avatar = "./images/profile-gb.png"
+link = "https://kuldeep.tech"
+
+# Sitemap config
+[sitemap]
+changefreq = "weekly"
+filename = "sitemap.xml"
+priority = 0.5
+
+[privacy]
+[privacy.twitter]
+enableDNT = true
+[privacy.youtube]
+privacyEnhanced = true
+
+[taxonomies]
+author = "authors"
+category = "categories"
+tag = "tags"
+series = "series"
+
+[outputs]
+# DoIt CHANGED | 0.2.0
+home = ["HTML", "RSS", "JSON"]
+page = ["HTML", "MarkDown"]
+section = ["HTML", "RSS"]
+taxonomy = ["HTML", "RSS"]
