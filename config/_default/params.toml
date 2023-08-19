@@ -4,7 +4,7 @@ title = "Parmar Kudeep"
 # gitRepo = "https://github.com/kaushalmodi/hugo-doit-theme.git"
 
 defaultTheme = "black"
-keywords = ["blog", "kud33p", "kuldeep", "parmar kuldeep", "coldter"]
+keywords = ["blog", "kuld33p", "kuldeep", "parmar kuldeep", "coldter"]
 
 gitRepo = ""
 # DoIt NEW | 0.1.1 which hash function used for SRI, when empty, no SRI is used
@@ -19,7 +19,7 @@ enablePWA = false
 
 [app]
 # optional site title override for the app when added to an iOS home screen or Android launcher
-title = "Kud33p"
+title = "Kuld33p"
 # whether to omit favicon resource links
 noFavicon = false
 # modern SVG favicon to use in place of older style .png and .ico files
@@ -58,7 +58,7 @@ themeChangeMode = "switch"
 [header.title]
 # logo = ""
 # title name
-name = "Kud33p"
+name = "Kuld33p"
 # you can add extra information before the name (HTML format is supported), such as icons
 post = ""
 # whether to use typeit animation for title name
