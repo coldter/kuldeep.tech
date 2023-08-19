@@ -1,4 +1,4 @@
-baseURL = 'http://kuldeep.tech/'
+baseURL = 'https://kuldeep.tech/'
 languageCode = 'en'
 title = 'Kuldeep'
 theme = 'DoIt'
@@ -50,6 +50,14 @@ name = "~/categories"
 url = "/categories/"
 title = ""
 weight = 5
+[[menu.main]]
+identifier = "cv"
+pre = ""
+post = ""
+name = "~/cv"
+url = "/pdfs/resume.pdf"
+title = ""
+weight = 6
 
 
 # Permalinks

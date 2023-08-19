@@ -1,0 +1,46 @@
+# based on https://github.com/peaceiris/actions-hugo
+name: update & deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive # Fetch Hugo themes recursively
+          fetch-depth: 0 # Fetch all history for .GitInfo and .Lastmod
+          lfs: true # download Git-LFS files
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: "latest"
+          extended: true #  need extended version to support SASS/SCSS
+
+      - name: Build
+        run: hugo --minify --debug --printUnusedTemplates
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          cname: kuldeepparmar.me
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "lts"
+      - name: Push algolia Index
+        working-directory: ./.github/actions/
+        run: |
+          npm install algoliasearch@4.12.1
+          node push_algolia_index.js
+        env:
+          ALGOLIA_ADMIN_KEY: ${{ secrets.ALGOLIA_ADMIN_KEY }}

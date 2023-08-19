@@ -40,9 +40,9 @@ snippetLength = 50
 highlightTag = "em"
 absoluteURL = false
 [search.algolia]
-index = ""
-appID = ""
-searchKey = ""
+index = "kuldeep-dot-tech"
+appID = "OJXEZRLO4G"
+searchKey = "2d3edc49852600445bc1acb14ed47ab4"
 
 # common
 license = '<a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a>'

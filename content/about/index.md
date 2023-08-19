@@ -43,7 +43,7 @@ Now, I don't like the term "H4cker" but like consider my self one not for the sk
 - **Technologies of Interest**:
   - **Linux**, **Git**, **Docker**, **Aws**, **GithubActions**, **CD/Ci**, **Mysql**, **Postgres**, **Deno**, **Nodejs**, **Bun**, **MongoDB**, **Redis**, **Nginx**, **Websockets**, **Socket.io**, and more...
 - Contact Me
-  - Email: `eWVzIHUgZ290IG1lLCBteSBlbWFpbCBpcyBoaUBrdWxkZWVwLnRlY2guIElmIHRoYXQgZG9lc24ndCB3b3JrIHRyeSB0ZWxlZ3JhbS4=`
+  - Email: `eWVzIHUgZ290IG1lLCBteSBlbWFpbCBpcyBoaUBrdWxkZWVwLnRlY2guIEFsdGVybmF0aXZlIGlzIGt1bGRlZXBwYXJtYXIzMzNAZ21haWwuY29tIElmIHRoYXQgZG9lc24ndCB3b3JrIHRyeSB0ZWxlZ3JhbS4=`
   - Github: <https://github.com/coldter/>
   - Telegram: <https://t.me/coldter>
 
