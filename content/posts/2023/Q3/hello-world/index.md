@@ -3,7 +3,7 @@ title: 'Hello World'
 subtitle: ''
 description: ''
 date: 2023-08-18T02:09:09+05:30
-lastmod: 2023-08-18T02:09:09+05:30
+lastmod: 2023-08-20T02:09:09+05:30
 draft: false
 
 featuredImage: 'featured-image.webp'
@@ -37,6 +37,8 @@ Welcome friend! I intend use this site as a playground to experiments and share 
 This site is powered by [Hugo](https://gohugo.io/) and it's using [DoIt Theme](https://hugodoit.pages.dev) with some extra customization and shortcodes here and there. Hosted on cloudflare pages alongside github pages. I'm using Github Actions to build and some other related stuff here and there.
 
 ### A website with speed and security in mind
+
+{{< figure src="web-dev-measure.png" title="Screenshot from web.dev/measure" >}}
 
 I'm not a designer I don't have interest nor time to make every corner of my website look at the way I want, So have to rely on others ideas and work which are ok compromise for me. There comes a another problem which platform to choose, As there are a tons and tons of solutions out there from billion CMS or headlessCMS and what not...
 
