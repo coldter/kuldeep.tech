@@ -29,6 +29,9 @@ toc:
 comment:
   utterances:
     enable: true
+		
+math:
+  enable: false
 ---
 
 TO BE DONE...

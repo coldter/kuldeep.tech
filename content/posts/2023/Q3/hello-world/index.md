@@ -1,13 +1,13 @@
 ---
 title: 'Hello World'
 subtitle: ''
-description: ''
+description: 'Welcome friend! I intend use this site as a playground to experiments and share my thoughts on various topics and thing I fine interesting.'
 date: 2023-08-18T02:09:09+05:30
 lastmod: 2023-08-20T02:09:09+05:30
 draft: false
 
 featuredImage: 'featured-image.webp'
-featuredImagePreview: 'featured-image-preview.jpg'
+featuredImagePreview: 'featured-image-preview.webp'
 
 tags: ['first-post', 'hugo']
 categories: ['tech', 'non-tech']
