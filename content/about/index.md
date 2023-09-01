@@ -3,14 +3,14 @@ title: 'About'
 date: 2021-01-16T00:24:31+08:00
 draft: false
 
-lightgallery: true
+lightgallery: false
 
 comment:
   utterances:
     enable: false
 ---
 
-![banner](night-light.webp)
+{{< figure src="night-light.webp" title="" >}}
 
 ## About Me
 
