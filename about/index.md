@@ -1,7 +1,7 @@
 # About
 
 
-![banner](night-light.webp)
+{{< figure src="night-light.webp" title="" >}}
 
 ## About Me
 

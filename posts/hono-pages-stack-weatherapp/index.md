@@ -67,7 +67,7 @@ The most popular weather api out there, I think it's good enough for my use case
 
 #### Result
 
-{{< figure src="screenshot.png" title="Final Look Screenshot" >}}
+![Final Look Screenshot](screenshot.png)
 
 {{< admonition tip "Takeaways" true >}}
 
