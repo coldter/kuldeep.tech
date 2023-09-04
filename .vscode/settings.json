@@ -19,5 +19,14 @@
 		"titleBar.inactiveForeground": "#e7e7e799"
 	},
   "peacock.color": "#5e69c1",
-  "cSpell.words": ["lastmod", "lightgallery", "noreffer", "openweathermap", "upstash", "Weatherapp"]
+  "cSpell.words": [
+    "lastmod",
+    "lightgallery",
+    "noreffer",
+    "openweathermap",
+    "upstash",
+    "Ventoy",
+    "Weatherapp",
+    "clonezilla"
+  ]
 }

@@ -17,7 +17,7 @@ license: '<a rel="license external nofollow noopener noreffer" href="https://cre
 hiddenFromSearch: false
 hiddenFromHomePage: false
 
-lightgallery: false
+lightgallery: true
 
 
 table:
@@ -29,7 +29,7 @@ toc:
 comment:
   utterances:
     enable: true
-		
+
 math:
   enable: false
 ---
