@@ -20,7 +20,7 @@ Launch a local Hugo server including live reload by running:
 
 ```shell
 # serve in debug mode, with all drafts
-hugo server --debug --buildDrafts --disableFastRender --bind 0.0.0.0
+hugo server --logLevel debug --buildDrafts --disableFastRender --bind 0.0.0.0
 
 # serve in production mode
 hugo serve -e production --disableFastRender
