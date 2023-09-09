@@ -26,7 +26,7 @@ comment:
   - Computer Networking - A Top-Down Approach, 7e
 - AI
   - [Dive into Deep Learning](https://github.com/d2l-ai/d2l-en)
-- Modeling & Design: Blender, Unreal Engine 5
+- Modelling & Design: Blender, Unreal Engine 5
   
 > Probably too dumb for any of these 🥲
 
