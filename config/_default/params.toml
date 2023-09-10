@@ -1,10 +1,10 @@
 # Website Settings
 
-title = "Parmar Kudeep"
+title = "Parmar Kuldeep"
 # gitRepo = "https://github.com/kaushalmodi/hugo-doit-theme.git"
 
 defaultTheme = "black"
-keywords = ["blog", "kuld33p", "kuldeep", "parmar kuldeep", "coldter"]
+keywords = ["blog", "kuld33p", "k5p", "kuldeep", "parmar kuldeep", "coldter"]
 
 gitRepo = ""
 # DoIt NEW | 0.1.1 which hash function used for SRI, when empty, no SRI is used
@@ -19,7 +19,7 @@ enablePWA = false
 
 [app]
 # optional site title override for the app when added to an iOS home screen or Android launcher
-title = "Kuld33p"
+title = "K5P"
 # whether to omit favicon resource links
 noFavicon = false
 # modern SVG favicon to use in place of older style .png and .ico files
@@ -58,7 +58,7 @@ themeChangeMode = "switch"
 [header.title]
 # logo = ""
 # title name
-name = "Kuld33p"
+name = "K5P"
 # you can add extra information before the name (HTML format is supported), such as icons
 post = ""
 # whether to use typeit animation for title name
@@ -126,7 +126,9 @@ avatarURL = "/images/profile-gb.png"
 # URL the avatar links to
 avatarLinkURL = ""
 # DoIt CHANGED | 0.2.7 title shown in home page (HTML format is supported)
-title = "Hey, It's Kudeep Parmar!"
+# title = "Hey, It's Kuldeep Parmar!"
+title = "<h1 style=\"font-size: 1.5rem; margin: 0 0 10px; font-weight: 800; background: radial-gradient(circle at 4.3% 10.7%, rgb(138, 118, 249) 13.6%, rgb(75, 252, 235) 100.7%);  -webkit-background-clip: text; -webkit-text-fill-color: transparent;\">Hey, I'm Kuldeep Parmar</h1>"
+
 # subtitle shown in home page
 subtitle = ""
 # whether to use typeit animation for subtitle
