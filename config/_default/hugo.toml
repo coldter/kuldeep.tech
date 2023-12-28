@@ -55,7 +55,7 @@ identifier = "cv"
 pre = ""
 post = ""
 name = "~/cv"
-url = "/pdfs/resume.pdf"
+url = "https://cv.kuldeep.tech/"
 title = ""
 weight = 6
 
