@@ -142,7 +142,7 @@ disclaimer = "Keep it simple, stupid.<br>simple != easy"
 [home.posts]
 enable = true
 # special amount of posts in each home posts page
-paginate = 6
+paginate = 4
 # # DoIt DELETED | 0.2.0 replaced with hiddenFromHomePage in page
 # # default behavior when you don't set "hiddenFromHomePage" in front matter
 # defaultHiddenFromHomePage = false
