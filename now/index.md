@@ -3,13 +3,14 @@
 
 ## 🌱 I’m currently learning
 
-- [NixOs](https://nixos.org)
+- [Go](https://go.dev)
+- [Kubernetes](https://kubernetes.io)
 - [System Design and how to design systems at scale](https://github.com/karanpratapsingh/system-design)
-- [A Little-bit of Go](https://go.dev)
+- [NixOs](https://nixos.org)
 
 ## 🤤 I want to learn
 
-- Programming Languages: **Rust, C, C++, Haskell, Erlang or Elixir**
+- Programming Languages: **Rust, C, C++, Haskell, Elixir, Zig**
 - Networking:
   - Computer Networking - A Top-Down Approach, 7e
 - AI
