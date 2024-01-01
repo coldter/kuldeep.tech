@@ -1,6 +1,6 @@
 ---
 weight: 1
-title: "The journey continues"
+title: "The Journey Continues"
 subtitle: ""
 description: ""
 date: 2023-12-31T20:28:07+05:30
