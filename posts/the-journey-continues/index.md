@@ -1,4 +1,4 @@
-# The journey continues
+# The Journey Continues
 
 
 I just want this post to be a short documentation of my current thoughts and perspectives as we rush towards 2024. As I'm writing this, 2024 is just a few hours away. Can't believe that it's been four years since 2020 feels like yesterday and the fact that the year 2040 is nearer than the year 2000 the year of my birth.
