@@ -161,8 +161,6 @@ lightgallery = true
 ruby = true
 # DoIt NEW | 0.2.0 whether to enable the fraction extended syntax
 fraction = true
-# DoIt NEW | 0.2.0 whether to enable the fontawesome extended syntax
-fontawesome = true
 # whether to show link to Raw Markdown content of the content
 linkToMarkdown = false
 # DoIt NEW | 0.2.14 configure the link to the source file of the post
