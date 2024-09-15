@@ -1,0 +1,279 @@
+%-------------------------
+% Author: Kuldeep
+% My modified version of resume in LaTeX,
+% based on https://github.com/jakegut/resume
+% License : MIT
+%------------------------
+
+\newcommand{\myName}{Kuldeep Parmar}
+\newcommand{\myPhoneNumber}{6355720306}
+\newcommand{\myEmail}{hey@kuldeep.tech}
+\newcommand{\myGithub}{github.com/coldter}
+\newcommand{\myLocation}{Rajkot, Gujarat}
+\newcommand{\myCityTzSlug}{rajkot}
+\newcommand{\myWebsite}{kuldeep.tech}
+
+\documentclass[letterpaper,12pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{changepage}
+\usepackage[a4paper,margin=1in,footskip=0.0in]{geometry}
+\usepackage{fancyhdr}
+\input{glyphtounicode}
+
+%----------FONT OPTIONS----------
+% sans-serif
+% \usepackage[sfdefault]{FiraSans}
+\usepackage[sfdefault]{roboto}
+% \usepackage[sfdefault]{noto-sans}
+% \usepackage[default]{sourcesanspro}
+
+% serif
+% \usepackage{CormorantGaramond}
+% \usepackage{charter}
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{0pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+% Ensure that generate pdf is machine readable/ATS parsable
+\pdfgentounicode=1
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeItemm}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeItemListHeading}[1]{
+  \small{
+    {\vspace{10pt} \hspace{-16pt} \textbf{#1}: \vspace{-4pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubSubheading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \textit{\small#1} & \textit{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\begin{center}
+  \textbf{\Huge \scshape \myName} \\ \vspace{5pt}
+  \small
+  % {\myPhoneNumber} $|$
+  {\expandafter\href\expandafter{tel:+91\myPhoneNumber}{\underline{+91 \myPhoneNumber}}} $|$
+  {\expandafter\href\expandafter{mailto:\myEmail}{\underline{\myEmail}}} $|$
+  {\expandafter\href\expandafter{https://\myWebsite}{\underline{\myWebsite}}} $|$
+  {\expandafter\href\expandafter{https://\myGithub}{\underline{\myGithub}}} $|$
+  {\expandafter\href\expandafter{https://www.timeanddate.com/time/zone/india/\myCityTzSlug}{\underline{\myLocation}}}
+\end{center}
+
+%          -ABOUT
+
+\section{About}
+\begin{adjustwidth}{8pt}{4pt}
+  \hspace{35pt}
+  \small{I'm a passionate software developer with strong problem-solving skills and deep interest in the ever-growing world of cloud-native tech, with a keen focus on information security to build beautiful and secure solutions. Willing to work remotely with teams to embrace new challenges and achieve success.}
+\end{adjustwidth}
+
+%-----------EXPERIENCE-----------
+\section{Work Experience}
+% C-2
+\resumeSubHeadingListStart
+\resumeSubheading
+{Backend Developer(Node.js)/DevOps}{Jan 2024 -- Present}
+{Ananta Security Lab}{Gujarat, India}
+\resumeItem{
+  \resumeItemListStart
+  \resumeItem{Joined as key resource for maintaining and scaling of company's on-demand food delivery platform with large codebase and many entities.}
+  \resumeItem{Utilized noje.js and related ecosystem to build RESTful APIs for various services.}
+  \resumeItem{Integrated solutions like AWS CloudFront, Redis cache and monitoring services like sentry and CloudWatch in existing platform to improve performance and reliability.}
+  \resumeItem{Dockerized various services and managed and maintained 20 plus servers on various platforms.}
+  \resumeItem{Built a high volume PDF generation service using puppeteer and AWS lambda to generate large PDFs with gathered data from various sources.}
+  \resumeItem{Helped companies to conduct various security audits and compliance.}
+  \resumeItem{Actively maintained project documentations and wikis.}
+  \resumeItem{Utilized Cloudflare platform with DNS, CND, waf, workers, KV, pages etc. to fulfill many projects serverless requirements.}
+  \resumeItemListEnd
+}
+% C-1
+\resumeSubHeadingListEnd
+\resumeSubHeadingListStart
+\resumeSubheading
+{Backend Developer}{Jan 2023 -- Dec 2024}
+{1lint}{Gujarat, India}
+\resumeItem{
+  \resumeItemListStart
+  \resumeItem{I worked as a key part of the backend development leveraging technologies like Node.js, TypeScript, MongoDB, PostgreSQL, message queues, etc. to build scalable solutions for high traffic and cloud environments.}
+  \resumeItem{Provisioned and maintained cloud infrastructure like provisioning of Ec2, Loadbalancers, VPC, RDS, S3, etc.}
+  \resumeItem{Developed a git based documentation system for engineers to easily collaborate and document various part of the projects and codebase, decreasing time in onboarding and knowledge transfer.}
+  \resumeItem{Migrated legacy es5 codebase to typescript and implemented tests for critical parts using frameworks like jest, resulting in better maintainability with quicker development cycles.}
+  \resumeItem{Worked on various POCs for new feature and for project development from the ground up with high focus deliverability and fast iteration.}
+  \resumeItem{Help in implementing and troubleshoot CI/CD pipelines for various projects with code review systems.}
+  \resumeItem{Utilized docker and devcontainer to standardize development environment across team member, along with linters like ESLint and prettier to maintain code quality and consistency across projects.}
+  \resumeItemListEnd
+}
+\resumeSubHeadingListEnd
+
+% %-----------PROJECTS-----------
+% \section{Projects}
+% \resumeSubHeadingListStart
+% \resumeProjectHeading
+% {\textbf{Checkers} $|$ \emph
+%   {Java, Typescript, Maven}
+% }
+% {\small{\href
+%     {https://github.com/Moztanku/Checkers}
+%     {\underline{github.com/Moztanku/Checkers}}
+%   }}
+% \resumeItemListStart
+% \resumeItem{Client-server checkers application with multiple playable variants}
+% \resumeItem{Server written in Java and web client made in TypeScript}
+% \resumeItem{Communication via WebSocket with decoder/encoder written by me in Java}
+% \resumeItemListEnd
+
+% \resumeSubHeadingListEnd
+
+%-----------EDUCATION-----------
+\section{Education}
+\resumeSubHeadingListStart
+\resumeSubheading
+{Atmiya University}{Gujarat, India}
+{Bachelor Of Science in Information Tech}{2019 -- 2022} %{}
+% \resumeItemListStart
+% \resumeItemListHeading{Relevant coursework}
+% \resumeItem{Algorithms and Data Structures}
+% \resumeItem{Metaheuristic Algorithms}
+% \resumeItem{Programming Languages and Paradigms}
+% \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+% %           -LANGUAGES-
+
+% \section{Languages}
+% \begin{itemize}[leftmargin=0.15in, label={}]
+%   \small{\item{
+%         \textbf{English}{: Communicative (B2)} \\
+%         \textbf{Gujarati}{: Native} \\
+%         }}
+% \end{itemize}
+%
+%-----------PROGRAMMING SKILLS-----------
+\section{Technical Skills}
+\begin{itemize}[leftmargin=0.15in, label={}]
+  \small{\item{
+        \textbf{Technologies}{:
+          Golang,
+          TypeScript,
+          JavaScript,
+          Python,
+          Node.js,
+          Deno,
+          Git,
+          Linux,
+          AWS,
+          Docker,
+          MongoDB,
+          PostgreSQL,
+          MySQL,
+          Redis,
+          Websockets,
+          Socket.io,
+          CI/CD,
+          GitHub Actions
+        } \\
+        \textbf{Interests}{:
+          Information Security,
+          Cloud Computing,
+          DevOps,
+          Serverless,
+          Distributed Systems,
+          Open Source
+        } \\
+        \textbf{Miscellaneous:}{
+          \underline{Born:} November 2000
+        } \\
+
+        }}
+\end{itemize}
+%-------------------------------------------
+
+%           -FOOTER-
+
+\AtBeginShipoutNext{%
+  \AtBeginShipoutUpperLeft{%
+    \put(35,-835){% Adjust these coordinates
+      \parbox{\textwidth}{\fontsize{7}{1}\selectfont
+        \textit{I agree to the processing of personal data provided in this document for the purpose of the recruitment process in accordance with the provisions of the Information Technology (Reasonable Security Practices and Procedures and Sensitive Personal Data or Information) Rules, 2011 under the Information Technology Act, 2000, and in agreement with any other applicable laws and regulations in India pertaining to the protection of personal data.}}%
+    }%
+  }%
+}
+
+\end{document}
