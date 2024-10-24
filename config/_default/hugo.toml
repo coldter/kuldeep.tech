@@ -95,13 +95,6 @@ unsafe = true
 startLevel = 2
 endLevel = 6
 
-# Author config
-[author]
-name = "Kuldeep"
-email = "hi@kuldeep.tech"
-avatar = "/images/profile-gb.png"
-link = "https://kuldeep.tech"
-
 # Sitemap config
 [sitemap]
 changefreq = "weekly"
