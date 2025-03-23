@@ -1,9 +1,9 @@
 import { UserConfig } from "./src/config"
 
 const userConfig: UserConfig = {
-    base_url: "https://notion-hugo.pages.dev",
+    base_url: "https://kuldeep.tech",
     mount: {
-        manual: false,
+        manual: true,
         page_url: 'https://kldp.notion.site/Public-Hugo-1bfe920b046e8063ad4adba71ea82a56',
         pages: [
             // {

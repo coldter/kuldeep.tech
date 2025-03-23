@@ -19,8 +19,14 @@ enablePWA = false
 
 # Author config
 [author]
+[auth.kuldeep]
 name = "Kuldeep"
 email = "hi@kuldeep.tech"
+avatar = "/images/profile-gb2.jpeg"
+link = "https://kuldeep.tech"
+[auth.kuldeep.notion]
+name = "Kuldeep"
+email = "kuldeepparmar333@gmail.com"
 avatar = "/images/profile-gb2.jpeg"
 link = "https://kuldeep.tech"
 
@@ -249,7 +255,7 @@ scale = true
 fullscreen = true
 # DoIt CHANGED | 0.2.0 social share links in post page
 [page.share]
-enable = true
+enable = false
 Whatsapp = true
 Twitter = true
 Linkedin = true

@@ -6,6 +6,8 @@ theme = 'DoIt'
 enableEmoji = true
 defaultContentLanguage = "en"
 
+summaryLength = 25
+
 [menu]
 [[menu.main]]
 identifier = "about"
@@ -47,7 +49,7 @@ weight = 6
 # Permalinks
 [Permalinks]
 # posts = ":year/:month/:filename"
-posts = "posts/:filename"
+posts = "posts/:title"
 
 
 # Markup related config in Hugo
