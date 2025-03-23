@@ -71,7 +71,7 @@ jobs:
       - name: Push algolia Index
         working-directory: ./.github/actions/
         run: |
-          npm install -g algoliasearch@4.12.1
+          npm install algoliasearch@4.12.1
           node push_algolia_index.js
         env:
           ALGOLIA_ADMIN_KEY: ${{ secrets.ALGOLIA_ADMIN_KEY }}

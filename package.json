@@ -29,6 +29,7 @@
   "author": "HEIGE-PCloud",
   "dependencies": {
     "@notionhq/client": "^2.2.16",
+    "algoliasearch": "^4.12.1",
     "dotenv": "^16.4.7",
     "front-matter": "^4.0.2",
     "fs-extra": "^11.3.0",
