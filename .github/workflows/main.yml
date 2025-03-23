@@ -51,6 +51,15 @@ jobs:
         with:
           commit_message: Sync content with Notion
 
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: "latest"
+          extended: true #  need extended version to support SASS/SCSS
+
+      - name: Build
+        run: hugo --minify --logLevel debug --printUnusedTemplates
+      
       - name: Push algolia Index
         working-directory: ./.github/actions/
         run: |
