@@ -1,14 +1,32 @@
 # based on https://github.com/peaceiris/actions-hugo
-name: update & deploy
+name: CD
 
 on:
   push:
     branches:
-      - main
+      - 'main'
+
+  schedule:
+    - cron: '0 */12 * * *' # At minute 0 past every 12th hour. UTC https://crontab.guru/
+  workflow_dispatch:
+  repository_dispatch:
+
+# Allow one concurrent deployment
+concurrency:
+  group: "deploy"
+  cancel-in-progress: false
+
+# Default to bash
+defaults:
+  run:
+    shell: bash
+
+env:
+  NODE_VERSION: 23.x
 
 jobs:
   update:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
@@ -16,8 +34,26 @@ jobs:
           fetch-depth: 0 # Fetch all history for .GitInfo and .Lastmod
           lfs: true # download Git-LFS files
 
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Sync content with Notion
+        env:
+         NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: |
+          npm install
+          npm start
+
+      - name: Commit updated content
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Sync content with Notion
+
+      # maybe remove this step. dont need to deploy on github pages
       - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2
+        uses: peaceiris/actions-hugo@v3
         with:
           hugo-version: "latest"
           extended: true #  need extended version to support SASS/SCSS
@@ -31,16 +67,15 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
-          cname: kuldeepparmar.me
-
-      - name: Use Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "lts/*"
+      
       - name: Push algolia Index
         working-directory: ./.github/actions/
         run: |
-          npm install algoliasearch@4.12.1
+          npm install -g algoliasearch@4.12.1
           node push_algolia_index.js
         env:
           ALGOLIA_ADMIN_KEY: ${{ secrets.ALGOLIA_ADMIN_KEY }}
+
+      # - name: Trigger Cloudflare Pages build
+      #   if: startsWith(env.CLOUDFLARE_PAGES_DEPLOY_HOOK, 'https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/') && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+      #   run: curl -X POST ${{ secrets.CLOUDFLARE_PAGES_DEPLOY_HOOK }}
