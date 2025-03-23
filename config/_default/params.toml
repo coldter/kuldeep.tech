@@ -226,7 +226,7 @@ mhchem = true
 # whether to show the copy button of the code block
 copy = true
 # the maximum number of lines of displayed code by default
-maxShownLines = 10
+maxShownLines = 10000
 # DoIt NEW | 0.2.14 Table config
 [page.table]
 # whether to enable sorting in the tables
