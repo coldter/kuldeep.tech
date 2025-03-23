@@ -21,7 +21,7 @@ enablePWA = false
 [author]
 name = "Kuldeep"
 email = "hi@kuldeep.tech"
-avatar = "/images/profile-gb.png"
+avatar = "/images/profile-gb2.jpeg"
 link = "https://kuldeep.tech"
 
 [app]
@@ -129,12 +129,12 @@ enable = true
 # URL of avatar shown in home page
 # Place your avatar file under static or assets directory
 # The filepath is relative to the static or assets directory
-avatarURL = "/images/profile-gb.png"
+avatarURL = "/images/profile-gb2.jpeg"
 # URL the avatar links to
 avatarLinkURL = ""
 # DoIt CHANGED | 0.2.7 title shown in home page (HTML format is supported)
 # title = "Hey, It's Kuldeep Parmar!"
-title = "<h1 style=\"font-size: 1.5rem; margin: 0 0 10px; font-weight: 800; background: radial-gradient(circle at 4.3% 10.7%, rgb(138, 118, 249) 13.6%, rgb(75, 252, 235) 100.7%);  -webkit-background-clip: text; -webkit-text-fill-color: transparent;\">Hey, I'm Kuldeep Parmar</h1>"
+title = "<h1 style=\"font-size: 1.5rem; margin: 0 0 10px; font-weight: 800; background: rgb(1,50,32); background: linear-gradient(159deg, rgba(1,50,32,1) 0%, rgba(57,255,20,1) 100%);-webkit-background-clip: text; -webkit-text-fill-color: transparent;\">Kuldeep Parmar</h1>"
 
 # subtitle shown in home page
 subtitle = ""
@@ -143,7 +143,7 @@ typeit = false
 # whether to show social links
 social = true
 # DoIt NEW | 0.2.0 disclaimer (HTML format is supported)
-disclaimer = "Keep it simple, stupid.<br>simple != easy"
+disclaimer = "I'm a simple man who likes complex things <br />and ends up complicating things."
 
 # Home page posts
 [home.posts]

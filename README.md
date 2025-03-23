@@ -1,6 +1,6 @@
 # Kuldeep.tech
 
-My personal site, built using [Hugo](https://github.com/gohugoio/hugo) and hosted on [cloudflare pages](https://pages.dev) also on [GitHub Pages](https://pages.github.com/).
+My personal site, built using [Hugo](https://github.com/gohugoio/hugo) and hosted on [cloudflare pages](https://pages.dev) integrates with [notion](https://github.com/HEIGE-PCloud/Notion-Hugo) to use this as a micro blog/notes.
 
 Address: <https://kuldeep.tech>
 
