@@ -1,7 +1,7 @@
 ---
 title: "Vscode settings gone too far"
 date: "2025-03-23T13:38:00.000Z"
-lastmod: "2025-03-23T21:12:00.000Z"
+lastmod: "2025-03-23T21:26:00.000Z"
 draft: false
 featuredImage: "https://kuldeep.tech/api?page_id=1bfe920b-046e-80e6-8839-cb72d9177dc2"
 series: []
@@ -13,7 +13,7 @@ NOTION_METADATA:
   object: "page"
   id: "1bfe920b-046e-80e6-8839-cb72d9177dc2"
   created_time: "2025-03-23T13:38:00.000Z"
-  last_edited_time: "2025-03-23T21:12:00.000Z"
+  last_edited_time: "2025-03-23T21:26:00.000Z"
   created_by:
     object: "user"
     id: "1bfd872b-594c-8140-b6fd-0002a427c2a5"
@@ -26,28 +26,28 @@ NOTION_METADATA:
       url: "https://prod-files-secure.s3.us-west-2.amazonaws.com/efd0d95c-0b39-4e3b-b\
         4cf-a61e65cb50af/11315e7a-26c5-4632-8c3d-a6cc62395974/flux-gemini.png?X\
         -Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X\
-        -Amz-Credential=ASIAZI2LB466U4MTYI6J%2F20250323%2Fus-west-2%2Fs3%2Faws4\
-        _request&X-Amz-Date=20250323T211405Z&X-Amz-Expires=3600&X-Amz-Security-\
-        Token=IQoJb3JpZ2luX2VjEIT%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtM\
-        iJHMEUCIEljcQJzeI063VutDhUC6OfORFtr8H%2BQbjCoZ4KIEab7AiEAzvUSHw3%2BJtM2\
-        vBfzxmxnr5zlKgURrn%2FxW25WpOqMPZUqiAQI3f%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FA\
-        RAAGgw2Mzc0MjMxODM4MDUiDOSLYv119XQXN%2F0z7ircA1gI8dkYdrAuMfnxiqYVYODIEv\
-        tgwiD7Tq4fAnVMveWbo0MWUtRtqRt5mp1XGGpfZCDnQlMJlD0xWXKK93t6yvgRn50ZacSoF\
-        bic%2B00sN1fQYU693cGcxRx%2BX6LRcIVDPNQ4TDslnSxbmk996pTqRqNjVNypkt5L2lkQ\
-        bd1h4h9l5Wj29wM3VXKYsA3FQUouORUHPLkqfaj4WOLlYC1K6b0GRqOgc1ecVscbFXNHtF%\
-        2FpPmRpEsSOPeT6fceouH%2FOFNu93OXvUdEbwBkrA0n26%2FdWaF%2BPd1XwSU25zyspAn\
-        jj04kNRp6JGNT0GhQuvI997gZky7l3uue7sua6nshHl5SM%2F5mj%2FNBOic1bJL7UiemMK\
-        JvKWa51Nfe%2FXa%2Fg%2Fj0cqeRHr8R21LRNX7uesAyIUnECOq1FzmHqJntXhQ%2FqKMEo\
-        lEPpUd3J0mvjbVwFqzQY%2BlaXh3gdPPbNvRH0%2FVfFoXEl428PrEBYaG9iQcW9bK%2Fc8\
-        l3LsqAxydmLriAK2mMg0nIWYDKMPgks9j5V6qkN1dxsPG%2FWHA1Y46yz78gM%2Ftz0hk%2\
-        BUwZOufjV%2BQnwck7kBxxCROnqb0ZhNVmvAKqRsDOFiQbc9UjzJG3fCAj91vU6Z6XeFnmt\
-        JqJXdrZCjMM7Kgb8GOqUBbl8rZEh6vVMPOUZOyszHDWarwb8DynW1%2BpvlzRoGI7CkHs4e\
-        lXG852g2WpcsqFkIVaHhAQYQC%2F7dCZaT4mbZUsMp150R7MPXvcwzpdpl0MjyfGdhvAdmp\
-        ocpeh22o6E0eZvVWK4XnoiVv9F0qbUo44Hl7Ybd77LnCJ%2BJ4H0lDeo%2FJYLm%2Fehbn0\
-        ia1AUJzlszPIC44jFNCnaPGzdN%2FWJDG4%2Fe%2BwVq&X-Amz-Signature=c82e5f8418\
-        389ad8b586a33e774c194b2176f4ecdf27c95cd1545c843a188238&X-Amz-SignedHead\
-        ers=host&x-id=GetObject"
-      expiry_time: "2025-03-23T22:14:05.957Z"
+        -Amz-Credential=ASIAZI2LB466VD2CKUUU%2F20250324%2Fus-west-2%2Fs3%2Faws4\
+        _request&X-Amz-Date=20250324T005355Z&X-Amz-Expires=3600&X-Amz-Security-\
+        Token=IQoJb3JpZ2luX2VjEIj%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtM\
+        iJHMEUCIQC8SV4fgsej8YZ%2FAgJraY0p4x4njlydRtV04IHLtwWZdQIgAzg2vcuMLsOYjx\
+        J6NwsnwoYxW5QLgpfc7yyneG%2BbalYqiAQI4f%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARA\
+        AGgw2Mzc0MjMxODM4MDUiDFe%2BCN3P2HXznF1TjircAyQGHSgUYUmJ2cecVwy%2BxT5sLb\
+        sIG40eW39%2Bc97tGnOnFIqHdWLI0YyYxieMx6J0RQ2eHwwtKOUBd6ecqefz1ncRtntNCbi\
+        sCzajq7w%2F6TWCmDdY6zwothjIq60tXSYzckiA59PXZjZeISmRIR4UE%2F5AMB85sy06Wi\
+        %2F9Fy20gLcM0Wy7MgiBZUgKI6S%2FBCTwWZQeN8yECof41m7RPFjSDoXzbVOSIw5MoUsKZ\
+        4uyHE%2FkR3CzjRASv5hYIV4MAadLrpK1H4NHbV0T5j2Y7%2BYdwAT8NPDnYVwGgmk%2BE9\
+        KPbi9bCDxMeWVpXFSr2BbMisbZCEHPixiFHhwYavBtyQzmzhirP61%2Bn4%2FEsZ63wBlPj\
+        DtRTI%2Fl%2FjYohb%2B9PI%2FkRw9%2FJ191sir8su1VK3NYsN8iCKnUyvaYbxQOZybs2e\
+        hY%2FhDzyny7Zk5kYMfCbekSpYNskE65SmnlRAJagTez8DuLRHRDkITbEkZILUmgMV5qaBn\
+        XJvpQMDhv9fR1jJh2ksOalgu2IukYMAOLrq1XYwCsAzs7zVU5JCKL9ozFcW9B9I5VROt6J2\
+        eoDcyq80YpXBX2yOV%2BgHK3Xeu72O%2BVsZHtF2AHfOvP4eXF5OKJX1DnqG%2BcSOw3zPd\
+        kSt9zsWcYMJGxgr8GOqUB7dKDKuACfEO1lBho3eMkzbEBYTES1qEaUqhN%2B0C9%2FfqMze\
+        bes3hoq8gYnOZZqevB7qta2q6JJudrfnvhUMd%2BrEnHL3usjZsJ5O31NoHvCyUTNK2LcRe\
+        cggCUMEdXdRRZu1TYiJZyA8zl0BCaT8cIq6NT5YOKxT5jec7HpBy%2BDDV06gVE9%2FkYbE\
+        Fy0CCf9D4DfCsA16mKcHQzXogmlkirNlAmBopu&X-Amz-Signature=5200d2061dc3ea54\
+        e4bb973fad51406406dea57c5fd85b2964cd996227c4a3d6&X-Amz-SignedHeaders=ho\
+        st&x-id=GetObject"
+      expiry_time: "2025-03-24T01:53:55.913Z"
   icon: null
   parent:
     type: "database_id"
@@ -90,7 +90,7 @@ NOTION_METADATA:
     Last edited time:
       id: "vbGE"
       type: "last_edited_time"
-      last_edited_time: "2025-03-23T21:12:00.000Z"
+      last_edited_time: "2025-03-23T21:26:00.000Z"
     summary:
       id: "x%3AlD"
       type: "rich_text"
@@ -121,7 +121,7 @@ MANAGED_BY_NOTION_HUGO: true
 ---
 
 
-I’ve been using vscode like 5 years now, that logger than I’m doing any meaningful coding. All this time I had my ups and down with it, but anytime I tried to move away from it (mainly vim/vim-motion) I had to move back to it because I had no other choice (I still try sometime nevertheless and might be successes someday). Regardless of my or any other’s opinion on it, it’s very versatile and very important according to some developers (mostly web-dev which are mostly some of the worst devs 🤣).
+I’ve been using vscode like 5 years now, that’s longer than I have been doing any meaningful coding. All this time I had my ups and down with it, but anytime I tried to move away from it (mainly vim/vim-motion) I had to move back to it because I had no other choice (I still try sometime nevertheless and might be successes someday). Regardless of my or any other’s opinion on it, it’s very versatile and very important according to some developers (mostly web-dev which are mostly some of the worst devs 🤣).
 
 
 Because of this, I’ve picked some really niche and some general settings of vscode that like to run my vscode with.
@@ -637,7 +637,7 @@ Because of this, I’ve picked some really niche and some general settings of vs
 > Generated with `code --list-extensions` to generated install command use `code --list-extensions | xargs -L 1 echo code --install-extension` 
 
 
-```json
+```text
 42crunch.vscode-openapi
 aaron-bond.better-comments
 ahmadalli.vscode-nginx-conf
