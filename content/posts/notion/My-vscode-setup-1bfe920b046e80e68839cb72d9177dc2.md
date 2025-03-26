@@ -1,7 +1,7 @@
 ---
-title: "Vscode settings gone too far"
+title: "My vscode setup"
 date: "2025-03-23T13:38:00.000Z"
-lastmod: "2025-03-23T21:26:00.000Z"
+lastmod: "2025-03-26T02:06:00.000Z"
 draft: false
 featuredImage: "https://kuldeep.tech/api?page_id=1bfe920b-046e-80e6-8839-cb72d9177dc2"
 series: []
@@ -13,7 +13,7 @@ NOTION_METADATA:
   object: "page"
   id: "1bfe920b-046e-80e6-8839-cb72d9177dc2"
   created_time: "2025-03-23T13:38:00.000Z"
-  last_edited_time: "2025-03-23T21:26:00.000Z"
+  last_edited_time: "2025-03-26T02:06:00.000Z"
   created_by:
     object: "user"
     id: "1bfd872b-594c-8140-b6fd-0002a427c2a5"
@@ -26,28 +26,27 @@ NOTION_METADATA:
       url: "https://prod-files-secure.s3.us-west-2.amazonaws.com/efd0d95c-0b39-4e3b-b\
         4cf-a61e65cb50af/11315e7a-26c5-4632-8c3d-a6cc62395974/flux-gemini.png?X\
         -Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X\
-        -Amz-Credential=ASIAZI2LB466VD2CKUUU%2F20250324%2Fus-west-2%2Fs3%2Faws4\
-        _request&X-Amz-Date=20250324T005355Z&X-Amz-Expires=3600&X-Amz-Security-\
-        Token=IQoJb3JpZ2luX2VjEIj%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtM\
-        iJHMEUCIQC8SV4fgsej8YZ%2FAgJraY0p4x4njlydRtV04IHLtwWZdQIgAzg2vcuMLsOYjx\
-        J6NwsnwoYxW5QLgpfc7yyneG%2BbalYqiAQI4f%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARA\
-        AGgw2Mzc0MjMxODM4MDUiDFe%2BCN3P2HXznF1TjircAyQGHSgUYUmJ2cecVwy%2BxT5sLb\
-        sIG40eW39%2Bc97tGnOnFIqHdWLI0YyYxieMx6J0RQ2eHwwtKOUBd6ecqefz1ncRtntNCbi\
-        sCzajq7w%2F6TWCmDdY6zwothjIq60tXSYzckiA59PXZjZeISmRIR4UE%2F5AMB85sy06Wi\
-        %2F9Fy20gLcM0Wy7MgiBZUgKI6S%2FBCTwWZQeN8yECof41m7RPFjSDoXzbVOSIw5MoUsKZ\
-        4uyHE%2FkR3CzjRASv5hYIV4MAadLrpK1H4NHbV0T5j2Y7%2BYdwAT8NPDnYVwGgmk%2BE9\
-        KPbi9bCDxMeWVpXFSr2BbMisbZCEHPixiFHhwYavBtyQzmzhirP61%2Bn4%2FEsZ63wBlPj\
-        DtRTI%2Fl%2FjYohb%2B9PI%2FkRw9%2FJ191sir8su1VK3NYsN8iCKnUyvaYbxQOZybs2e\
-        hY%2FhDzyny7Zk5kYMfCbekSpYNskE65SmnlRAJagTez8DuLRHRDkITbEkZILUmgMV5qaBn\
-        XJvpQMDhv9fR1jJh2ksOalgu2IukYMAOLrq1XYwCsAzs7zVU5JCKL9ozFcW9B9I5VROt6J2\
-        eoDcyq80YpXBX2yOV%2BgHK3Xeu72O%2BVsZHtF2AHfOvP4eXF5OKJX1DnqG%2BcSOw3zPd\
-        kSt9zsWcYMJGxgr8GOqUB7dKDKuACfEO1lBho3eMkzbEBYTES1qEaUqhN%2B0C9%2FfqMze\
-        bes3hoq8gYnOZZqevB7qta2q6JJudrfnvhUMd%2BrEnHL3usjZsJ5O31NoHvCyUTNK2LcRe\
-        cggCUMEdXdRRZu1TYiJZyA8zl0BCaT8cIq6NT5YOKxT5jec7HpBy%2BDDV06gVE9%2FkYbE\
-        Fy0CCf9D4DfCsA16mKcHQzXogmlkirNlAmBopu&X-Amz-Signature=5200d2061dc3ea54\
-        e4bb973fad51406406dea57c5fd85b2964cd996227c4a3d6&X-Amz-SignedHeaders=ho\
-        st&x-id=GetObject"
-      expiry_time: "2025-03-24T01:53:55.913Z"
+        -Amz-Credential=ASIAZI2LB4664K2YMUA2%2F20250326%2Fus-west-2%2Fs3%2Faws4\
+        _request&X-Amz-Date=20250326T122039Z&X-Amz-Expires=3600&X-Amz-Security-\
+        Token=IQoJb3JpZ2luX2VjEMT%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtM\
+        iJHMEUCIQD83ufR86JzRdDtIQSZd8cpVFMvKAt368BPsP82Z0N7hgIgHZDYU%2F8U5a%2FD\
+        st1b5y9%2BQ1Jyw5BYljR%2FGSDCGBp7u90q%2FwMILRAAGgw2Mzc0MjMxODM4MDUiDAv93\
+        RbVhgmvCbV%2FkircA1HGWGxvA%2FUvWCq7WrY1wSHuABI6vjfvp8WigfVwFUyLwsp27YWv\
+        OQ4kD%2FScmY6J3lP4NgaCFMBtG22qnLfJdqINtnzTSPutxj6U9bNHUy7Mu7DCDUWK%2FDs\
+        mbzQUG3xfCLfCWVLU7rovGesf0qVhZRC%2BQlMvEKyv83WNenthg9dfQi2sUMVdZ0TiqtBc\
+        iv6PEkl%2BCoUFI4HTbvyXcBeckFOdYRw5CVjd9sTOm40JsMlp%2FP76%2BBnp4Z3tt%2BW\
+        %2FbN5UQCJSl7n0YqDsfFOmqkb1r2GWDD8XqxAvOp8eVXtqsdK%2FWVZFPAUbEgnTgpVX1r\
+        n12toBHuFYZHJv9wjHERsbkRrhfMP3RDD59hQIqiXud8Vb9tir04GIR3XMIiFvMbjb%2F5Y\
+        hBXQ1s5%2FrZTBDcS6YHa6qVm790eywsByjofrJ%2BorGT5iZN7rL0UogNorGiF1VDvx%2F\
+        gtPqXbahv7yv1455T1FXHHLGVisagRYZaiDLpW3axgsj3UHsiX%2FefFBtjetZj8hVNOMEH\
+        u%2BzJsi4NoYSCfthJsmE%2FQIB0Y%2FqLC5VWubHgWX9TR6bbp%2FfQzVsydeWqftUqirh\
+        2p3LtYA5hn5ci8aR6cadrZpu6vQ%2B4jeWLWU35qJVovB1f5pgeybaMI3bj78GOqUBkiSTm\
+        PKoEL1T9OlEyYqEZlKd%2FGNLqp0DgfqKRdNwGmxsapsxKqCWHEJsYwc%2B4wMOqmNj2nq4\
+        Bn0tLhJwY1iogmlWqXXDu9trvf1fk%2BnyE4bUHklZQiWQSyu%2BlF6GTahWUmZWtN45K%2\
+        FFDSjU%2B0DqovuuCUvJXF6KQDKd3Nv5EHOclKTH8a6CNxzB1JrB%2FARVceRoFHKuDB3zN\
+        2u%2FJBXOfOtfk7%2FeK&X-Amz-Signature=940315b8b13d4cd7a5a3c772ac7a5c16e3\
+        a37008a3d9fbdcad3bb05c5eefdaba&X-Amz-SignedHeaders=host&x-id=GetObject"
+      expiry_time: "2025-03-26T13:20:39.450Z"
   icon: null
   parent:
     type: "database_id"
@@ -90,7 +89,7 @@ NOTION_METADATA:
     Last edited time:
       id: "vbGE"
       type: "last_edited_time"
-      last_edited_time: "2025-03-23T21:26:00.000Z"
+      last_edited_time: "2025-03-26T02:06:00.000Z"
     summary:
       id: "x%3AlD"
       type: "rich_text"
@@ -101,7 +100,7 @@ NOTION_METADATA:
       title:
         - type: "text"
           text:
-            content: "Vscode settings gone too far"
+            content: "My vscode setup"
             link: null
           annotations:
             bold: false
@@ -110,12 +109,10 @@ NOTION_METADATA:
             underline: false
             code: false
             color: "default"
-          plain_text: "Vscode settings gone too far"
+          plain_text: "My vscode setup"
           href: null
-  url: "https://www.notion.so/Vscode-settings-gone-too-far-1bfe920b046e80e68839cb\
-    72d9177dc2"
-  public_url: "https://kldp.notion.site/Vscode-settings-gone-too-far-1bfe920b046e\
-    80e68839cb72d9177dc2"
+  url: "https://www.notion.so/My-vscode-setup-1bfe920b046e80e68839cb72d9177dc2"
+  public_url: "https://kldp.notion.site/My-vscode-setup-1bfe920b046e80e68839cb72d9177dc2"
 MANAGED_BY_NOTION_HUGO: true
 
 ---
