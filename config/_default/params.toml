@@ -149,7 +149,8 @@ typeit = false
 # whether to show social links
 social = true
 # DoIt NEW | 0.2.0 disclaimer (HTML format is supported)
-disclaimer = "I'm a simple man who likes complex things <br />and ends up complicating things."
+# disclaimer = "I'm a simple man who likes complex things <br />and ends up complicating things."
+disclaimer = "Talk is cheap, show me the money."
 
 # Home page posts
 [home.posts]
