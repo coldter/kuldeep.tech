@@ -6,6 +6,7 @@ _gen/
 
 resume-latex/*
 !resume-latex/resume.tex
+!resume-latex/main.tex
 
 *.env
 
