@@ -88,7 +88,7 @@ filename = "sitemap.xml"
 priority = 0.5
 
 [privacy]
-[privacy.twitter]
+[privacy.x]
 enableDNT = true
 [privacy.youtube]
 privacyEnhanced = true

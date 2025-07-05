@@ -22,7 +22,7 @@ defaults:
     shell: bash
 
 env:
-  NODE_VERSION: 23.x
+  NODE_VERSION: 24.x
 
 jobs:
   update:
