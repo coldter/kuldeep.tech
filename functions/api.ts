@@ -37,7 +37,8 @@ async function setCachedData(
   key: string,
   data: CacheEntry,
 ): Promise<void> {
-  await cache.put(key, JSON.stringify(data), { expirationTtl: 60 * 60 * 6 });
+  // The S3 URL from Notion is valid for one hour.
+  await cache.put(key, JSON.stringify(data), { expirationTtl: 60 * 60 });
 }
 
 export const onRequest: PagesFunction<Env> = async (context) => {
@@ -58,43 +59,61 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
   const notion = new Client({ auth: context.env.NOTION_TOKEN });
 
-  const cacheData = await getCachedData(context.env.KV, pageId ?? blockId);
+  let fileUrl: string;
+
+  const cacheKey = pageId ?? blockId;
+  const cacheData = await getCachedData(context.env.KV, cacheKey);
   if (cacheData) {
-    return Response.redirect(cacheData.url, 302);
-  }
-
-  if (blockId) {
-    const block = await notion.blocks.retrieve({ block_id: blockId });
-
-    if (!isFullBlock(block)) {
-      return new Response("Failed to retreve block", { status: 400 });
-    }
-
-    const file = getFile(block);
-    if (!file) {
-      return new Response("No file url found", {
-        status: 400,
-      });
-    }
-
-    await setCachedData(context.env.KV, blockId, file);
-    return Response.redirect(file.url, 302);
+    fileUrl = cacheData.url;
   } else {
-    const page = await notion.pages.retrieve({ page_id: pageId });
+    if (blockId) {
+      const block = await notion.blocks.retrieve({ block_id: blockId });
 
-    if (!isFullPage(page)) {
-      return new Response("Failed to retrieve page", { status: 400 });
+      if (!isFullBlock(block)) {
+        return new Response("Failed to retreve block", { status: 400 });
+      }
+
+      const file = getFile(block);
+      if (!file) {
+        return new Response("No file url found", {
+          status: 400,
+        });
+      }
+
+      await setCachedData(context.env.KV, blockId, file);
+      fileUrl = file.url;
+    } else {
+      const page = await notion.pages.retrieve({ page_id: pageId });
+
+      if (!isFullPage(page)) {
+        return new Response("Failed to retrieve page", { status: 400 });
+      }
+
+      if (!page.cover) {
+        return new Response("No cover found", { status: 400 });
+      }
+
+      if (page.cover.type === "external") {
+        return new Response("External cover is not supported", { status: 400 });
+      }
+
+      await setCachedData(context.env.KV, pageId, page.cover.file);
+      fileUrl = page.cover.file.url;
     }
-
-    if (!page.cover) {
-      return new Response("No cover found", { status: 400 });
-    }
-
-    if (page.cover.type === "external") {
-      return new Response("External cover is not supported", { status: 400 });
-    }
-
-    await setCachedData(context.env.KV, pageId, page.cover.file);
-    return Response.redirect(page.cover.file.url, 302);
   }
+
+  const imageResponse = await fetch(fileUrl);
+
+  if (!imageResponse.ok) {
+    return imageResponse;
+  }
+
+  const headers = new Headers(imageResponse.headers);
+  headers.set("Cache-Control", "public, max-age=86400, s-maxage=86400");
+
+  return new Response(imageResponse.body, {
+    headers: headers,
+    status: imageResponse.status,
+    statusText: imageResponse.statusText,
+  });
 };
