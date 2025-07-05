@@ -102,18 +102,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     }
   }
 
-  const imageResponse = await fetch(fileUrl);
-
-  if (!imageResponse.ok) {
-    return imageResponse;
-  }
-
-  const headers = new Headers(imageResponse.headers);
-  headers.set("Cache-Control", "public, max-age=86400, s-maxage=86400");
-
-  return new Response(imageResponse.body, {
-    headers: headers,
-    status: imageResponse.status,
-    statusText: imageResponse.statusText,
+  return fetch(fileUrl, {
+    cf: {
+      cacheEverything: true,
+      cacheTtl: 60 * 60, // Cache for one hour
+    },
   });
 };
