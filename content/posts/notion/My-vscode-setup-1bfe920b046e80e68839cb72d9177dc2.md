@@ -1,7 +1,7 @@
 ---
 title: "My vscode setup"
 date: "2025-03-23T13:38:00.000Z"
-lastmod: "2025-03-26T02:06:00.000Z"
+lastmod: "2025-07-16T13:42:00.000Z"
 draft: false
 featuredImage: "https://kuldeep.tech/api?page_id=1bfe920b-046e-80e6-8839-cb72d9177dc2"
 series: []
@@ -13,7 +13,7 @@ NOTION_METADATA:
   object: "page"
   id: "1bfe920b-046e-80e6-8839-cb72d9177dc2"
   created_time: "2025-03-23T13:38:00.000Z"
-  last_edited_time: "2025-03-26T02:06:00.000Z"
+  last_edited_time: "2025-07-16T13:42:00.000Z"
   created_by:
     object: "user"
     id: "1bfd872b-594c-8140-b6fd-0002a427c2a5"
@@ -26,27 +26,27 @@ NOTION_METADATA:
       url: "https://prod-files-secure.s3.us-west-2.amazonaws.com/efd0d95c-0b39-4e3b-b\
         4cf-a61e65cb50af/11315e7a-26c5-4632-8c3d-a6cc62395974/flux-gemini.png?X\
         -Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X\
-        -Amz-Credential=ASIAZI2LB4664K2YMUA2%2F20250326%2Fus-west-2%2Fs3%2Faws4\
-        _request&X-Amz-Date=20250326T122039Z&X-Amz-Expires=3600&X-Amz-Security-\
-        Token=IQoJb3JpZ2luX2VjEMT%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtM\
-        iJHMEUCIQD83ufR86JzRdDtIQSZd8cpVFMvKAt368BPsP82Z0N7hgIgHZDYU%2F8U5a%2FD\
-        st1b5y9%2BQ1Jyw5BYljR%2FGSDCGBp7u90q%2FwMILRAAGgw2Mzc0MjMxODM4MDUiDAv93\
-        RbVhgmvCbV%2FkircA1HGWGxvA%2FUvWCq7WrY1wSHuABI6vjfvp8WigfVwFUyLwsp27YWv\
-        OQ4kD%2FScmY6J3lP4NgaCFMBtG22qnLfJdqINtnzTSPutxj6U9bNHUy7Mu7DCDUWK%2FDs\
-        mbzQUG3xfCLfCWVLU7rovGesf0qVhZRC%2BQlMvEKyv83WNenthg9dfQi2sUMVdZ0TiqtBc\
-        iv6PEkl%2BCoUFI4HTbvyXcBeckFOdYRw5CVjd9sTOm40JsMlp%2FP76%2BBnp4Z3tt%2BW\
-        %2FbN5UQCJSl7n0YqDsfFOmqkb1r2GWDD8XqxAvOp8eVXtqsdK%2FWVZFPAUbEgnTgpVX1r\
-        n12toBHuFYZHJv9wjHERsbkRrhfMP3RDD59hQIqiXud8Vb9tir04GIR3XMIiFvMbjb%2F5Y\
-        hBXQ1s5%2FrZTBDcS6YHa6qVm790eywsByjofrJ%2BorGT5iZN7rL0UogNorGiF1VDvx%2F\
-        gtPqXbahv7yv1455T1FXHHLGVisagRYZaiDLpW3axgsj3UHsiX%2FefFBtjetZj8hVNOMEH\
-        u%2BzJsi4NoYSCfthJsmE%2FQIB0Y%2FqLC5VWubHgWX9TR6bbp%2FfQzVsydeWqftUqirh\
-        2p3LtYA5hn5ci8aR6cadrZpu6vQ%2B4jeWLWU35qJVovB1f5pgeybaMI3bj78GOqUBkiSTm\
-        PKoEL1T9OlEyYqEZlKd%2FGNLqp0DgfqKRdNwGmxsapsxKqCWHEJsYwc%2B4wMOqmNj2nq4\
-        Bn0tLhJwY1iogmlWqXXDu9trvf1fk%2BnyE4bUHklZQiWQSyu%2BlF6GTahWUmZWtN45K%2\
-        FFDSjU%2B0DqovuuCUvJXF6KQDKd3Nv5EHOclKTH8a6CNxzB1JrB%2FARVceRoFHKuDB3zN\
-        2u%2FJBXOfOtfk7%2FeK&X-Amz-Signature=940315b8b13d4cd7a5a3c772ac7a5c16e3\
-        a37008a3d9fbdcad3bb05c5eefdaba&X-Amz-SignedHeaders=host&x-id=GetObject"
-      expiry_time: "2025-03-26T13:20:39.450Z"
+        -Amz-Credential=ASIAZI2LB466Y2YBZYQZ%2F20250716%2Fus-west-2%2Fs3%2Faws4\
+        _request&X-Amz-Date=20250716T194422Z&X-Amz-Expires=3600&X-Amz-Security-\
+        Token=IQoJb3JpZ2luX2VjEEsaCXVzLXdlc3QtMiJHMEUCIQC0Eqoz4yOsrkqBpfXbzv6Ot\
+        s62gS3Y81%2FVf1DuNuTVDQIgGue%2BU1y7Dz2K%2BSHA6AHKNytFAlJp%2FQXqNY3sSspw\
+        AMEq%2FwMIZBAAGgw2Mzc0MjMxODM4MDUiDCvIvw%2FH%2Bwt7rZSdyCrcA3AyE9pVgxoyp\
+        7pKcyWz1IXVjjdcMnpP3EayOt%2F3I9Vt8Bku6pv%2BDcj2vzIHZkqoXwBxrPR2r2QweJn4\
+        NyMfvw5a07ybw5ralYYpmwHIfYAOS03UcQ4pncMEpbztkcWFm4LRnR4cCKWRXNS6A0IczCJ\
+        Fm%2BtdzVY5PsR0JgsJn3rFl2S9FCP1dcJLOMXFhT1pTYCyzEatKLZgZ9UgP22IesfTupNl\
+        WYuOORQbTyQRIuqDKP7DFFe8yPH9rO2jxKg7KQK7HQBUkAe7ID1HNA4sDdG9tHT9XrCl2np\
+        rv3CNywngRO2jOwf1mJv%2BSqFPE%2FUPIhjWJOCgmx%2BtiRtNDFiQkwWOVGuyxfoWgd%2\
+        BMvf2sD7qkiyJo%2FPQS2mMvb3%2FsoMvb61MWW99oL9lri5trKx98kqYxUyicIVujX5DFE\
+        IYcY%2BjWoi2mKRkDE8WliickO18C6EYbwJ%2Fiejbt7t1ePPPg0vdiaOW80W%2BjG%2BJG\
+        a%2B2OyQy%2BSKEjdY4zdsihfFj3DcE2z5eKo32rcRHTuer9wxNek4AlL83c50iNqWndC2q\
+        Hl6sbsjG2URPXELlz0%2F6Al%2F3VbiBabZ9%2F3i5nuoqNoT%2B7%2FjlT3BXychJ8hKc3\
+        qYBOde7Apmvvg6oXOEf2RfBgMK%2Fg38MGOqUBcL78hxi5iiOzY2ms6CXfmGzpY3%2FarUm\
+        t41CNFFxtoaJgc%2BaAGMFdPt57Rn6AkLFmLVzLt%2BHOnDAN5V3FT3f6KmzixCwmG8636u\
+        WQQWjaTx6qV8mIg2EZPFbWsmTFuBAHj0sdkPoRotyk20b63wX0AcGPMalEL8k2L6qDmqAEl\
+        fi9Za177n2coPMQRR5EVHl7BvVEXj4KF2Jo5Rkk1fJCD1%2BPmTAj&X-Amz-Signature=b\
+        33675051bb6101a85faa27c42267809cbb89d06a01906aad039a516e028cfe0&X-Amz-S\
+        ignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+      expiry_time: "2025-07-16T20:44:22.561Z"
   icon: null
   parent:
     type: "database_id"
@@ -89,7 +89,7 @@ NOTION_METADATA:
     Last edited time:
       id: "vbGE"
       type: "last_edited_time"
-      last_edited_time: "2025-03-26T02:06:00.000Z"
+      last_edited_time: "2025-07-16T13:42:00.000Z"
     summary:
       id: "x%3AlD"
       type: "rich_text"
