@@ -1,0 +1,159 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+import ContactCTA from "../components/ContactCTA.astro";
+import Hero from "../components/Hero.astro";
+
+import { Image } from "astro:assets";
+import aboutPic from "../assets/portrait.png";
+---
+
+<BaseLayout
+  title="About Me | Kuldeep Parmar"
+  description="About Kuldeep Parmar"
+>
+  <div class="stack gap-20">
+    <main class="wrapper about">
+      <Hero
+        title="About Me"
+        tagline="Thanks for stopping by! Read below to learn more about myself and my background."
+      >
+        <Image
+          src={aboutPic}
+          widths={[240, 540, 720, aboutPic.width]}
+          sizes={`(max-width: 360px) 240px, (max-width: 720px) 540px, (max-width: 1600px) 720px, ${aboutPic.width}px`}
+          alt="Kuldeep Parmar profile picture"
+          loading={"eager"}
+        />
+      </Hero>
+
+      <section>
+        <h2 class="section-title">Background</h2>
+        <div class="content">
+          <p>
+            I'm a passionate software developer with strong problem-solving
+            skills and deep interest in the ever-growing world of cloud-native
+            tech. I focus on creating innovative solutions by embedding
+            intelligence into applications.
+          </p>
+          <p>
+            My experience spans backend systems, cloud infrastructure, and
+            process automation. I prioritize information security, ensuring the
+            applications I develop are robust, secure, and user-friendly. By
+            leveraging the latest AI tools and continuously adapting to new
+            challenges, I deliver solutions that blend technical excellence with
+            a seamless user experience.
+          </p>
+          <p>
+            I'm always willing to work remotely with teams to embrace new
+            challenges and achieve success.
+          </p>
+        </div>
+      </section>
+      <section>
+        <h2 class="section-title">Education</h2>
+        <div class="content">
+          <p>
+            Atmiya University, Bachelor Of Science in Information Tech,
+            2019-2022
+          </p>
+        </div>
+      </section>
+      <section>
+        <h2 class="section-title">Skills</h2>
+        <div class="content">
+          <p>
+            <strong>Programming Languages:</strong> Golang, TypeScript, JavaScript,
+            Python
+          </p>
+          <p><strong>Frameworks & Runtimes:</strong> Node.js, Deno, Hono</p>
+          <p>
+            <strong>Cloud & DevOps:</strong> AWS, Google Cloud Platform, Docker, Cloudflare
+            Workers, CI/CD, GitHub Actions
+          </p>
+          <p>
+            <strong>Databases:</strong> MongoDB, PostgreSQL, MySQL, Redis, RabbitMQ
+          </p>
+          <p>
+            <strong>Interests:</strong> Cloud-Native Technologies, Information Security,
+            AI/ML, API Integration
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <ContactCTA />
+  </div>
+</BaseLayout>
+
+<style>
+  .about {
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+  }
+
+  img {
+    max-width: 300px;
+    aspect-ratio: 5 / 4;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 1.5rem;
+    box-shadow: var(--shadow-md);
+    margin-top: 1.5rem;
+    margin-inline: auto;
+  }
+
+  @media (min-width: 50em) {
+    img {
+      max-width: 512px;
+      aspect-ratio: 3 / 4;
+      border-radius: 3rem;
+      object-fit: cover;
+    }
+  }
+
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--gray-200);
+  }
+
+  .section-title {
+    grid-column-start: 1;
+    font-size: var(--text-xl);
+    color: var(--gray-0);
+  }
+
+  .content {
+    grid-column: 2 / 4;
+  }
+
+  .content :global(a) {
+    text-decoration: 1px solid underline transparent;
+    text-underline-offset: 0.25em;
+    transition: text-decoration-color var(--theme-transition);
+  }
+
+  .content :global(a:hover),
+  .content :global(a:focus) {
+    text-decoration-color: currentColor;
+  }
+
+  @media (min-width: 50em) {
+    .about {
+      display: grid;
+      grid-template-columns: 1fr 60% 1fr;
+    }
+
+    .about > :global(:first-child) {
+      grid-column-start: 2;
+    }
+
+    section {
+      display: contents;
+      font-size: var(--text-lg);
+    }
+  }
+</style>

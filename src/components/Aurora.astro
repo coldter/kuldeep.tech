@@ -1,0 +1,369 @@
+---
+interface Props {
+  colorStopsLight?: string[];
+  colorStopsDark?: string[];
+  amplitude?: number;
+  blend?: number;
+  speed?: number;
+}
+
+const {
+  colorStopsLight = ["#6EE7B7", "#10B981", "#047857"],
+  colorStopsDark = ["#34D399", "#059669", "#064E3B"],
+  amplitude = 1.0,
+  blend = 0.5,
+  speed = 1.0,
+} = Astro.props;
+---
+
+<aurora-background
+  data-color-stops-light={JSON.stringify(colorStopsLight)}
+  data-color-stops-dark={JSON.stringify(colorStopsDark)}
+  data-amplitude={amplitude}
+  data-blend={blend}
+  data-speed={speed}
+>
+</aurora-background>
+
+<style>
+  aurora-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  aurora-background :global(canvas) {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  /* Fallback gradient for no WebGL support */
+  @supports not (display: contents) {
+    aurora-background {
+      background: linear-gradient(
+        135deg,
+        var(--accent-light),
+        var(--accent-regular),
+        var(--accent-dark)
+      );
+    }
+  }
+
+  /* Respect reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    aurora-background :global(canvas) {
+      display: none;
+    }
+    aurora-background {
+      background: linear-gradient(
+        135deg,
+        var(--accent-light),
+        var(--accent-regular),
+        var(--accent-dark)
+      );
+    }
+  }
+
+  /* Disable for forced colors mode */
+  @media (forced-colors: active) {
+    aurora-background {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { Renderer, Program, Mesh, Color, Triangle } from "ogl";
+
+  const VERT = `#version 300 es
+in vec2 position;
+void main() {
+  gl_Position = vec4(position, 0.0, 1.0);
+}
+`;
+
+  const FRAG = `#version 300 es
+precision highp float;
+
+uniform float uTime;
+uniform float uAmplitude;
+uniform vec3 uColorStops[3];
+uniform vec2 uResolution;
+uniform float uBlend;
+
+out vec4 fragColor;
+
+vec3 permute(vec3 x) {
+  return mod(((x * 34.0) + 1.0) * x, 289.0);
+}
+
+float snoise(vec2 v){
+  const vec4 C = vec4(
+      0.211324865405187, 0.366025403784439,
+      -0.577350269189626, 0.024390243902439
+  );
+  vec2 i  = floor(v + dot(v, C.yy));
+  vec2 x0 = v - i + dot(i, C.xx);
+  vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod(i, 289.0);
+
+  vec3 p = permute(
+      permute(i.y + vec3(0.0, i1.y, 1.0))
+    + i.x + vec3(0.0, i1.x, 1.0)
+  );
+
+  vec3 m = max(
+      0.5 - vec3(
+          dot(x0, x0),
+          dot(x12.xy, x12.xy),
+          dot(x12.zw, x12.zw)
+      ), 
+      0.0
+  );
+  m = m * m;
+  m = m * m;
+
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
+
+  vec3 g;
+  g.x  = a0.x  * x0.x  + h.x  * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+
+struct ColorStop {
+  vec3 color;
+  float position;
+};
+
+#define COLOR_RAMP(colors, factor, finalColor) {              \
+  int index = 0;                                            \
+  for (int i = 0; i < 2; i++) {                               \
+     ColorStop currentColor = colors[i];                    \
+     bool isInBetween = currentColor.position <= factor;    \
+     index = int(mix(float(index), float(i), float(isInBetween))); \
+  }                                                         \
+  ColorStop currentColor = colors[index];                   \
+  ColorStop nextColor = colors[index + 1];                  \
+  float range = nextColor.position - currentColor.position; \
+  float lerpFactor = (factor - currentColor.position) / range; \
+  finalColor = mix(currentColor.color, nextColor.color, lerpFactor); \
+}
+
+void main() {
+  vec2 uv = gl_FragCoord.xy / uResolution;
+  
+  ColorStop colors[3];
+  colors[0] = ColorStop(uColorStops[0], 0.0);
+  colors[1] = ColorStop(uColorStops[1], 0.5);
+  colors[2] = ColorStop(uColorStops[2], 1.0);
+  
+  vec3 rampColor;
+  COLOR_RAMP(colors, uv.x, rampColor);
+  
+  float height = snoise(vec2(uv.x * 2.0 + uTime * 0.1, uTime * 0.25)) * 0.5 * uAmplitude;
+  height = exp(height);
+  height = (uv.y * 2.0 - height + 0.2);
+  float intensity = 0.6 * height;
+  
+  float midPoint = 0.20;
+  float auroraAlpha = smoothstep(midPoint - uBlend * 0.5, midPoint + uBlend * 0.5, intensity);
+  
+  vec3 auroraColor = intensity * rampColor;
+  
+  fragColor = vec4(auroraColor * auroraAlpha, auroraAlpha);
+}
+`;
+
+  class AuroraBackground extends HTMLElement {
+    private renderer: Renderer | null = null;
+    private program: Program | null = null;
+    private mesh: Mesh | null = null;
+    private animateId = 0;
+    private resizeHandler: (() => void) | null = null;
+    private themeObserver: MutationObserver | null = null;
+
+    connectedCallback() {
+      // Check for reduced motion preference
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        return;
+      }
+
+      try {
+        this.initWebGL();
+        this.setupThemeObserver();
+      } catch (e) {
+        console.warn("Aurora: WebGL initialization failed", e);
+      }
+    }
+
+    disconnectedCallback() {
+      this.cleanup();
+    }
+
+    private initWebGL() {
+      const renderer = new Renderer({
+        alpha: true,
+        premultipliedAlpha: true,
+        antialias: true,
+      });
+
+      this.renderer = renderer;
+      const gl = renderer.gl;
+
+      gl.clearColor(0, 0, 0, 0);
+      gl.enable(gl.BLEND);
+      gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+      (gl.canvas as HTMLCanvasElement).style.backgroundColor = "transparent";
+
+      // Get initial color stops based on current theme
+      const colorStops = this.getCurrentColorStops();
+      const colorStopsArray = colorStops.map((hex: string) => {
+        const c = new Color(hex);
+        return [c.r, c.g, c.b];
+      });
+
+      const amplitude = parseFloat(this.dataset.amplitude || "1.0");
+      const blend = parseFloat(this.dataset.blend || "0.5");
+
+      // Create geometry - fullscreen triangle
+      const geometry = new Triangle(gl);
+      if (geometry.attributes.uv) {
+        delete geometry.attributes.uv;
+      }
+
+      // Create program with shaders
+      this.program = new Program(gl, {
+        vertex: VERT,
+        fragment: FRAG,
+        uniforms: {
+          uTime: { value: 0 },
+          uAmplitude: { value: amplitude },
+          uColorStops: { value: colorStopsArray },
+          uResolution: { value: [this.offsetWidth, this.offsetHeight] },
+          uBlend: { value: blend },
+        },
+      });
+
+      this.mesh = new Mesh(gl, { geometry, program: this.program });
+
+      // Append canvas to this element
+      this.appendChild(gl.canvas as HTMLCanvasElement);
+
+      // Setup resize handler
+      this.resizeHandler = () => this.resize();
+      window.addEventListener("resize", this.resizeHandler);
+
+      // Initial resize
+      this.resize();
+
+      // Start animation loop
+      this.renderLoop(0);
+    }
+
+    private resize() {
+      if (!this.renderer || !this.program) return;
+
+      const width = this.offsetWidth;
+      const height = this.offsetHeight;
+
+      this.renderer.setSize(width, height);
+      this.program.uniforms.uResolution.value = [width, height];
+    }
+
+    private renderLoop = (time: number) => {
+      this.animateId = requestAnimationFrame(this.renderLoop);
+
+      if (!this.renderer || !this.program || !this.mesh) return;
+
+      const speed = parseFloat(this.dataset.speed || "1.0");
+      this.program.uniforms.uTime.value = time * 0.01 * speed * 0.1;
+
+      this.renderer.render({ scene: this.mesh });
+    };
+
+    private getCurrentColorStops(): string[] {
+      const isDark = document.documentElement.classList.contains("theme-dark");
+      const stopsData = isDark
+        ? this.dataset.colorStopsDark
+        : this.dataset.colorStopsLight;
+
+      try {
+        return JSON.parse(stopsData || "[]");
+      } catch {
+        return ["#6EE7B7", "#10B981", "#047857"];
+      }
+    }
+
+    private updateColors() {
+      if (!this.program) return;
+
+      const colorStops = this.getCurrentColorStops();
+      const colorStopsArray = colorStops.map((hex: string) => {
+        const c = new Color(hex);
+        return [c.r, c.g, c.b];
+      });
+
+      this.program.uniforms.uColorStops.value = colorStopsArray;
+    }
+
+    private setupThemeObserver() {
+      this.themeObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.attributeName === "class") {
+            this.updateColors();
+          }
+        });
+      });
+
+      this.themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
+    }
+
+    private cleanup() {
+      // Cancel animation
+      if (this.animateId) {
+        cancelAnimationFrame(this.animateId);
+      }
+
+      // Remove resize listener
+      if (this.resizeHandler) {
+        window.removeEventListener("resize", this.resizeHandler);
+      }
+
+      // Disconnect theme observer
+      if (this.themeObserver) {
+        this.themeObserver.disconnect();
+      }
+
+      // Clean up WebGL context
+      if (this.renderer) {
+        const gl = this.renderer.gl;
+        if (gl.canvas.parentNode === this) {
+          this.removeChild(gl.canvas as HTMLCanvasElement);
+        }
+        gl.getExtension("WEBGL_lose_context")?.loseContext();
+      }
+
+      this.renderer = null;
+      this.program = null;
+      this.mesh = null;
+    }
+  }
+
+  customElements.define("aurora-background", AuroraBackground);
+</script>

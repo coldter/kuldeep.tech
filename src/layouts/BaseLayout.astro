@@ -1,0 +1,121 @@
+---
+// Learn about using Astro layouts:
+// https://docs.astro.build/en/core-concepts/layouts/
+
+// Component Imports
+import MainHead from "../components/MainHead.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import Aurora from "../components/Aurora.astro";
+
+interface Props {
+  title?: string | undefined;
+  description?: string | undefined;
+}
+
+const { title, description } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <MainHead title={title} description={description} />
+  </head>
+  <body>
+    <!-- Aurora hero section wrapper -->
+    <div class="aurora-hero-wrapper">
+      <Aurora
+        colorStopsLight={[
+          "#6EE7B7",
+          "#10B981",
+          "#047857",
+          "#004E3B",
+          "#002E27",
+          "#001E27",
+          "#000E27",
+        ]}
+        colorStopsDark={[
+          "#34D399",
+          "#059669",
+          "#064E3B",
+          "#003E33",
+          "#002E27",
+          "#001E27",
+          "#000E27",
+        ]}
+        amplitude={0.8}
+        blend={0.6}
+        speed={0.8}
+      />
+    </div>
+    <div class="stack backgrounds">
+      <Nav />
+      <slot />
+      <Footer />
+    </div>
+
+    <script>
+      // Add "loaded" class once the document has completely loaded.
+      addEventListener("load", () =>
+        document.documentElement.classList.add("loaded"),
+      );
+    </script>
+
+    <style>
+      /* Aurora container - subtle accent at the top only */
+      .aurora-hero-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 400px;
+        overflow: hidden;
+        z-index: 0;
+        pointer-events: none;
+        opacity: 0.6;
+        /* Fade out at the bottom */
+        mask-image: linear-gradient(
+          to bottom,
+          black 0%,
+          black 40%,
+          transparent 100%
+        );
+        -webkit-mask-image: linear-gradient(
+          to bottom,
+          black 0%,
+          black 40%,
+          transparent 100%
+        );
+      }
+
+      @media (min-width: 50em) {
+        .aurora-hero-wrapper {
+          height: 500px;
+        }
+      }
+
+      .backgrounds {
+        min-height: 100%;
+        position: relative;
+        z-index: 1;
+        background-color: transparent;
+      }
+
+      /* Noise overlay on the aurora section */
+      /* .aurora-hero-wrapper::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: url("/assets/backgrounds/noise.png") top center/220px repeat;
+        opacity: 0.1;
+        mix-blend-mode: overlay;
+      } */
+
+      @media (forced-colors: active) {
+        .aurora-hero-wrapper {
+          display: none;
+        }
+      }
+    </style>
+  </body>
+</html>
