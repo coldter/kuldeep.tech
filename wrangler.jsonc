@@ -1,6 +1,6 @@
 {
 	"main": "dist/_worker.js/index.js",
-	"name": "portfolio-site",
+	"name": "kuldeep-dot-tech",
   "compatibility_date": "2026-01-13",
   "compatibility_flags": [
     "nodejs_compat",
