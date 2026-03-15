@@ -25,9 +25,9 @@ const { title, description } = Astro.props;
     <div class="aurora-hero-wrapper">
       <Aurora
         colorStopsLight={[
-          "#00e676",
-          "#00a152",
-          "#006b36"
+          "#00f076",
+          "#00c25a",
+          "#009945"
         ]}
         colorStopsDark={[
           "#00a152",
@@ -63,7 +63,7 @@ const { title, description } = Astro.props;
         overflow: hidden;
         z-index: 0;
         pointer-events: none;
-        opacity: 0.6;
+        opacity: 0.85; /* Increased opacity for light mode visibility */
         /* Fade out at the bottom */
         mask-image: linear-gradient(
           to bottom,
@@ -77,6 +77,10 @@ const { title, description } = Astro.props;
           black 40%,
           transparent 100%
         );
+      }
+
+      :global(.theme-dark) .aurora-hero-wrapper {
+        opacity: 0.5; /* Keep it subtle in dark mode */
       }
 
       @media (min-width: 50em) {

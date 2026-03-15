@@ -194,44 +194,42 @@ const isCurrentPage = (href: string) => {
     line-height: 1.1;
     color: var(--gray-0);
     text-decoration: none;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
   }
 
   .menu-button {
     position: relative;
     display: flex;
-    border: 0;
+    border: 1px solid var(--gray-800);
     border-radius: 999rem;
     padding: 0.5rem;
     font-size: 1.5rem;
     color: var(--gray-300);
-    background: radial-gradient(var(--gray-900), var(--gray-800) 150%);
-    box-shadow: var(--shadow-md);
+    background: var(--gray-999_40);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-sm);
+    transition: color var(--theme-transition), background var(--theme-transition), border-color var(--theme-transition);
   }
 
   .menu-button[aria-expanded="true"] {
     color: var(--gray-0);
-    background:
-      linear-gradient(180deg, var(--gray-600), transparent),
-      radial-gradient(var(--gray-900), var(--gray-800) 150%);
+    background: var(--gray-800);
+    border-color: var(--gray-600);
   }
 
   .menu-button[hidden] {
     display: none;
   }
 
-  .menu-button::before {
-    position: absolute;
-    inset: -1px;
-    content: "";
-    background: var(--gradient-stroke);
-    border-radius: 999rem;
-    z-index: -1;
-  }
-
   .menu-content {
     position: absolute;
     left: 0;
     right: 0;
+    z-index: 9999;
   }
 
   .nav-items {
@@ -243,18 +241,28 @@ const isCurrentPage = (href: string) => {
     line-height: 1.2;
     list-style: none;
     padding: 2rem;
-    background-color: var(--gray-999);
+    background: var(--gray-999_40);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--gray-800);
   }
 
   .link {
     display: inline-block;
-    color: var(--gray-300);
+    color: var(--gray-100);
     text-decoration: none;
+    transition: color var(--theme-transition);
+    font-weight: 500;
+  }
+
+  .link:hover,
+  .link:focus {
+    color: var(--accent-dark);
   }
 
   .link[aria-current] {
     color: var(--gray-0);
+    font-weight: 600;
   }
 
   .menu-footer {
@@ -265,9 +273,12 @@ const isCurrentPage = (href: string) => {
     justify-content: space-between;
     gap: 0.75rem;
     padding: 1.5rem 2rem 1.5rem 1.5rem;
-    background-color: var(--gray-999);
+    background: var(--gray-999_40);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border-radius: 0 0 0.75rem 0.75rem;
     box-shadow: var(--shadow-lg);
+    border-bottom: 1px solid var(--gray-800);
   }
 
   .socials {
@@ -281,13 +292,14 @@ const isCurrentPage = (href: string) => {
     display: flex;
     padding: var(--icon-padding);
     text-decoration: none;
-    color: var(--accent-dark);
-    transition: color var(--theme-transition);
+    color: var(--gray-100);
+    transition: color var(--theme-transition), transform var(--theme-transition);
   }
 
   .social:hover,
   .social:focus {
-    color: var(--accent-text-over);
+    color: var(--accent-dark);
+    transform: translateY(-2px);
   }
 
   .theme-toggle {
@@ -310,7 +322,7 @@ const isCurrentPage = (href: string) => {
     }
 
     .site-title {
-      font-size: var(--text-lg);
+      font-size: var(--text-base);
     }
 
     .menu-content {
@@ -322,22 +334,12 @@ const isCurrentPage = (href: string) => {
       flex-direction: row;
       font-size: var(--text-sm);
       border-radius: 999rem;
-      border: 0;
+      border: 1px solid var(--gray-800);
       padding: 0.5rem 0.5625rem;
       background: var(--gray-999_40);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       box-shadow: var(--shadow-md);
-    }
-
-    .nav-items::before {
-      position: absolute;
-      inset: -1px;
-      content: "";
-      background: var(--gradient-stroke);
-      border-radius: 999rem;
-      z-index: -1;
-      opacity: 0.5;
     }
 
     .link {
@@ -370,13 +372,13 @@ const isCurrentPage = (href: string) => {
 
     .link:hover,
     .link:focus {
-      color: var(--gray-100);
+      color: var(--accent-dark);
       background-color: var(--accent-subtle-overlay);
     }
 
     .link[aria-current] {
-      color: var(--accent-text-over);
-      background-color: var(--accent-regular);
+      color: var(--gray-0);
+      background-color: var(--accent-subtle-overlay);
     }
 
     .menu-footer {
@@ -387,6 +389,9 @@ const isCurrentPage = (href: string) => {
       padding: 0;
       background-color: transparent;
       box-shadow: none;
+      border: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
     }
 
     .socials {
