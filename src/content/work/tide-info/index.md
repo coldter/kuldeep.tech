@@ -20,14 +20,13 @@ The UI is structured around a few core ideas:
 
 - **Forecast-first views**: present “now” plus the next major events (e.g., next high/low) with clear timestamps.
 - **Location-centric state**: a selected coastal location drives which tide series and weather snapshot are loaded, cached, and displayed.
-- **Alert-friendly data model**: rather than only rendering charts, the app also elevates *events* (threshold crossings, approaching extremes, notable shifts) that can be used to trigger smart notifications.
+- **Alert-friendly data model**: rather than only rendering charts, the app also elevates _events_ (threshold crossings, approaching extremes, notable shifts) that can be used to trigger smart notifications.
 
 Because responsiveness matters (many users check tides on mobile at the shoreline), the styling layer stays lean, with a small CSS footprint supporting fast rendering and simple layout adjustments across screen sizes. Overall, the project balances a clean, user-oriented surface with just enough structure underneath—typed data models, predictable state flow, and reusable UI building blocks—to keep real-time environmental data understandable and dependable.
 
 ![Tide Info dashboard showing tide predictions and weather conditions](./dash1.png)
 ![Tide Info dashboard showing tide predictions and weather conditions](./dash2.png)
 ![Tide Info dashboard showing tide predictions and weather conditions](./dash3.png)
-
 
 ---
 

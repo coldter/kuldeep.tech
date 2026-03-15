@@ -9,10 +9,9 @@ tags:
   - CLI
   - TUI
   - Vibe Coding
-  
+
 draft: false
 ---
-
 
 ![Commit Canvas TUI showing the interactive setup wizard](./ss.jpg)
 
@@ -51,8 +50,6 @@ Commit Canvas drops down to git plumbing commands. It creates a single empty tre
 Beyond the CLI flags, there's a full terminal UI built with Bubble Tea that walks through each step: message, author info, optional GitHub username, year, alignment, and a live ASCII preview. If you provide a username, it fetches your contribution data in the background and overlays your message on top, so you can see exactly how it'll look before committing.
 
 <hr>
-
-
 
 ![Commit Canvas ASCII preview overlaid on existing GitHub contributions](/work/commit-canvas/demo.gif)
 

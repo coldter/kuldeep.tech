@@ -9,4 +9,9 @@ export default defineConfig({
   site: "https://kuldeep.tech",
   integrations: [sitemap()],
   adapter: cloudflare(),
+  vite: {
+    optimizeDeps: {
+      exclude: ["astro"],
+    },
+  },
 });

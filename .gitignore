@@ -50,3 +50,5 @@ pnpm-debug.log*
 ref-only
 
 .git.backup
+
+.wrangler

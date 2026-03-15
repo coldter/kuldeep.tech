@@ -34,7 +34,7 @@ const { Content } = await render(entry);
             <a class="back-link" href="/work/">
               <Icon icon="arrow-left" /> Work
             </a>
-            
+
             <div class="hero-wrapper">
               <Hero title={entry.data.title} align="start">
                 <div class="details">
@@ -61,7 +61,7 @@ const { Content } = await render(entry);
                     loading={"eager"}
                     class="hero-image"
                   />
-                  <div class="image-overlay"></div>
+                  <div class="image-overlay" />
                 </div>
               )
             }
@@ -127,7 +127,11 @@ const { Content } = await render(entry);
     transform: translate(-50%, -50%);
     width: 140%;
     height: 140%;
-    background: radial-gradient(circle, var(--accent-subtle-overlay) 0%, transparent 60%);
+    background: radial-gradient(
+      circle,
+      var(--accent-subtle-overlay) 0%,
+      transparent 60%
+    );
     opacity: 0.15;
     z-index: -1;
     pointer-events: none;
@@ -202,9 +206,17 @@ const { Content } = await render(entry);
     font-family: var(--font-brand);
   }
 
-  .content :global(h1) { font-size: 2.5rem; }
-  .content :global(h2) { font-size: 2rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--gray-800); }
-  .content :global(h3) { font-size: 1.5rem; }
+  .content :global(h1) {
+    font-size: 2.5rem;
+  }
+  .content :global(h2) {
+    font-size: 2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--gray-800);
+  }
+  .content :global(h3) {
+    font-size: 1.5rem;
+  }
 
   /* Premium Blockquote */
   .content :global(blockquote) {
@@ -229,7 +241,9 @@ const { Content } = await render(entry);
     margin: 2rem auto;
     display: block;
     max-width: 100%;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
   }
 
   .content :global(img:hover) {
@@ -242,19 +256,26 @@ const { Content } = await render(entry);
     border-radius: 1rem;
     border: 1px solid var(--gray-800);
     padding: 1.5rem;
-    background: var(--gray-999) !important; /* Override theme default if needed */
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    background: var(
+      --gray-999
+    ) !important; /* Override theme default if needed */
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
   }
 
   /* Links */
   .content :global(a) {
     color: var(--accent-regular);
     text-decoration: none;
-    background-image: linear-gradient(var(--accent-regular), var(--accent-regular));
+    background-image: linear-gradient(
+      var(--accent-regular),
+      var(--accent-regular)
+    );
     background-position: 0% 100%;
     background-repeat: no-repeat;
     background-size: 0% 2px;
-    transition: background-size 0.3s, color 0.3s;
+    transition:
+      background-size 0.3s,
+      color 0.3s;
     font-weight: 500;
   }
 
@@ -319,8 +340,14 @@ const { Content } = await render(entry);
 
   /* Animation Entry */
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .content-wrapper {
