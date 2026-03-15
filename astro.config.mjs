@@ -8,7 +8,9 @@ import cloudflare from "@astrojs/cloudflare";
 export default defineConfig({
   site: "https://kuldeep.tech",
   integrations: [sitemap()],
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    imageService: "compile",
+  }),
   vite: {
     optimizeDeps: {
       exclude: ["astro"],
