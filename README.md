@@ -33,9 +33,12 @@ tags:
 
 ## Commands
 
-| Command        | Description                           |
-| -------------- | ------------------------------------- |
-| `pnpm dev`     | Start dev server                      |
-| `pnpm build`   | Production build                      |
-| `pnpm preview` | Preview production build              |
-| `pnpm fix`     | Format & lint (`prettier` + `eslint`) |
+| Command             | Description                         |
+| ------------------- | ----------------------------------- |
+| `pnpm dev`          | Start dev server                    |
+| `pnpm build`        | Production build                    |
+| `pnpm preview`      | Preview production build            |
+| `pnpm lint`         | Lint with `oxlint`                  |
+| `pnpm format`       | Format supported files with `oxfmt` |
+| `pnpm format:check` | Check formatting with `oxfmt`       |
+| `pnpm fix`          | Format and apply lint fixes         |
