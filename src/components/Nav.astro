@@ -324,7 +324,9 @@ const isCurrentPage = (href: string) => {
       border-radius: 999rem;
       border: 0;
       padding: 0.5rem 0.5625rem;
-      background: radial-gradient(var(--gray-900), var(--gray-800) 150%);
+      background: var(--gray-999_40);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       box-shadow: var(--shadow-md);
     }
 
@@ -335,14 +337,35 @@ const isCurrentPage = (href: string) => {
       background: var(--gradient-stroke);
       border-radius: 999rem;
       z-index: -1;
+      opacity: 0.5;
     }
 
     .link {
       padding: 0.5rem 1rem;
       border-radius: 999rem;
+      position: relative;
       transition:
         color var(--theme-transition),
         background-color var(--theme-transition);
+    }
+
+    .link::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 2px;
+      background-color: var(--accent-regular);
+      transition: width var(--theme-transition) ease-out;
+      border-radius: 2px;
+    }
+
+    .link:hover::after,
+    .link:focus::after,
+    .link[aria-current]::after {
+      width: 60%;
     }
 
     .link:hover,

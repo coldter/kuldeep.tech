@@ -98,17 +98,24 @@ import aboutPic from "../assets/portrait.png";
     aspect-ratio: 5 / 4;
     object-fit: cover;
     object-position: top;
-    border-radius: 1.5rem;
-    box-shadow: var(--shadow-md);
+    border-radius: 1rem;
+    border: 1px solid var(--accent-regular);
+    box-shadow: 0 0 20px var(--accent-overlay);
     margin-top: 1.5rem;
     margin-inline: auto;
+    transition: transform var(--theme-transition), box-shadow var(--theme-transition);
+  }
+
+  img:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 30px var(--accent-regular);
   }
 
   @media (min-width: 50em) {
     img {
       max-width: 512px;
       aspect-ratio: 3 / 4;
-      border-radius: 3rem;
+      border-radius: 1rem;
       object-fit: cover;
     }
   }
@@ -128,6 +135,11 @@ import aboutPic from "../assets/portrait.png";
 
   .content {
     grid-column: 2 / 4;
+  }
+
+  .content strong {
+    color: var(--accent-regular);
+    font-weight: 600;
   }
 
   .content :global(a) {

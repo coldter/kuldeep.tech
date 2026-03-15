@@ -3,42 +3,56 @@ const currentYear = new Date().getFullYear();
 ---
 
 <footer>
-  <div class="group">
-    <p>&copy; {currentYear} Kuldeep Parmar</p>
+  <div class="footer-content">
+    <div class="group">
+      <p>&copy; {currentYear} Kuldeep Parmar</p>
+    </div>
+    <p class="socials">
+      <a
+        href="https://github.com/coldter"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        GitHub</a
+      >
+      <a href="/admin/"> Admin</a>
+    </p>
   </div>
-  <p class="socials">
-    <a
-      href="https://github.com/coldter"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      GitHub</a
-    >
-    <a href="/admin/"> Admin</a>
-  </p>
 </footer>
 <style>
   footer {
     display: flex;
     flex-direction: column;
-    gap: 3rem;
     margin-top: auto;
     padding: 3rem 2rem 3rem;
     text-align: center;
     color: var(--gray-400);
     font-size: var(--text-sm);
+    border-top: 1px solid var(--gray-800);
+    background: var(--gray-999_40);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .footer-content {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    max-width: 83rem;
+    margin: 0 auto;
+    width: 100%;
   }
 
   footer a {
-    color: var(--gray-400);
-    text-decoration: 1px solid underline transparent;
-    text-underline-offset: 0.25em;
-    transition: text-decoration-color var(--theme-transition);
+    color: var(--gray-300);
+    text-decoration: none;
+    transition: color var(--theme-transition), text-shadow var(--theme-transition);
   }
 
   footer a:hover,
   footer a:focus {
-    text-decoration-color: currentColor;
+    color: var(--accent-regular);
+    text-shadow: 0 0 8px var(--accent-overlay);
   }
 
   .group {
@@ -50,15 +64,17 @@ const currentYear = new Date().getFullYear();
   .socials {
     display: flex;
     justify-content: center;
-    gap: 1rem;
+    gap: 1.5rem;
     flex-wrap: wrap;
+    font-weight: 500;
   }
 
   @media (min-width: 50em) {
-    footer {
+    .footer-content {
       flex-direction: row;
       justify-content: space-between;
-      padding: 2.5rem 5rem;
+      align-items: center;
+      padding: 0 3rem;
     }
 
     .group {

@@ -20,8 +20,29 @@ import Icon from "./Icon.astro";
     border-top: 1px solid var(--gray-800);
     border-bottom: 1px solid var(--gray-800);
     padding: 5rem 1.5rem;
-    background-color: var(--gray-999_40);
+    background: var(--gradient-subtle);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+  }
+
+  aside::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, var(--accent-subtle-overlay) 0%, transparent 60%);
+    opacity: 0.2;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  h2, CallToAction {
+    z-index: 1;
   }
 
   h2 {

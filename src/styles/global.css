@@ -16,12 +16,12 @@
   --gray-999_40: hsla(var(--gray-999-basis), 0.4);
   --gray-999: #ffffff;
 
-  --accent-light: #34d399;
-  --accent-regular: #10b981;
-  --accent-dark: #047857;
-  --accent-overlay: hsla(160, 84%, 39%, 0.33);
-  --accent-subtle-overlay: var(--accent-overlay);
-  --accent-text-over: var(--gray-999);
+  --accent-light: #00e676;
+  --accent-regular: #00a152;
+  --accent-dark: #006b36;
+  --accent-overlay: hsla(151, 100%, 25%, 0.15);
+  --accent-subtle-overlay: hsla(151, 100%, 25%, 0.05);
+  --accent-text-over: var(--gray-999); /* White text on dark green buttons */
 
   --link-color: var(--accent-regular);
 
@@ -31,9 +31,9 @@
   --gradient-stop-3: var(--accent-dark);
 
   /* Aurora-compatible stops (match src/components/Aurora.astro defaults) */
-  --aurora-stop-1: #6ee7b7;
-  --aurora-stop-2: #10b981;
-  --aurora-stop-3: #047857;
+  --aurora-stop-1: #00e676;
+  --aurora-stop-2: #00a152;
+  --aurora-stop-3: #006b36;
   --gradient-subtle: linear-gradient(150deg, var(--gray-900) 19%, var(--gray-999) 150%);
   --gradient-accent: linear-gradient(
     150deg,
@@ -43,9 +43,9 @@
   );
   --gradient-accent-secondary: linear-gradient(
     150deg,
-    #6ee7b7,
     var(--accent-regular),
-    var(--accent-dark)
+    var(--accent-dark),
+    #004d27
   );
   --gradient-stroke: linear-gradient(180deg, var(--gray-900), var(--gray-700));
 
@@ -77,6 +77,7 @@
     "Open Sans", "Helvetica Neue", sans-serif;
   --font-body: "Public Sans Variable", var(--font-system);
   --font-brand: "Rubik Variable", var(--font-system);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
   /* Transitions */
   --theme-transition: 0.2s ease-in-out;
@@ -97,26 +98,26 @@
   --gray-999-basis: 225, 31%, 5%;
   --gray-999: #090b11;
 
-  --accent-light: #064e3b;
-  --accent-regular: #059669;
-  --accent-dark: #34d399;
-  --accent-overlay: hsla(160, 84%, 45%, 0.33);
-  --accent-subtle-overlay: hsla(160, 50%, 25%, 0.33);
-  --accent-text-over: var(--gray-0);
+  --accent-light: #004d27;
+  --accent-regular: #00e676;
+  --accent-dark: #69ffb4;
+  --accent-overlay: hsla(151, 100%, 50%, 0.2);
+  --accent-subtle-overlay: hsla(151, 100%, 50%, 0.1);
+  --accent-text-over: var(--gray-999); /* Dark text on neon green buttons */
 
   --link-color: var(--accent-dark);
 
-  --gradient-stop-1: #065f46;
+  --gradient-stop-1: #00331a;
 
   /* Aurora-compatible stops (match src/components/Aurora.astro defaults) */
-  --aurora-stop-1: #34d399;
-  --aurora-stop-2: #059669;
-  --aurora-stop-3: #064e3b;
+  --aurora-stop-1: #00a152;
+  --aurora-stop-2: #00e676;
+  --aurora-stop-3: #004d27;
   --gradient-subtle: linear-gradient(150deg, var(--gray-900) 19%, var(--gray-999) 81%);
   --gradient-accent-secondary: linear-gradient(
     150deg,
-    #6ee7b7,
-    var(--accent-regular),
+    #69ffb4,
+    #00e676,
     var(--accent-light)
   );
   --gradient-stroke: linear-gradient(180deg, var(--gray-600), var(--gray-800));
@@ -130,6 +131,36 @@
   --shadow-lg:
     0px 62px 25px rgba(255, 255, 255, 0.01), 0px 35px 21px rgba(255, 255, 255, 0.05),
     0px 16px 16px rgba(255, 255, 255, 0.1), 0px 4px 9px rgba(255, 255, 255, 0.12);
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gray-999);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gray-800);
+  border-radius: 10px;
+  border: 2px solid var(--gray-999);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-600);
+}
+
+/* Selection Highlight */
+::selection {
+  background-color: var(--accent-overlay);
+  color: var(--gray-0);
+}
+
+::-moz-selection {
+  background-color: var(--accent-overlay);
+  color: var(--gray-0);
 }
 
 html,
@@ -171,6 +202,7 @@ h5 {
   font-family: var(--font-brand);
   font-weight: 600;
   color: var(--gray-100);
+  letter-spacing: -0.02em;
 }
 
 h1 {

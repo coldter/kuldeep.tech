@@ -22,8 +22,15 @@ const { href } = Astro.props;
     border-radius: 999rem;
     overflow: hidden;
     background: var(--gradient-accent-secondary);
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 0 15px var(--accent-overlay);
     white-space: nowrap;
+    transition: box-shadow var(--theme-transition), transform var(--theme-transition);
+  }
+
+  a:hover,
+  a:focus {
+    box-shadow: 0 0 25px var(--accent-regular);
+    transform: translateY(-2px);
   }
 
   @media (min-width: 20em) {

@@ -3,7 +3,7 @@ import Icon from "./Icon.astro";
 ---
 
 <section class="box skills">
-  <div class="stack gap-2 lg:gap-4">
+  <div class="skill-item stack gap-2 lg:gap-4">
     <Icon
       icon="terminal-window"
       color="var(--accent-regular)"
@@ -16,7 +16,7 @@ import Icon from "./Icon.astro";
       APIs and backend services.
     </p>
   </div>
-  <div class="stack gap-2 lg:gap-4">
+  <div class="skill-item stack gap-2 lg:gap-4">
     <Icon icon="shield" color="var(--accent-regular)" size="2.5rem" gradient />
     <h2>Reliability</h2>
     <p>
@@ -24,7 +24,7 @@ import Icon from "./Icon.astro";
       availability.
     </p>
   </div>
-  <div class="stack gap-2 lg:gap-4">
+  <div class="skill-item stack gap-2 lg:gap-4">
     <Icon icon="robot" color="var(--accent-regular)" size="2.5rem" gradient />
     <h2>Automation First</h2>
     <p>
@@ -38,9 +38,11 @@ import Icon from "./Icon.astro";
   .box {
     margin-top: 4rem;
     border: 1px solid var(--gray-800);
-    border-radius: 0.75rem;
+    border-radius: 1rem;
     padding: 1.5rem;
     background-color: var(--gray-999_40);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     box-shadow: var(--shadow-sm);
   }
 
@@ -48,6 +50,19 @@ import Icon from "./Icon.astro";
     display: flex;
     flex-direction: column;
     gap: 3rem;
+  }
+
+  .skill-item {
+    transition: transform var(--theme-transition);
+    padding: 1rem;
+    border-radius: 0.75rem;
+  }
+
+  .skill-item:hover {
+    transform: translateY(-4px);
+    background: var(--gradient-subtle);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-800);
   }
 
   .skills h2 {
@@ -67,7 +82,11 @@ import Icon from "./Icon.astro";
     .skills {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 5rem;
+      gap: 2rem;
+    }
+
+    .skill-item {
+      padding: 1.5rem;
     }
 
     .skills h2 {
