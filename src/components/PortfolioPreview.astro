@@ -31,19 +31,20 @@ const {
     height: 11rem;
     background: var(--gradient-subtle);
     border: 1px solid var(--gray-800);
-    border-radius: 0.75rem;
+    border-radius: 1rem;
     overflow: hidden;
     box-shadow: var(--shadow-sm);
     text-decoration: none;
     font-family: var(--font-brand);
     font-size: var(--text-lg);
     font-weight: 500;
-    transition: box-shadow var(--theme-transition), transform var(--theme-transition);
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   .card:hover {
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-4px);
+    box-shadow: 0 20px 40px -15px var(--accent-overlay), 0 0 20px -5px var(--accent-subtle-overlay);
+    transform: translateY(-8px) scale(1.01);
+    border-color: var(--accent-regular);
   }
 
   .title {
@@ -52,16 +53,18 @@ const {
     margin: 0.75rem;
     padding: 0.5rem 1rem;
     background: var(--gray-999_40);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     color: var(--gray-0);
-    border: 1px solid var(--gray-800);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 0.5rem;
-    transition: background-color var(--theme-transition);
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   .card:hover .title {
     background: var(--gray-999);
+    color: var(--accent-regular);
+    border-color: var(--accent-regular);
   }
 
   img {

@@ -120,7 +120,14 @@ const projects = (await getCollection("work"))
   }
 
   .roles {
-    display: none;
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    animation: fadeInHero 1s ease-out forwards;
+    animation-delay: 0.1s;
+    opacity: 0; /* Animated in */
   }
 
   .cubes-container {
@@ -137,8 +144,9 @@ const projects = (await getCollection("work"))
 
     .roles {
       margin-top: 0.5rem;
-      display: flex;
+      justify-content: flex-start;
       gap: 0.5rem;
+      opacity: 1; /* reset for desktop default or let animation handle it */
     }
 
     .cubes-container {
@@ -166,21 +174,30 @@ const projects = (await getCollection("work"))
     pointer-events: none;
     left: 50%;
     width: 100vw;
-    aspect-ratio: 2.25;
-    top: 0;
-    transform: translateY(-75%) translateX(-50%);
+    height: 100%;
+    top: 50%;
+    transform: translateY(-50%) translateX(-50%);
     background:
       url("/assets/backgrounds/noise.png") top center/220px repeat,
-      linear-gradient(135deg, var(--accent-light) 0%, transparent 50%);
+      radial-gradient(ellipse at center, var(--accent-light) 0%, transparent 70%);
     background-blend-mode: overlay, normal;
-    opacity: 0.15;
+    opacity: 0.12;
     z-index: -1;
+  }
+
+  @media (min-width: 50em) {
+    .with-background::before {
+      height: 150%;
+      background:
+        url("/assets/backgrounds/noise.png") top center/220px repeat,
+        radial-gradient(ellipse at center, var(--accent-light) 0%, transparent 60%);
+    }
   }
 
   .with-background.bg-variant::before {
     background:
       url("/assets/backgrounds/noise.png") top center/220px repeat,
-      linear-gradient(135deg, var(--accent-regular) 0%, transparent 50%);
+      radial-gradient(ellipse at center, var(--accent-regular) 0%, transparent 70%);
   }
 
   .section-header {

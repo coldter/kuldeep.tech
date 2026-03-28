@@ -164,14 +164,20 @@ const { Content } = await render(entry);
   .hero-image-container {
     position: relative;
     width: 100%;
-    max-width: 1100px; /* Wider than content */
+    max-width: 1100px;
     margin-inline: auto;
     border-radius: 1.5rem;
     overflow: hidden;
     box-shadow: var(--shadow-lg);
     background: var(--gradient-subtle);
     border: 1px solid var(--gray-800);
-    transition: transform var(--theme-transition);
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .hero-image-container:hover {
+    transform: scale(1.01) translateY(-4px);
+    box-shadow: 0 20px 40px -10px var(--accent-overlay);
+    border-color: var(--accent-regular);
   }
 
   .hero-image {

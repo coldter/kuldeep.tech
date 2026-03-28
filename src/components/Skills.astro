@@ -36,14 +36,14 @@ import Icon from "./Icon.astro";
 
 <style>
   .box {
-    margin-top: 4rem;
+    margin-top: 1rem;
     border: 1px solid var(--gray-800);
-    border-radius: 1rem;
+    border-radius: 1.5rem;
     padding: 1.5rem;
     background-color: var(--gray-999_40);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: var(--shadow-sm), 0 0 40px -10px var(--accent-subtle-overlay);
   }
 
   .skills {
@@ -53,16 +53,17 @@ import Icon from "./Icon.astro";
   }
 
   .skill-item {
-    transition: transform var(--theme-transition);
-    padding: 1rem;
-    border-radius: 0.75rem;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid transparent;
   }
 
   .skill-item:hover {
-    transform: translateY(-4px);
+    transform: translateY(-8px);
     background: var(--gradient-subtle);
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--gray-800);
+    box-shadow: 0 20px 40px -15px var(--accent-overlay);
+    border-color: var(--accent-regular);
   }
 
   .skills h2 {
@@ -75,6 +76,7 @@ import Icon from "./Icon.astro";
 
   @media (min-width: 50em) {
     .box {
+      margin-top: 4rem;
       border-radius: 1.5rem;
       padding: 2.5rem;
     }

@@ -25,18 +25,18 @@ const { title, description } = Astro.props;
     <div class="aurora-hero-wrapper">
       <Aurora
         colorStopsLight={[
-          "#00f076",
-          "#00c25a",
-          "#009945"
+          "#A7F3D0",
+          "#34D399",
+          "#10B981"
         ]}
         colorStopsDark={[
           "#00a152",
           "#00e676",
           "#004d27"
         ]}
-        amplitude={0.8}
-        blend={0.6}
-        speed={0.8}
+        amplitude={0.5}
+        blend={0.8}
+        speed={0.4}
       />
     </div>
     <div class="stack backgrounds">
@@ -59,33 +59,28 @@ const { title, description } = Astro.props;
         top: 0;
         left: 0;
         right: 0;
-        height: 400px;
+        height: 50vh;
+        min-height: 300px;
+        max-height: 600px;
         overflow: hidden;
         z-index: 0;
         pointer-events: none;
-        opacity: 0.85; /* Increased opacity for light mode visibility */
-        /* Fade out at the bottom */
-        mask-image: linear-gradient(
-          to bottom,
-          black 0%,
-          black 40%,
-          transparent 100%
-        );
-        -webkit-mask-image: linear-gradient(
-          to bottom,
-          black 0%,
-          black 40%,
-          transparent 100%
-        );
+        opacity: 0.5; /* Smoother light mode visibility */
+        /* Dynamic radial fade out for premium unique blending */
+        mask-image: radial-gradient(ellipse at top, black 0%, transparent 80%);
+        -webkit-mask-image: radial-gradient(ellipse at top, black 0%, transparent 80%);
       }
 
       :global(.theme-dark) .aurora-hero-wrapper {
-        opacity: 0.5; /* Keep it subtle in dark mode */
+        opacity: 0.35; /* Keep it exceedingly subtle in dark mode */
       }
 
       @media (min-width: 50em) {
         .aurora-hero-wrapper {
-          height: 500px;
+          height: 60vh;
+          max-height: 800px;
+          mask-image: radial-gradient(ellipse at top, black 0%, transparent 70%);
+          -webkit-mask-image: radial-gradient(ellipse at top, black 0%, transparent 70%);
         }
       }
 

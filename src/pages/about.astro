@@ -98,17 +98,17 @@ import aboutPic from "../assets/portrait.png";
     aspect-ratio: 5 / 4;
     object-fit: cover;
     object-position: top;
-    border-radius: 1rem;
+    border-radius: 1.5rem;
     border: 1px solid var(--accent-regular);
     box-shadow: 0 0 20px var(--accent-overlay);
     margin-top: 1.5rem;
     margin-inline: auto;
-    transition: transform var(--theme-transition), box-shadow var(--theme-transition);
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   img:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 0 30px var(--accent-regular);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px -15px var(--accent-overlay), 0 0 40px var(--accent-regular);
   }
 
   @media (min-width: 50em) {
