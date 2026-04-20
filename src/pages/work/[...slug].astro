@@ -257,6 +257,40 @@ const { Content } = await render(entry);
     box-shadow: var(--shadow-lg);
   }
 
+  /* Screenshot gallery grid — 2 columns, centered within content column.
+     Markdown wraps each image in its own <p>, so those <p> tags are the grid
+     children; we reset their default margins so the grid gaps are the only spacing. */
+  .content :global(.screenshot-grid) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.75rem 1.25rem; /* row-gap column-gap */
+    margin: 3rem auto;
+    width: 100%;
+    max-width: 640px;
+    align-items: start;
+    justify-items: stretch;
+  }
+
+  .content :global(.screenshot-grid p) {
+    margin: 0;
+    width: 100%;
+  }
+
+  .content :global(.screenshot-grid img) {
+    margin: 0;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    display: block;
+  }
+
+  @media (min-width: 50em) {
+    .content :global(.screenshot-grid) {
+      gap: 2.5rem 2rem;
+      max-width: 720px;
+    }
+  }
+
   /* Code Blocks (if any) */
   .content :global(pre) {
     border-radius: 1rem;
