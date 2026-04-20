@@ -190,11 +190,13 @@ const { Content } = await render(entry);
   /* Content Typography & Layout */
   .content {
     max-width: 80ch; /* Increased from 65ch for wider reading area */
+    width: 100%;
     margin-inline: auto;
     font-size: 1.125rem; /* Larger base font size (18px) */
     line-height: 1.75;
     color: var(--gray-200);
     padding: 0 1rem;
+    overflow-wrap: anywhere;
   }
 
   /* Typography Enhancements */
