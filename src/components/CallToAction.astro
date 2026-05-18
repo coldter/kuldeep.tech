@@ -22,15 +22,29 @@ const { href } = Astro.props;
     border-radius: 999rem;
     overflow: hidden;
     background: var(--gradient-accent-secondary);
-    box-shadow: 0 0 15px var(--accent-overlay);
+    box-shadow:
+      inset 0 1px 0 hsla(0, 0%, 100%, 0.15),
+      0 4px 14px -4px var(--accent-overlay);
     white-space: nowrap;
-    transition: box-shadow var(--theme-transition), transform var(--theme-transition);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    transition:
+      box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
   }
 
   a:hover,
-  a:focus {
-    box-shadow: 0 10px 30px -10px var(--accent-regular), 0 0 25px var(--accent-overlay);
-    transform: translateY(-4px) scale(1.02);
+  a:focus-visible {
+    box-shadow:
+      inset 0 1px 0 hsla(0, 0%, 100%, 0.2),
+      0 10px 24px -8px var(--accent-overlay);
+    transform: translateY(-2px);
+  }
+
+  a:active {
+    transform: translateY(0);
+    transition-duration: 0.15s;
   }
 
   @media (min-width: 20em) {

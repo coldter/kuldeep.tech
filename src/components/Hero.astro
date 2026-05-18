@@ -29,6 +29,12 @@ const { align = "center", tagline, title } = Astro.props;
     font-size: var(--text-lg);
   }
 
+  .tagline {
+    color: var(--gray-300);
+    text-wrap: balance;
+    line-height: 1.55;
+  }
+
   .title {
     font-size: var(--text-3xl);
     color: var(--gray-0);
@@ -37,6 +43,8 @@ const { align = "center", tagline, title } = Astro.props;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     display: inline-block;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
   }
 
   @media (min-width: 50em) {

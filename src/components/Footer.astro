@@ -5,7 +5,7 @@ const currentYear = new Date().getFullYear();
 <footer>
   <div class="footer-content">
     <div class="group">
-      <p>&copy; {currentYear} Kuldeep Parmar</p>
+      <p>&copy; <time class="tabular">{currentYear}</time> Kuldeep Parmar</p>
     </div>
     <p class="socials">
       <a
@@ -46,13 +46,12 @@ const currentYear = new Date().getFullYear();
   footer a {
     color: var(--gray-300);
     text-decoration: none;
-    transition: color var(--theme-transition), text-shadow var(--theme-transition);
+    transition: color var(--theme-transition);
   }
 
   footer a:hover,
-  footer a:focus {
+  footer a:focus-visible {
     color: var(--accent-regular);
-    text-shadow: 0 0 8px var(--accent-overlay);
   }
 
   .group {

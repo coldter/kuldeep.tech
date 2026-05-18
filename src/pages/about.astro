@@ -99,16 +99,20 @@ import aboutPic from "../assets/portrait.png";
     object-fit: cover;
     object-position: top;
     border-radius: 1.5rem;
-    border: 1px solid var(--accent-regular);
-    box-shadow: 0 0 20px var(--accent-overlay);
+    border: 1px solid var(--gray-800);
+    box-shadow: var(--shadow-md);
     margin-top: 1.5rem;
     margin-inline: auto;
-    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    transition:
+      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.4s ease;
   }
 
   img:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 40px -15px var(--accent-overlay), 0 0 40px var(--accent-regular);
+    transform: translateY(-3px);
+    border-color: var(--gray-600);
+    box-shadow: var(--shadow-lg);
   }
 
   @media (min-width: 50em) {
