@@ -12,37 +12,37 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "check": "astro check",
     "lint": "oxlint .",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",
     "fix": "oxfmt --write . && oxlint --fix .",
-    "preinstall": "npx only-allow pnpm",
     "deploy": "wrangler deploy"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^13.1.10",
+    "@astrojs/cloudflare": "^13.5.1",
     "@astrojs/rss": "^4.0.18",
     "@astrojs/sitemap": "^3.7.2",
     "@fontsource-variable/public-sans": "^5.2.7",
     "@fontsource-variable/rubik": "^5.2.8",
-    "astro": "^6.1.8",
-    "gsap": "^3.14.2",
+    "astro": "^6.3.3",
+    "gsap": "^3.15.0",
     "markdown-it": "^14.1.1",
     "ogl": "^1.0.11",
-    "sanitize-html": "^2.17.1",
+    "sanitize-html": "^2.17.4",
     "sharp": "^0.34.5"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.8",
+    "@astrojs/check": "^0.9.9",
     "@types/markdown-it": "^14.1.2",
     "@types/sanitize-html": "^2.16.1",
-    "eslint-plugin-astro": "^1.6.0",
+    "eslint-plugin-astro": "^1.7.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
-    "oxfmt": "^0.40.0",
-    "oxlint": "^1.55.0",
-    "typescript": "^5.9.3",
-    "vite": "^8.0.0",
-    "wrangler": "^4.73.0"
+    "oxfmt": "^0.50.0",
+    "oxlint": "^1.65.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.13",
+    "wrangler": "^4.92.0"
   },
-  "packageManager": "pnpm@10.32.1"
+  "packageManager": "pnpm@11.1.2"
 }
