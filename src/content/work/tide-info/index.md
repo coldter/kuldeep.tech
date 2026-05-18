@@ -1,7 +1,7 @@
 ---
 title: Tide Info
 publishDate: 2026-01-12 00:00:00
-img: ./costal-vibes.png
+img: ./hero.png
 img_alt: A view of the Tide Info interface showing tide predictions and coastal conditions
 description: A comprehensive tide tracking application providing real-time tide predictions, weather conditions, and smart alerts for coastal locations worldwide.
 tags:
