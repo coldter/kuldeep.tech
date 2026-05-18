@@ -17,6 +17,7 @@
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",
     "fix": "oxfmt --write . && oxlint --fix .",
+    "og": "node scripts/generate-og.mjs",
     "deploy": "wrangler deploy"
   },
   "dependencies": {
