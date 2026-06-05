@@ -11,9 +11,4 @@ export default defineConfig({
   adapter: cloudflare({
     imageService: "compile",
   }),
-  vite: {
-    optimizeDeps: {
-      exclude: ["astro"],
-    },
-  },
 });

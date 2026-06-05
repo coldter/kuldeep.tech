@@ -50,15 +50,11 @@
   --gradient-stroke: linear-gradient(180deg, var(--gray-900), var(--gray-700));
 
   /* Shadows — tinted with palette hue for cohesion */
-  --shadow-sm:
-    0px 4px 8px hsla(225, 31%, 12%, 0.04),
-    0px 1px 2px hsla(225, 31%, 12%, 0.05);
+  --shadow-sm: 0px 4px 8px hsla(225, 31%, 12%, 0.04), 0px 1px 2px hsla(225, 31%, 12%, 0.05);
   --shadow-md:
-    0px 18px 30px -10px hsla(225, 31%, 12%, 0.06),
-    0px 6px 12px -4px hsla(225, 31%, 12%, 0.05);
+    0px 18px 30px -10px hsla(225, 31%, 12%, 0.06), 0px 6px 12px -4px hsla(225, 31%, 12%, 0.05);
   --shadow-lg:
-    0px 40px 60px -20px hsla(225, 31%, 12%, 0.08),
-    0px 16px 24px -8px hsla(225, 31%, 12%, 0.08);
+    0px 40px 60px -20px hsla(225, 31%, 12%, 0.08), 0px 16px 24px -8px hsla(225, 31%, 12%, 0.08);
 
   /* Text Sizes */
   --text-sm: 0.875rem;
@@ -119,15 +115,11 @@
   --gradient-accent-secondary: linear-gradient(150deg, #69ffb4, #00e676, var(--accent-light));
   --gradient-stroke: linear-gradient(180deg, var(--gray-600), var(--gray-800));
 
-  --shadow-sm:
-    0px 4px 8px hsla(225, 31%, 3%, 0.45),
-    0px 1px 2px hsla(225, 31%, 3%, 0.5);
+  --shadow-sm: 0px 4px 8px hsla(225, 31%, 3%, 0.45), 0px 1px 2px hsla(225, 31%, 3%, 0.5);
   --shadow-md:
-    0px 18px 30px -10px hsla(225, 31%, 3%, 0.55),
-    0px 6px 12px -4px hsla(225, 31%, 3%, 0.45);
+    0px 18px 30px -10px hsla(225, 31%, 3%, 0.55), 0px 6px 12px -4px hsla(225, 31%, 3%, 0.45);
   --shadow-lg:
-    0px 40px 60px -20px hsla(225, 31%, 3%, 0.6),
-    0px 16px 24px -8px hsla(225, 31%, 3%, 0.5);
+    0px 40px 60px -20px hsla(225, 31%, 3%, 0.6), 0px 16px 24px -8px hsla(225, 31%, 3%, 0.5);
 }
 
 /* Scrollbar Styles */

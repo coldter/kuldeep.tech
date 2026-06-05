@@ -47,7 +47,6 @@ The goal isn't a product so much as an experiment in treating heterogeneous scre
 
 ![TV pairing screen](./ss/tv/Screenshot_2026-04-20-16-38-59-649_com.vync.tv-front.png)
 
-
 <div class="screenshot-grid">
 
 ![Vync phone controller screen](./ss/Screenshot_20260420-165551.Acme-portrait.png)
@@ -73,4 +72,3 @@ The goal isn't a product so much as an experiment in treating heterogeneous scre
 </div>
 
 ---
-
