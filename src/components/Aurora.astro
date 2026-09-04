@@ -8,8 +8,10 @@ interface Props {
 }
 
 const {
-  colorStopsLight = ["#6EE7B7", "#10B981", "#047857"],
-  colorStopsDark = ["#34D399", "#059669", "#064E3B"],
+  // Light: soft pastels (deliberate design, mirrors --aurora-stop-* light).
+  // Dark: accent primitives, mirrors --aurora-stop-* dark.
+  colorStopsLight = ["#A7F3D0", "#34D399", "#10B981"],
+  colorStopsDark = ["#00a152", "#00e676", "#004d27"],
   amplitude = 1.0,
   blend = 0.5,
   speed = 1.0,
@@ -303,7 +305,7 @@ void main() {
       try {
         return JSON.parse(stopsData || "[]");
       } catch {
-        return ["#6EE7B7", "#10B981", "#047857"];
+        return ["#A7F3D0", "#34D399", "#10B981"];
       }
     }
 

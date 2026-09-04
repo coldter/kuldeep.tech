@@ -111,7 +111,7 @@ const configData = JSON.stringify({
 });
 ---
 
-<div class="cubes-wrapper" style={wrapperStyle} data-cubes-config={configData}>
+<div class="cubes-wrapper" style={wrapperStyle} data-cubes-config={configData} aria-hidden="true">
   <div class="cubes-scene" style={sceneStyle}>
     {
       cells.map(({ row, col }) => (
@@ -155,7 +155,6 @@ const configData = JSON.stringify({
     height: 100%;
     aspect-ratio: 1 / 1;
     transform-style: preserve-3d;
-    will-change: transform;
   }
 
   /* Expand hit area for smoother mouse tracking */
@@ -180,7 +179,6 @@ const configData = JSON.stringify({
     box-shadow: var(--cube-face-shadow);
     opacity: 1;
     backface-visibility: hidden;
-    will-change: background-color;
   }
 
   .cube-face--top {
@@ -208,6 +206,13 @@ const configData = JSON.stringify({
   @media (max-width: 768px) {
     .cubes-wrapper {
       width: 100%;
+    }
+  }
+
+  /* Respect reduced motion preferences: no auto-animation transforms */
+  @media (prefers-reduced-motion: reduce) {
+    .cube {
+      transform: none !important;
     }
   }
 </style>
@@ -256,7 +261,10 @@ const configData = JSON.stringify({
 
     private init(): void {
       this.bindEvents();
-      if (this.config.autoAnimate) {
+      if (
+        this.config.autoAnimate &&
+        !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) {
         this.startAutoAnimation();
       }
     }

@@ -28,8 +28,9 @@ const projects = (await getCollection("work"))
 
 <BaseLayout>
   <div class="stack gap-20 lg:gap-48">
-    <div class="wrapper stack gap-8 lg:gap-20">
-      <header class="hero">
+    <main id="main-content" tabindex="-1" class="wrapper stack gap-20 lg:gap-48">
+      <div class="stack gap-8 lg:gap-20">
+        <header class="hero">
         <Hero
           title="Hi, I'm Kuldeep Parmar"
           tagline="Software Engineer building scalable backend systems and robust cloud infrastructure."
@@ -61,10 +62,9 @@ const projects = (await getCollection("work"))
         </div>
       </header>
 
-      <Skills />
-    </div>
+        <Skills />
+      </div>
 
-    <main class="wrapper stack gap-20 lg:gap-48">
       <section class="section with-background with-cta">
         <header class="section-header stack gap-2 lg:gap-4">
           <h3>Selected Work</h3>
@@ -87,7 +87,7 @@ const projects = (await getCollection("work"))
 
         <div class="cta">
           <CallToAction href="/work/">
-            View All
+            View all work
             <Icon icon="arrow-right" size="1.2em" />
           </CallToAction>
         </div>
@@ -137,7 +137,6 @@ const projects = (await getCollection("work"))
     .hero {
       display: grid;
       grid-template-columns: 6fr 4fr;
-      padding-inline: 2.5rem;
       gap: 3.75rem;
     }
 
@@ -171,11 +170,11 @@ const projects = (await getCollection("work"))
     content: "";
     position: absolute;
     pointer-events: none;
-    left: 50%;
-    width: 100vw;
+    inset-inline: 0;
+    width: auto;
     height: 100%;
     top: 50%;
-    transform: translateY(-50%) translateX(-50%);
+    transform: translateY(-50%);
     background:
       url("/assets/backgrounds/noise.png") top center/220px repeat,
       radial-gradient(ellipse at center, var(--accent-light) 0%, transparent 70%);

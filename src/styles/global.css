@@ -23,17 +23,25 @@
   --accent-subtle-overlay: hsla(151, 100%, 25%, 0.05);
   --accent-text-over: var(--gray-999); /* White text on dark green buttons */
 
-  --link-color: var(--accent-regular);
+  /* Role tokens (semantic layer — components use these, never primitives directly) */
+  --color-text-body: var(--gray-200);
+  --color-accent-text: var(--accent-dark);
+  --color-accent-solid: var(--accent-dark);
+  --color-border: var(--gray-800);
+
+  --link-color: var(--color-accent-text);
 
   /* Gradients */
   --gradient-stop-1: var(--accent-light);
   --gradient-stop-2: var(--accent-regular);
   --gradient-stop-3: var(--accent-dark);
 
-  /* Aurora-compatible stops (match src/components/Aurora.astro defaults) */
-  --aurora-stop-1: #00e676;
-  --aurora-stop-2: #00a152;
-  --aurora-stop-3: #006b36;
+  /* Aurora stops. Dark mirrors the accent primitives; light uses the soft
+     pastel set (deliberate — vivid accent at 0.5 opacity is too loud in
+     light mode). Keep BaseLayout props and Aurora defaults in sync. */
+  --aurora-stop-1: #A7F3D0;
+  --aurora-stop-2: #34D399;
+  --aurora-stop-3: #10B981;
   --gradient-subtle: linear-gradient(150deg, var(--gray-900) 19%, var(--gray-999) 150%);
   --gradient-accent: linear-gradient(
     150deg,
@@ -42,10 +50,10 @@
     var(--gradient-stop-3)
   );
   --gradient-accent-secondary: linear-gradient(
-    150deg,
-    var(--accent-regular),
+    150deg in oklab,
     var(--accent-dark),
-    #004d27
+    #004d27,
+    #00331a
   );
   --gradient-stroke: linear-gradient(180deg, var(--gray-900), var(--gray-700));
 
@@ -103,7 +111,13 @@
   --accent-subtle-overlay: hsla(151, 100%, 50%, 0.1);
   --accent-text-over: var(--gray-999); /* Dark text on neon green buttons */
 
-  --link-color: var(--accent-dark);
+  /* Role tokens (mirror :root; values resolve against this theme's primitives) */
+  --color-text-body: var(--gray-200);
+  --color-accent-text: var(--accent-regular);
+  --color-accent-solid: var(--accent-regular);
+  --color-border: var(--gray-800);
+
+  --link-color: var(--color-accent-text);
 
   --gradient-stop-1: #00331a;
 
@@ -112,7 +126,7 @@
   --aurora-stop-2: #00e676;
   --aurora-stop-3: #004d27;
   --gradient-subtle: linear-gradient(150deg, var(--gray-900) 19%, var(--gray-999) 81%);
-  --gradient-accent-secondary: linear-gradient(150deg, #69ffb4, #00e676, var(--accent-light));
+  --gradient-accent-secondary: linear-gradient(150deg in oklab, #69ffb4, #00e676, #00a152);
   --gradient-stroke: linear-gradient(180deg, var(--gray-600), var(--gray-800));
 
   --shadow-sm: 0px 4px 8px hsla(225, 31%, 3%, 0.45), 0px 1px 2px hsla(225, 31%, 3%, 0.5);
@@ -161,6 +175,11 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Skip-link target: focusable only for the skip action, never shows a ring */
+#main-content:focus {
+  outline: none;
+}
+
 html,
 body {
   min-height: 100%;
@@ -195,7 +214,7 @@ a {
 
 /* Accessible, consistent focus ring (keyboard only) */
 :focus-visible {
-  outline: 2px solid var(--accent-regular);
+  outline: 2px solid var(--color-accent-text);
   outline-offset: 3px;
   border-radius: 4px;
 }

@@ -28,11 +28,11 @@ const { Content } = await render(entry);
 <BaseLayout title={entry.data.title} description={entry.data.description}>
   <div class="work-container">
     <div class="stack gap-20">
-      <div class="stack gap-15">
+      <main id="main-content" tabindex="-1" class="stack gap-15">
         <header>
           <div class="wrapper stack gap-2">
             <a class="back-link" href="/work/">
-              <Icon icon="arrow-left" /> Work
+              <Icon icon="arrow-left" /> Back to Work
             </a>
 
             <div class="hero-wrapper">
@@ -48,14 +48,14 @@ const { Content } = await render(entry);
           </div>
         </header>
 
-        <main class="wrapper">
+        <div class="wrapper">
           <div class="stack gap-10 content-wrapper">
             {
               entry.data.img && (
                 <div class="hero-image-container">
                   <Image
                     src={entry.data.img}
-                    alt={entry.data.img_alt || ""}
+                    alt={entry.data.img_alt ?? entry.data.description}
                     widths={[480, 720, 1200, entry.data.img.width]}
                     sizes={`(max-width: 720px) 100vw, 1200px`}
                     loading={"eager"}
@@ -69,8 +69,8 @@ const { Content } = await render(entry);
               <Content />
             </div>
           </div>
-        </main>
-      </div>
+        </div>
+      </main>
       <ContactCTA />
     </div>
   </div>
@@ -100,7 +100,11 @@ const { Content } = await render(entry);
     color: var(--gray-200);
     font-weight: 500;
     text-decoration: none;
-    transition: all var(--theme-transition);
+    transition:
+      color var(--theme-transition),
+      background-color var(--theme-transition),
+      border-color var(--theme-transition),
+      transform var(--theme-transition);
     width: fit-content;
     margin-bottom: 1rem;
   }
@@ -108,25 +112,27 @@ const { Content } = await render(entry);
   .back-link:hover {
     background: var(--gray-900);
     color: var(--gray-0);
-    transform: translateX(-2px);
     border-color: var(--gray-600);
+  }
+
+  @media (hover: hover) {
+    .back-link:hover {
+      transform: translateX(-2px);
+    }
   }
 
   /* Hero Section Styling */
   .hero-wrapper {
     position: relative;
     padding: 2rem 0;
+    overflow: clip;
   }
 
   /* Subtle background glow for Hero */
   .hero-wrapper::before {
     content: "";
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 140%;
-    height: 140%;
+    inset: 0;
     background: radial-gradient(
       circle,
       var(--accent-subtle-overlay) 0%,
@@ -140,6 +146,7 @@ const { Content } = await render(entry);
   .details {
     display: flex;
     flex-direction: column;
+    flex-wrap: wrap;
     padding: 0.5rem;
     gap: 1.5rem;
     justify-content: space-between;
@@ -151,11 +158,13 @@ const { Content } = await render(entry);
     gap: 0.5rem;
     flex-wrap: wrap;
     margin-top: 0.5rem;
+    flex-shrink: 0; /* Pills keep one horizontal row; the description wraps below when narrow */
   }
 
   .description {
     font-size: var(--text-lg);
     max-width: 65ch;
+    flex: 1 1 24ch;
     color: var(--gray-200);
     line-height: 1.6;
   }
@@ -172,15 +181,20 @@ const { Content } = await render(entry);
     background: var(--gradient-subtle);
     border: 1px solid var(--gray-800);
     transition:
-      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-      box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-      border-color 0.4s ease;
+      transform 300ms ease-out,
+      box-shadow 300ms ease-out,
+      border-color 150ms ease-out;
   }
 
   .hero-image-container:hover {
-    transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
     border-color: var(--gray-600);
+  }
+
+  @media (hover: hover) {
+    .hero-image-container:hover {
+      transform: translateY(-2px);
+    }
   }
 
   .hero-image {
@@ -192,10 +206,10 @@ const { Content } = await render(entry);
 
   /* Content Typography & Layout */
   .content {
-    max-width: 80ch; /* Increased from 65ch for wider reading area */
+    max-width: 80ch; /* Deliberate original measure — restores previous width */
     width: 100%;
     margin-inline: auto;
-    font-size: 1.125rem; /* Larger base font size (18px) */
+    font-size: var(--text-md);
     line-height: 1.75;
     color: var(--gray-200);
     padding: 0 1rem;
@@ -218,26 +232,26 @@ const { Content } = await render(entry);
   }
 
   .content :global(h1) {
-    font-size: 2.5rem;
+    font-size: var(--text-3xl);
   }
   .content :global(h2) {
-    font-size: 2rem;
+    font-size: var(--text-2xl);
     padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--gray-800);
   }
   .content :global(h3) {
-    font-size: 1.5rem;
+    font-size: var(--text-xl);
   }
 
   /* Premium Blockquote */
   .content :global(blockquote) {
-    font-size: 1.4rem;
+    font-size: var(--text-lg);
     font-family: var(--font-brand);
     font-weight: 500;
     line-height: 1.4;
     margin: 2rem 0;
     padding: 1.5rem 2rem;
-    border-left: 4px solid var(--accent-regular);
+    border-inline-start: 4px solid var(--accent-regular);
     background: linear-gradient(to right, var(--gray-999_40), transparent);
     border-radius: 0 1rem 1rem 0;
     color: var(--gray-0);
@@ -258,8 +272,13 @@ const { Content } = await render(entry);
   }
 
   .content :global(img:hover) {
-    transform: scale(1.01);
     box-shadow: var(--shadow-lg);
+  }
+
+  @media (hover: hover) {
+    .content :global(img:hover) {
+      transform: scale(1.01);
+    }
   }
 
   /* Screenshot gallery grid — 2 columns, centered within content column.
@@ -293,6 +312,12 @@ const { Content } = await render(entry);
     .content :global(.screenshot-grid) {
       gap: 2.5rem 2rem;
       max-width: 720px;
+    }
+  }
+
+  @media (max-width: 30em) {
+    .content :global(.screenshot-grid) {
+      grid-template-columns: 1fr;
     }
   }
 
@@ -332,7 +357,7 @@ const { Content } = await render(entry);
   /* List Styling */
   .content :global(ul),
   .content :global(ol) {
-    padding-left: 1.5rem;
+    padding-inline-start: 1.5rem;
     margin: 1.5rem 0;
   }
 
@@ -343,13 +368,13 @@ const { Content } = await render(entry);
 
   .content :global(ul li) {
     list-style: none;
-    padding-left: 0.5rem;
+    padding-inline-start: 0.5rem;
   }
 
   .content :global(ul li::before) {
     content: "•";
     position: absolute;
-    left: -1rem;
+    inset-inline-start: -1rem;
     color: var(--accent-regular);
     font-weight: bold;
     font-size: 1.2em;
@@ -357,7 +382,7 @@ const { Content } = await render(entry);
   }
 
   .content :global(ol li) {
-    padding-left: 0.5rem;
+    padding-inline-start: 0.5rem;
   }
 
   .content :global(ol li::marker) {
@@ -375,7 +400,7 @@ const { Content } = await render(entry);
     .details {
       flex-direction: row;
       gap: 2.5rem;
-      align-items: center;
+      align-items: flex-start;
     }
 
     .description {

@@ -8,7 +8,6 @@ import Icon from "./Icon.astro";
       icon="terminal-window"
       color="var(--accent-regular)"
       size="2.5rem"
-      gradient
     />
     <h2>Backend Development</h2>
     <p>
@@ -17,7 +16,7 @@ import Icon from "./Icon.astro";
     </p>
   </div>
   <div class="skill-item stack gap-2 lg:gap-4">
-    <Icon icon="shield" color="var(--accent-regular)" size="2.5rem" gradient />
+    <Icon icon="shield" color="var(--accent-regular)" size="2.5rem" />
     <h2>Reliability</h2>
     <p>
       Implementing observability stacks and monitoring to ensure high system
@@ -25,7 +24,7 @@ import Icon from "./Icon.astro";
     </p>
   </div>
   <div class="skill-item stack gap-2 lg:gap-4">
-    <Icon icon="robot" color="var(--accent-regular)" size="2.5rem" gradient />
+    <Icon icon="robot" color="var(--accent-regular)" size="2.5rem" />
     <h2>Automation First</h2>
     <p>
       Eliminating toil through robust CI/CD pipelines, infrastructure as code,
@@ -54,10 +53,10 @@ import Icon from "./Icon.astro";
 
   .skill-item {
     transition:
-      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-      background 0.4s ease,
-      border-color 0.4s ease,
-      box-shadow 0.5s ease;
+      background-color 150ms ease-out,
+      border-color 150ms ease-out,
+      box-shadow 250ms ease-out,
+      transform 250ms ease-out;
     padding: 1.5rem;
     border-radius: 1rem;
     border: 1px solid transparent;
@@ -71,11 +70,13 @@ import Icon from "./Icon.astro";
   }
 
   .skills h2 {
-    font-size: var(--text-lg);
+    font-size: var(--text-2xl);
+    text-wrap: balance;
   }
 
   .skills p {
     color: var(--gray-400);
+    text-wrap: pretty;
   }
 
   @media (min-width: 50em) {
@@ -87,7 +88,7 @@ import Icon from "./Icon.astro";
 
     .skills {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 2rem;
     }
 
@@ -97,6 +98,12 @@ import Icon from "./Icon.astro";
 
     .skills h2 {
       font-size: var(--text-2xl);
+    }
+  }
+
+  @media (min-width: 60em) {
+    .skills h2 {
+      font-size: var(--text-3xl);
     }
   }
 </style>

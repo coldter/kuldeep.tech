@@ -1,8 +1,25 @@
 ---
+import CallToAction from "../components/CallToAction.astro";
 import Hero from "../components/Hero.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<BaseLayout title="Not Found" description="404 Error — this page was not found">
-  <Hero title="404 Error" tagline="Page not found :(" />
+<BaseLayout title="Page not found" description="404 Error — this page was not found">
+  <main id="main-content" tabindex="-1" class="wrapper">
+    <Hero
+      title="Page not found"
+      tagline="This page doesn't exist. Check the address or return to the homepage."
+    />
+    <div class="cta">
+      <CallToAction href="/">Back to homepage</CallToAction>
+    </div>
+  </main>
 </BaseLayout>
+
+<style>
+  .cta {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+</style>

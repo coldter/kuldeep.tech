@@ -59,6 +59,20 @@ const ogImageURL = new URL("/og-image.png", Astro.site).toString();
 
 <script is:inline>
   // This code is inlined in the head to make dark mode instant & blocking.
+  // Snap theme flips instead of smearing every transition at once.
+  const withSuppressedTransitions = (flip) => {
+    const style = document.createElement("style");
+    style.append(
+      document.createTextNode("*,*::before,*::after{transition:none!important}")
+    );
+    document.head.append(style);
+    flip();
+    void (document.body || document.documentElement).offsetHeight;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => style.remove());
+    });
+  };
+
   const getThemePreference = () => {
     if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
       return localStorage.getItem("theme");
@@ -69,7 +83,9 @@ const ogImageURL = new URL("/og-image.png", Astro.site).toString();
   };
 
   const isDark = getThemePreference() === "dark";
-  document.documentElement.classList[isDark ? "add" : "remove"]("theme-dark");
+  withSuppressedTransitions(() =>
+    document.documentElement.classList[isDark ? "add" : "remove"]("theme-dark")
+  );
 
   if (typeof localStorage !== "undefined") {
     // Watch the document element and persist user preference when it changes.
@@ -98,8 +114,10 @@ const ogImageURL = new URL("/og-image.png", Astro.site).toString();
 
     const isDark = getThemePreference() === "dark";
     // Set the theme on the incoming document
-    ev.newDocument.documentElement.classList[isDark ? "add" : "remove"](
-      "theme-dark",
+    withSuppressedTransitions(() =>
+      ev.newDocument.documentElement.classList[isDark ? "add" : "remove"](
+        "theme-dark"
+      )
     );
   });
 </script>

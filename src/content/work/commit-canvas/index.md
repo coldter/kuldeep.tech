@@ -55,6 +55,6 @@ Beyond the CLI flags, there's a full terminal UI built with Bubble Tea that walk
 
 ---
 
-[View the repository][repo-link]
+[View the Commit Canvas repository on GitHub][repo-link]
 
 [repo-link]: https://github.com/coldter/commit-canvas

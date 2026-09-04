@@ -7,16 +7,18 @@ const currentYear = new Date().getFullYear();
     <div class="group">
       <p>&copy; <time class="tabular">{currentYear}</time> Kuldeep Parmar</p>
     </div>
-    <p class="socials">
-      <a
-        href="https://github.com/coldter"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        GitHub</a
-      >
-      <a href="/admin/"> Admin</a>
-    </p>
+    <ul class="socials">
+      <li>
+        <a
+          href="https://github.com/coldter"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          GitHub</a
+        >
+      </li>
+      <li><a href="/admin/">Site admin</a></li>
+    </ul>
   </div>
 </footer>
 <style>
@@ -24,7 +26,7 @@ const currentYear = new Date().getFullYear();
     display: flex;
     flex-direction: column;
     margin-top: auto;
-    padding: 3rem 2rem 3rem;
+    padding: 3rem 2rem calc(3rem + env(safe-area-inset-bottom));
     text-align: center;
     color: var(--gray-400);
     font-size: var(--text-sm);
@@ -66,6 +68,9 @@ const currentYear = new Date().getFullYear();
     gap: 1.5rem;
     flex-wrap: wrap;
     font-weight: 500;
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
 
   @media (min-width: 50em) {

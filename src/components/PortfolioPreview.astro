@@ -39,10 +39,11 @@ const {
     font-size: var(--text-lg);
     font-weight: 500;
     transition:
-      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-      box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-      border-color 0.4s ease;
-    will-change: transform;
+      border-color 150ms ease-out,
+      background-color 150ms ease-out,
+      color 150ms ease-out,
+      box-shadow 300ms ease-out,
+      transform 300ms ease-out;
   }
 
   .card:hover {
@@ -54,8 +55,10 @@ const {
   }
 
   .card:active {
-    transform: translateY(-1px);
-    transition-duration: 0.2s;
+    scale: 0.96;
+    transition-property: scale;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
   }
 
   .title {
@@ -70,10 +73,17 @@ const {
     border: 1px solid hsla(0, 0%, 100%, 0.08);
     box-shadow: inset 0 1px 0 hsla(0, 0%, 100%, 0.05);
     border-radius: 0.5rem;
+    line-height: 1.2;
+    overflow-wrap: break-word;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    text-wrap: balance;
     transition:
-      background 0.4s ease,
-      color 0.4s ease,
-      border-color 0.4s ease;
+      background-color 150ms ease-out,
+      color 150ms ease-out,
+      border-color 150ms ease-out;
   }
 
   .card:hover .title {
@@ -87,11 +97,17 @@ const {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    outline: 1px solid oklch(0 0 0 / 0.1);
+    outline-offset: -1px;
+    transition: transform 300ms ease-out;
   }
 
   .card:hover img {
     transform: scale(1.04);
+  }
+
+  :global(.theme-dark) img {
+    outline-color: oklch(1 0 0 / 0.1);
   }
 
   @media (min-width: 50em) {

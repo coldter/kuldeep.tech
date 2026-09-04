@@ -3,8 +3,8 @@ import Icon from "./Icon.astro";
 ---
 
 <theme-toggle>
-  <button>
-    <span class="sr-only">Dark theme</span>
+  <button aria-label="Switch to dark theme">
+    <span class="sr-only">Switch to dark theme</span>
     <span class="icon light"><Icon icon="sun" /></span>
     <span class="icon dark"><Icon icon="moon-stars" /></span>
   </button>
@@ -45,12 +45,19 @@ import Icon from "./Icon.astro";
     z-index: -1;
     position: absolute;
     inset: 0;
-    background-color: var(--accent-regular);
+    /* Role token: same solid green the CTAs use. Light: white glyph on
+       #006b36 = 6.65:1 (was accent-regular #00a152 = 3.37:1).
+       Dark: #090b11 glyph on #00e676 = 11.6:1. */
+    background-color: var(--color-accent-solid);
     border-radius: 999rem;
   }
 
   :global(.theme-dark) .icon.light::before {
     transform: translateX(100%);
+  }
+
+  :global([dir="rtl"].theme-dark) .icon.light::before {
+    transform: translateX(-100%);
   }
 
   :global(.theme-dark) .icon.dark,
@@ -63,6 +70,10 @@ import Icon from "./Icon.astro";
       color: var(--accent-regular);
   }
 
+  /* Contextual icon cross-fade removed: this is a two-icon segmented
+     control (both glyphs stay visible, the pill marks the active one),
+     not a single swapping icon, so fading the inactive glyph out
+     destroyed the control's design. */
   @media (prefers-reduced-motion: no-preference) {
     .icon,
     .icon.light::before {
@@ -88,10 +99,26 @@ import Icon from "./Icon.astro";
 
       /** Set the theme to dark/light mode. */
       const setTheme = (dark: boolean) => {
+        // Snap the swap: kill transitions, flip, reflow, restore next frame.
+        const style = document.createElement("style");
+        style.append(
+          document.createTextNode(
+            "*,*::before,*::after{transition:none!important}",
+          ),
+        );
+        document.head.append(style);
         document.documentElement.classList[dark ? "add" : "remove"](
           "theme-dark",
         );
         button.setAttribute("aria-pressed", String(dark));
+        const label = dark ? "Switch to light theme" : "Switch to dark theme";
+        button.setAttribute("aria-label", label);
+        const labelText = button.querySelector(".sr-only");
+        if (labelText) labelText.textContent = label;
+        void document.body.offsetHeight;
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => style.remove());
+        });
       };
 
       // Toggle the theme when a user clicks the button.

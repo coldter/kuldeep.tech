@@ -30,6 +30,6 @@ Because responsiveness matters (many users check tides on mobile at the shorelin
 
 ---
 
-[View the repository][repo-link]
+[View the Tide Info repository on GitHub][repo-link]
 
 [repo-link]: https://github.com/coldter/tide-info

@@ -21,6 +21,7 @@ const { title, description } = Astro.props;
     <MainHead title={title} description={description} />
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
     <!-- Aurora hero section wrapper -->
     <div class="aurora-hero-wrapper">
       <Aurora
@@ -53,6 +54,16 @@ const { title, description } = Astro.props;
     </script>
 
     <style>
+      .skip-link {
+        position: absolute;
+        left: 1rem;
+        top: -100px;
+        z-index: 100;
+      }
+      .skip-link:focus-visible {
+        top: 1rem;
+      }
+
       /* Aurora container - subtle accent at the top only */
       .aurora-hero-wrapper {
         position: absolute;
