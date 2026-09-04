@@ -2,3 +2,8 @@ allowBuilds:
   esbuild: true
   sharp: true
   workerd: true
+minimumReleaseAgeExclude:
+  - "@astrojs/cloudflare@14.3.0"
+  - astro@7.3.1
+  - miniflare@5.20260903.0-alpha
+  - wrangler@4.129.0
