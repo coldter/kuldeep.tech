@@ -11,9 +11,11 @@ import Aurora from "../components/Aurora.astro";
 interface Props {
   title?: string | undefined;
   description?: string | undefined;
+  /** Render the aurora glow at the top of the page. Defaults to true. */
+  aurora?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, aurora = true } = Astro.props;
 ---
 
 <html lang="en">
@@ -23,23 +25,19 @@ const { title, description } = Astro.props;
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
     <!-- Aurora hero section wrapper -->
-    <div class="aurora-hero-wrapper">
-      <Aurora
-        colorStopsLight={[
-          "#A7F3D0",
-          "#34D399",
-          "#10B981"
-        ]}
-        colorStopsDark={[
-          "#00a152",
-          "#00e676",
-          "#004d27"
-        ]}
-        amplitude={0.5}
-        blend={0.8}
-        speed={0.4}
-      />
-    </div>
+    {
+      aurora && (
+        <div class="aurora-hero-wrapper">
+          <Aurora
+            colorStopsLight={["#A7F3D0", "#34D399", "#10B981"]}
+            colorStopsDark={["#00a152", "#00e676", "#004d27"]}
+            amplitude={0.5}
+            blend={0.8}
+            speed={0.4}
+          />
+        </div>
+      )
+    }
     <div class="stack backgrounds">
       <Nav />
       <slot />
