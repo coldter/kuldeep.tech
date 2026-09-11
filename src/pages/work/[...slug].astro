@@ -28,7 +28,7 @@ const { Content } = await render(entry);
 <BaseLayout title={entry.data.title} description={entry.data.description}>
   <div class="work-container">
     <div class="stack gap-20">
-      <main id="main-content" tabindex="-1" class="stack gap-15">
+      <main id="main-content" tabindex="-1" class="stack gap-8">
         <header>
           <div class="wrapper stack gap-2">
             <a class="back-link" href="/work/">
@@ -83,7 +83,7 @@ const { Content } = await render(entry);
   }
 
   header {
-    padding-bottom: 2.5rem;
+    padding-bottom: 1rem;
     position: relative;
   }
 
@@ -124,7 +124,7 @@ const { Content } = await render(entry);
   /* Hero Section Styling */
   .hero-wrapper {
     position: relative;
-    padding: 2rem 0;
+    padding: 2rem 0 1rem;
     overflow: clip;
   }
 
@@ -164,7 +164,6 @@ const { Content } = await render(entry);
   .description {
     font-size: var(--text-lg);
     max-width: 65ch;
-    flex: 1 1 24ch;
     color: var(--gray-200);
     line-height: 1.6;
   }
@@ -398,9 +397,7 @@ const { Content } = await render(entry);
     }
 
     .details {
-      flex-direction: row;
-      gap: 2.5rem;
-      align-items: flex-start;
+      gap: 1.75rem;
     }
 
     .description {
