@@ -26,7 +26,7 @@ export const GET: APIRoute = async (context) => {
       link: `/work/${post.id}/`,
       content: sanitizeHtml(parser.render(post.body ?? "")),
       customData: `<media:content
-        type="image/${post.data.img.format === "jpg" ? "jpeg" : "png"}"
+        type="image/${post.data.img.format === "jpg" ? "jpeg" : post.data.img.format}"
         width="${post.data.img.width}"
         height="${post.data.img.height}"
         medium="image"

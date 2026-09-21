@@ -303,10 +303,21 @@ html {
   outline: none;
 }
 
-html,
-body {
+/* Contain stray wide elements without breaking `position: sticky` downstream.
+   `overflow-x: hidden` on <body> computes overflow-y to `auto`, which makes
+   body a scroll container whose scrollport never scrolls — every sticky
+   descendant inside it then silently stops sticking. `clip` contains the same
+   overflow without establishing a scroll container. <html> keeps `hidden`
+   because the root element propagates its overflow to the viewport, which is
+   exactly where that constraint belongs. */
+html {
   min-height: 100%;
   overflow-x: hidden;
+}
+
+body {
+  min-height: 100%;
+  overflow-x: clip;
 }
 
 body {

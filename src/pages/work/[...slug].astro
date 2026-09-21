@@ -355,6 +355,52 @@ const { Content } = await render(entry);
     color: var(--gray-0);
   }
 
+  /* Section break — a short ruled gauge instead of the browser default. */
+  .content :global(hr) {
+    border: 0;
+    height: 1px;
+    max-width: 12rem;
+    margin: 3rem auto;
+    background: linear-gradient(90deg, transparent, var(--gray-700), transparent);
+  }
+
+  /* Repost panel — the editor's note on reprinted pieces. */
+  .content :global(.repost-note) {
+    position: relative;
+    padding: 1.35rem 1.5rem 1.25rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 1rem;
+    background: var(--gradient-subtle);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .content :global(.repost-note p) {
+    margin: 0;
+    font-size: var(--text-md);
+    line-height: 1.7;
+    color: var(--gray-200);
+  }
+
+  .content :global(.repost-note .repost-label) {
+    margin-bottom: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gray-300);
+    text-shadow: var(--engrave);
+  }
+
+  .content :global(.repost-note .repost-source) {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--gray-800);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    color: var(--gray-300);
+  }
+
   /* Enhanced Images in Content */
   .content :global(img) {
     border-radius: 1rem;
