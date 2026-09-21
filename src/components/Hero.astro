@@ -10,6 +10,7 @@ const { align = "center", tagline, title } = Astro.props;
 
 <div class:list={["hero stack gap-4", align]}>
   <div class="stack gap-2">
+    <span class="rule" aria-hidden="true"><span></span><span></span><span></span></span>
     <h1 class="title">{title}</h1>
     {tagline && <p class="tagline">{tagline}</p>}
   </div>
@@ -29,6 +30,31 @@ const { align = "center", tagline, title } = Astro.props;
     font-size: var(--text-lg);
   }
 
+  /* Three skewed bars — the racing-stripe rule that heads every page. */
+  .rule {
+    display: flex;
+    gap: 0.28rem;
+    width: fit-content;
+    margin-inline: auto;
+    margin-bottom: 0.35rem;
+  }
+
+  .rule span {
+    height: 0.5rem;
+    background: var(--gold);
+    transform: skewX(-20deg);
+  }
+
+  .rule span:nth-child(1) {
+    width: 1.9rem;
+  }
+  .rule span:nth-child(2) {
+    width: 0.85rem;
+  }
+  .rule span:nth-child(3) {
+    width: 0.38rem;
+  }
+
   .tagline {
     color: var(--gray-300);
     text-wrap: pretty;
@@ -38,13 +64,10 @@ const { align = "center", tagline, title } = Astro.props;
   .title {
     font-size: var(--text-3xl);
     color: var(--gray-0);
-    background: var(--gradient-accent-secondary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    display: inline-block;
     letter-spacing: -0.035em;
     line-height: 1.05;
+    /* Engraved rather than printed: the cut edge catches the light source. */
+    text-shadow: var(--engrave);
   }
 
   @media (min-width: 50em) {
@@ -59,6 +82,10 @@ const { align = "center", tagline, title } = Astro.props;
     .start .title,
     .start .tagline {
       margin-inline: unset;
+    }
+
+    .start .rule {
+      margin-inline: 0;
     }
 
     .title {

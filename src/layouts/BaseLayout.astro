@@ -29,7 +29,7 @@ const { title, description, aurora = true } = Astro.props;
       aurora && (
         <div class="aurora-hero-wrapper">
           <Aurora
-            colorStopsLight={["#A7F3D0", "#34D399", "#10B981"]}
+            colorStopsLight={["#f7f1e2", "#e8dcc0", "#dcd3ba"]}
             colorStopsDark={["#00a152", "#00e676", "#004d27"]}
             amplitude={0.5}
             blend={0.8}
@@ -74,14 +74,15 @@ const { title, description, aurora = true } = Astro.props;
         overflow: hidden;
         z-index: 0;
         pointer-events: none;
-        opacity: 0.5; /* Smoother light mode visibility */
+        /* Warm light spill in light mode; a lit panel, not a green stain. */
+        opacity: 0.34;
         /* Dynamic radial fade out for premium unique blending */
         mask-image: radial-gradient(ellipse at top, black 0%, transparent 80%);
         -webkit-mask-image: radial-gradient(ellipse at top, black 0%, transparent 80%);
       }
 
       :global(.theme-dark) .aurora-hero-wrapper {
-        opacity: 0.35; /* Keep it exceedingly subtle in dark mode */
+        opacity: 0.3; /* Keep it exceedingly subtle in dark mode */
       }
 
       @media (min-width: 50em) {

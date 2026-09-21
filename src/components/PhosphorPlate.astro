@@ -1,0 +1,913 @@
+---
+/**
+ * PhosphorPlate — the homepage's maker's plate.
+ * =============================================
+ * A lacquered panel with a die-struck monogram, four machined fasteners, an
+ * etched tick scale, and a surface coated in phosphor dust.
+ *
+ * The surface is a dither dot-field, not an animation loop. Each frame the
+ * pointer writes charge into the dots it passes over; charge then decays
+ * exponentially, so the field HOLDS light the way a CRT's phosphor coating
+ * does. There is no trail, no particles, and no idle scribble — only
+ * afterglow. A single warm-up sweep runs when the plate first scrolls into
+ * view, like a tube striking, and a faint refresh band crosses every ~15s to
+ * keep the surface from reading as a static image.
+ *
+ * The whole plate is decorative: every fact it carries is stated in real text
+ * in the masthead beside it, so it is hidden from assistive tech.
+ *
+ * Performance: the base dither is rendered once per theme/size into an
+ * offscreen bitmap and blitted per frame; only charged dots are drawn live,
+ * and their bloom comes from compositing a downscaled buffer rather than
+ * per-dot blur. The rAF loop parks itself when the plate is off-screen, when
+ * the tab is hidden, or when the field has fully decayed.
+ */
+
+interface Props {
+  /** Die-struck monogram. Keep to 2 characters. */
+  mark?: string;
+  /** Model designation, etched bottom-left. */
+  model?: string;
+  /** Discipline, etched beside the model. */
+  discipline?: string;
+  class?: string;
+}
+
+const {
+  mark = "KP",
+  model = "KP-01",
+  discipline = "Software Engineer",
+  class: className,
+} = Astro.props;
+---
+
+<figure
+  class:list={["plate-stage", className]}
+  role="presentation"
+  aria-hidden="true"
+>
+  <div class="plate" data-plate>
+    <!-- Phosphor substrate: pointer-charged dither field (base is blitted). -->
+    <canvas class="field" data-field></canvas>
+
+    <!-- Clearcoat: specular band that tracks the pointer, like lacquer. -->
+    <div class="clearcoat" data-specular></div>
+
+    <!-- Glass: vignette + interlacing, always over the field. -->
+    <div class="glass"></div>
+
+    <!-- Etched measuring scale down the left edge. -->
+    <div class="scale"></div>
+
+    <!-- Die-struck monogram. Optically above centre: the legend weights the
+         plate's bottom edge, so true centre reads low. -->
+    <div class="emblem">
+      <span class="emblem__knurl"></span>
+      <span class="emblem__mark">{mark}</span>
+    </div>
+
+    <!-- Machined fasteners. -->
+    <span class="fastener" style="--fx: 0; --fy: 0;"></span>
+    <span class="fastener" style="--fx: 1; --fy: 0;"></span>
+    <span class="fastener" style="--fx: 0; --fy: 1;"></span>
+    <span class="fastener" style="--fx: 1; --fy: 1;"></span>
+
+    <div class="legend">
+      <div class="legend__row">
+        <p class="legend__key">{model}</p>
+        <span class="legend__sep" aria-hidden="true"></span>
+        <p class="legend__value">{discipline}</p>
+      </div>
+      <div class="tick-rule legend__ticks"></div>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .plate-stage {
+    margin: 0;
+    width: 100%;
+  }
+
+  .plate {
+    position: relative;
+    isolation: isolate;
+    aspect-ratio: 4 / 3;
+    --plate-radius: 1.375rem;
+    --plate-inset: 0.75rem;
+    border-radius: var(--plate-radius);
+    overflow: hidden;
+    /* Two lacquer passes: a curving top-left falloff (the light source) over
+       the body colour ramp, so the panel reads as a painted curve rather
+       than a flat fill. */
+    background:
+      radial-gradient(
+        120% 78% at 24% -12%,
+        var(--lacquer-lit) 0%,
+        transparent 62%
+      ),
+      radial-gradient(
+        145% 125% at 28% -10%,
+        var(--lacquer) 26%,
+        var(--lacquer-deep) 74%,
+        var(--lacquer-rim) 100%
+      );
+    box-shadow:
+      inset 0 1px 0 hsla(110, 45%, 82%, 0.22),
+      inset 0 0 0 1px hsla(150, 45%, 3%, 0.55),
+      inset 0 -20px 44px -26px hsla(150, 50%, 2%, 0.9),
+      var(--shadow-lg),
+      0 32px 64px -32px hsla(150, 45%, 3%, 0.9);
+    transition: box-shadow 400ms ease-out;
+    /* Pointer-tracked specular position. */
+    --mx: 26%;
+    --my: 6%;
+  }
+
+  /* Inlaid gold frame — the tell that this is a machined plate and not a
+     screen. Sits inside the rim, under nothing. */
+  .plate::after {
+    content: "";
+    position: absolute;
+    inset: var(--plate-inset);
+    z-index: 7;
+    pointer-events: none;
+    border: 1px solid hsla(43, 42%, 58%, 0.24);
+    border-radius: calc(var(--plate-radius) - var(--plate-inset) * 0.7);
+    box-shadow:
+      inset 0 1px 0 hsla(43, 55%, 82%, 0.14),
+      0 1px 0 hsla(150, 45%, 3%, 0.4);
+  }
+
+  /* Bone panel when the machine is powered off. */
+  :global(:root:not(.theme-dark)) .plate {
+    background:
+      radial-gradient(120% 78% at 24% -12%, var(--bone-hi) 0%, transparent 62%),
+      radial-gradient(
+        145% 125% at 28% -10%,
+        var(--bone) 26%,
+        var(--bone-dim) 78%,
+        #c4bda9 100%
+      );
+    box-shadow:
+      inset 0 1px 0 hsla(0, 0%, 100%, 0.95),
+      inset 0 0 0 1px hsla(43, 20%, 58%, 0.4),
+      inset 0 -20px 44px -28px hsla(43, 25%, 45%, 0.2),
+      var(--shadow-lg),
+      0 30px 60px -34px hsla(140, 28%, 20%, 0.45);
+  }
+
+  :global(:root:not(.theme-dark)) .plate::after {
+    border-color: hsla(43, 40%, 38%, 0.28);
+    box-shadow:
+      inset 0 1px 0 hsla(43, 55%, 92%, 0.55),
+      0 1px 0 hsla(0, 0%, 100%, 0.6);
+  }
+
+  /* --- Phosphor field ---------------------------------------------------- */
+  .field {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    /* Dot colours are read by the script as RGB triplets. Dark ink on bone
+       carries far more contrast per unit alpha than phosphor on lacquer, so
+       the light theme gets a weaker field to stay a whisper. */
+    --dot-rgb: 42, 63, 49;
+    --dot-charge-rgb: 27, 77, 49;
+    --dot-strength: 0.32;
+    --dot-size: 0.72;
+  }
+
+  :global(.theme-dark) .field {
+    --dot-rgb: 140, 224, 122;
+    --dot-charge-rgb: 190, 245, 172;
+    --dot-strength: 0.7;
+    --dot-size: 1;
+  }
+
+  /* --- Clearcoat --------------------------------------------------------- */
+  .clearcoat {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: var(--clearcoat);
+  }
+
+  /* Specular highlight: soft, wide, and lagging slightly behind the pointer. */
+  .clearcoat::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      46% 38% at var(--mx) var(--my),
+      hsla(105, 45%, 82%, 0.17) 0%,
+      hsla(105, 40%, 74%, 0.06) 42%,
+      transparent 72%
+    );
+    mix-blend-mode: screen;
+    transition: opacity 700ms ease-out;
+  }
+
+  :global(:root:not(.theme-dark)) .clearcoat::after {
+    background: radial-gradient(
+      46% 38% at var(--mx) var(--my),
+      hsla(0, 0%, 100%, 0.85) 0%,
+      hsla(0, 0%, 100%, 0.35) 44%,
+      transparent 74%
+    );
+    mix-blend-mode: soft-light;
+  }
+
+  /* --- Glass: vignette + interlacing --------------------------------------
+     Kept light. A heavy vignette reads as a cheap CRT filter and swallows
+     the lacquer's green; this only darkens far enough to seat the plate. */
+  .glass {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      180deg,
+      var(--scanline) 0 1px,
+      transparent 1px 3px
+    );
+    box-shadow: inset 0 0 64px 0 hsla(150, 45%, 2%, 0.5);
+  }
+
+  :global(:root:not(.theme-dark)) .glass {
+    box-shadow: inset 0 0 60px 0 hsla(43, 22%, 52%, 0.18);
+  }
+
+  /* --- Etched scale ------------------------------------------------------- */
+  .scale {
+    position: absolute;
+    left: 1.5rem;
+    top: 22%;
+    bottom: 22%;
+    width: 9px;
+    z-index: 4;
+    pointer-events: none;
+    opacity: 0.7;
+    background-image:
+      repeating-linear-gradient(180deg, var(--tick) 0 1px, transparent 1px 44px),
+      repeating-linear-gradient(180deg, var(--tick) 0 1px, transparent 1px 11px);
+    background-size:
+      100% 100%,
+      58% 100%;
+    background-repeat: no-repeat, repeat;
+  }
+
+  /* --- Fasteners ---------------------------------------------------------- */
+  .fastener {
+    position: absolute;
+    z-index: 6;
+    width: 0.8125rem;
+    height: 0.8125rem;
+    border-radius: 50%;
+    left: calc(1.5rem + var(--fx) * (100% - 3rem));
+    top: calc(1.5rem + var(--fy) * (100% - 3rem));
+    /* Seated into the panel, lit from top-left. */
+    background: radial-gradient(
+      circle at 32% 26%,
+      var(--gold-hi) 0%,
+      var(--gold) 40%,
+      var(--gold-lo) 74%,
+      #4d3a15 100%
+    );
+    box-shadow:
+      inset 0 -1px 1px hsla(40, 60%, 90%, 0.45),
+      0 0 0 1px hsla(150, 45%, 3%, 0.5),
+      0 1px 2px hsla(150, 45%, 3%, 0.55);
+  }
+
+  /* Hex socket */
+  .fastener::after {
+    content: "";
+    position: absolute;
+    inset: 27%;
+    background: hsla(43, 30%, 18%, 0.85);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  }
+
+  /* --- Emblem & legend ---------------------------------------------------- */
+  .legend {
+    position: absolute;
+    inset: auto 1.75rem 1.5rem;
+    z-index: 5;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .emblem {
+    position: absolute;
+    z-index: 5;
+    left: 50%;
+    top: 44%;
+    transform: translate(-50%, -50%);
+    display: grid;
+    place-items: center;
+    width: clamp(4.5rem, 25%, 6.5rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 34% 26%,
+      var(--gold-hi) 0%,
+      var(--gold) 32%,
+      var(--gold) 56%,
+      var(--gold-lo) 100%
+    );
+    /* Die-struck relief: bright top edge, dark underside. */
+    box-shadow:
+      inset 1px 1px 1px hsla(40, 65%, 94%, 0.6),
+      inset -2px -3px 5px hsla(40, 55%, 20%, 0.5),
+      0 1px 0 hsla(150, 45%, 3%, 0.55),
+      0 6px 14px -6px hsla(150, 45%, 3%, 0.75);
+  }
+
+  :global(:root:not(.theme-dark)) .emblem {
+    box-shadow:
+      inset 1px 1px 1px hsla(40, 65%, 96%, 0.7),
+      inset -2px -3px 5px hsla(40, 50%, 26%, 0.4),
+      0 1px 0 hsla(0, 0%, 100%, 0.8),
+      0 6px 14px -6px hsla(43, 30%, 35%, 0.35);
+  }
+
+  /* Machined step, not a pattern. A knurled ring at this size reads as a
+     dotted outline and competes with the phosphor field behind it. */
+  .emblem__knurl {
+    position: absolute;
+    inset: 4.5%;
+    border-radius: 50%;
+    border: 1px solid hsla(40, 55%, 22%, 0.32);
+    box-shadow: inset 0 1px 0 hsla(40, 70%, 96%, 0.55);
+  }
+
+  .emblem__mark {
+    position: relative;
+    font-family: var(--font-brand);
+    font-weight: 700;
+    font-size: clamp(1.4rem, 44%, 2.2rem);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    color: #241a05;
+    /* Struck into the metal, not printed on it. */
+    text-shadow:
+      0 1px 0 hsla(40, 70%, 92%, 0.72),
+      0 -1px 1px hsla(40, 60%, 18%, 0.45);
+    transform: translateY(-1px);
+  }
+
+  .legend__row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-family: var(--font-mono);
+    font-size: clamp(0.625rem, 2.4vw, 0.7rem);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    line-height: 1.3;
+  }
+
+  .legend__key {
+    color: var(--gold-ink);
+    font-weight: 600;
+    flex: none;
+  }
+
+  .legend__sep {
+    width: 1px;
+    align-self: stretch;
+    background: hsla(43, 45%, 60%, 0.4);
+  }
+
+  .legend__value {
+    color: var(--gray-400);
+    text-shadow: var(--engrave);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .legend__ticks {
+    opacity: 0.8;
+  }
+
+  /* Scale the plate up and give it a square face where there is room. */
+  @media (min-width: 50em) {
+    .plate {
+      aspect-ratio: 1 / 1;
+      --plate-radius: 1.75rem;
+      --plate-inset: 0.9rem;
+    }
+
+    .scale {
+      left: 2.25rem;
+    }
+
+    .legend {
+      inset: auto 2.25rem 2rem;
+    }
+
+    .fastener {
+      left: calc(2.125rem + var(--fx) * (100% - 4.25rem));
+      top: calc(2.125rem + var(--fy) * (100% - 4.25rem));
+    }
+  }
+
+  /* With no beam to write with, the field still reads as static dither. */
+  @media (prefers-reduced-motion: reduce) {
+    .clearcoat::after {
+      transition: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .plate {
+      border: 1px solid CanvasText;
+    }
+    .field,
+    .clearcoat {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  type Ctx = CanvasRenderingContext2D;
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  /** Integer hash → [0,1). Deterministic, so the dither is stable per size. */
+  const hash = (x: number, y: number): number => {
+    let h = (x * 374761393 + y * 668265263) | 0;
+    h = (h ^ (h >>> 13)) * 1274126177;
+    return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+  };
+
+  const smooth = (t: number) => t * t * (3 - 2 * t);
+
+  /** Value noise: gives the dither organic clumping instead of plain static. */
+  const noise = (x: number, y: number): number => {
+    const xi = Math.floor(x);
+    const yi = Math.floor(y);
+    const u = smooth(x - xi);
+    const v = smooth(y - yi);
+    const a = hash(xi, yi);
+    const b = hash(xi + 1, yi);
+    const c = hash(xi, yi + 1);
+    const d = hash(xi + 1, yi + 1);
+    return a * (1 - u) * (1 - v) + b * u * (1 - v) + c * (1 - u) * v + d * u * v;
+  };
+
+  /* Ordered dither matrix — multiplied with the noise so the field keeps a
+     fine, screen-like grain at every density. */
+  const BAYER = [
+    0, 32, 8, 40, 2, 34, 10, 42, 48, 16, 56, 24, 50, 18, 58, 26, 12, 44, 4, 36, 14, 46, 6, 38,
+    60, 28, 52, 20, 62, 30, 54, 22, 3, 35, 11, 43, 1, 33, 9, 41, 51, 19, 59, 27, 49, 17, 57, 25,
+    15, 47, 7, 39, 13, 45, 5, 37, 63, 31, 55, 23, 61, 29, 53, 21,
+  ];
+
+  const GAP = 7; // dot pitch in CSS px
+  const TAU = 0.85; // afterglow decay constant, seconds
+  const BEAM_R = 76; // beam radius in CSS px
+  const WARMUP_MS = 1500;
+  const REFRESH_EVERY_MS = 15000;
+  const REFRESH_MS = 2800;
+
+  class Plate {
+    plate: HTMLElement;
+    canvas: HTMLCanvasElement;
+    ctx: Ctx;
+    specular: HTMLElement | null;
+
+    /** Pre-rendered base dither, blitted each frame. */
+    base: HTMLCanvasElement;
+    /** Quarter-scale buffer used to fake phosphor bloom cheaply. */
+    bloom: HTMLCanvasElement;
+
+    w = 0;
+    h = 0;
+    dpr = 1;
+
+    xs = new Float32Array(0);
+    ys = new Float32Array(0);
+    rs = new Float32Array(0);
+    as = new Float32Array(0);
+    charge = new Float32Array(0);
+
+    dotRGB = "42,63,49";
+    chargeRGB = "27,77,49";
+    dotStrength = 1;
+    dotSize = 1;
+
+    px = -1e4;
+    py = -1e4;
+    lastPx = -1e4;
+    lastPy = -1e4;
+    pointerInside = false;
+    pointerHasMoved = false;
+
+    raf = 0;
+    last = 0;
+    visible = false;
+    warmupStart = 0;
+    warmupDone = false;
+    refreshAt = 0;
+    refreshStart = 0;
+
+    constructor(plate: HTMLElement) {
+      this.plate = plate;
+      this.canvas = plate.querySelector<HTMLCanvasElement>("[data-field]")!;
+      this.ctx = this.canvas.getContext("2d")!;
+      this.specular = plate.querySelector<HTMLElement>("[data-specular]");
+      this.base = document.createElement("canvas");
+      this.bloom = document.createElement("canvas");
+
+      this.readTheme();
+      this.resize();
+      this.watch();
+      this.bindPointer();
+    }
+
+    /* --- theme ---------------------------------------------------------- */
+
+    /** Palette is read from the canvas: the --dot-* properties are declared
+     *  on .field, and custom properties only inherit downward. */
+    readTheme() {
+      const cs = getComputedStyle(this.canvas);
+      this.dotRGB = cs.getPropertyValue("--dot-rgb").trim() || this.dotRGB;
+      this.chargeRGB = cs.getPropertyValue("--dot-charge-rgb").trim() || this.chargeRGB;
+      this.dotStrength = Number(cs.getPropertyValue("--dot-strength")) || 1;
+      this.dotSize = Number(cs.getPropertyValue("--dot-size")) || 1;
+    }
+
+    /* --- sizing --------------------------------------------------------- */
+
+    resize() {
+      const rect = this.plate.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+
+      this.dpr = Math.min(window.devicePixelRatio || 1, 2);
+      this.w = rect.width;
+      this.h = rect.height;
+
+      for (const c of [this.canvas, this.base, this.bloom]) {
+        c.width = Math.round(this.w * this.dpr);
+        c.height = Math.round(this.h * this.dpr);
+      }
+      this.bloom.width = Math.max(1, Math.round(this.w / 3));
+      this.bloom.height = Math.max(1, Math.round(this.h / 3));
+
+      this.layoutDots();
+      this.paintBase();
+      this.paint();
+    }
+
+    /** Place dots on an even grid and derive each dot's dithered weight. */
+    layoutDots() {
+      const cols = Math.max(1, Math.round(this.w / GAP));
+      const rows = Math.max(1, Math.round(this.h / GAP));
+      const n = cols * rows;
+
+      this.xs = new Float32Array(n);
+      this.ys = new Float32Array(n);
+      this.rs = new Float32Array(n);
+      this.as = new Float32Array(n);
+      this.charge = new Float32Array(n);
+
+      const stepX = this.w / cols;
+      const stepY = this.h / rows;
+      const cx = this.w / 2;
+      const cy = this.h / 2;
+      const maxD = Math.hypot(cx, cy);
+
+      for (let j = 0; j < rows; j++) {
+        for (let i = 0; i < cols; i++) {
+          const k = j * cols + i;
+          const x = (i + 0.5) * stepX;
+          const y = (j + 0.5) * stepY;
+          this.xs[k] = x;
+          this.ys[k] = y;
+
+          const organic = noise(i * 0.13, j * 0.13) * 0.72;
+          const grain = (BAYER[(j % 8) * 8 + (i % 8)] / 64) * 0.4;
+          // Field thins toward the edges so the plate's rim stays clean.
+          const d = Math.hypot(x - cx, y - cy) / maxD;
+          const edge = 1 - smooth(Math.min(1, Math.max(0, (d - 0.3) / 0.6)));
+          const v = Math.min(1, (organic + grain) * (0.28 + 0.72 * edge));
+
+          // Barely-there by default: the field is meant to be discovered when
+          // the beam writes into it, not announced as a screen-door pattern.
+          this.rs[k] = (0.26 + v * 0.62) * this.dpr * this.dotSize;
+          this.as[k] = (0.022 + v * 0.13) * this.dotStrength;
+        }
+      }
+    }
+
+    /** Render the base dither once; per-frame we only blit it. */
+    paintBase() {
+      const b = this.base.getContext("2d")!;
+      b.setTransform(1, 0, 0, 1, 0, 0);
+      b.clearRect(0, 0, this.base.width, this.base.height);
+      b.globalCompositeOperation = "source-over";
+      b.fillStyle = "rgb(" + this.dotRGB + ")";
+
+      // Group by quantised alpha to cut fillStyle churn.
+      const buckets = new Map<number, number[]>();
+      for (let k = 0; k < this.rs.length; k++) {
+        const q = Math.round(this.as[k] * 12) / 12;
+        (buckets.get(q) ?? buckets.set(q, []).get(q)!).push(k);
+      }
+      for (const [alpha, idx] of buckets) {
+        b.globalAlpha = alpha;
+        for (const k of idx) {
+          b.beginPath();
+          b.arc(this.xs[k], this.ys[k], this.rs[k], 0, Math.PI * 2);
+          b.fill();
+        }
+      }
+      b.globalAlpha = 1;
+    }
+
+    /* --- the beam -------------------------------------------------------- */
+
+    /** Write charge into every dot a beam segment passes near. */
+    chargeAt(x0: number, y0: number, x1: number, y1: number, strength: number) {
+      const steps = Math.max(1, Math.ceil(Math.hypot(x1 - x0, y1 - y0) / (BEAM_R * 0.4)));
+      for (let s = 0; s <= steps; s++) {
+        const t = s / steps;
+        const x = x0 + (x1 - x0) * t;
+        const y = y0 + (y1 - y0) * t;
+        this.stamp(x, y, strength);
+      }
+    }
+
+    stamp(x: number, y: number, strength: number) {
+      const n = this.xs.length;
+      const r = BEAM_R;
+      const r2 = r * r;
+      for (let k = 0; k < n; k++) {
+        const dx = this.xs[k] - x;
+        const dy = this.ys[k] - y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 >= r2) continue;
+        // Raised falloff keeps a concentrated core, so the write reads as a
+        // beam rather than a floodlight.
+        const falloff = 1 - Math.sqrt(d2) / r;
+        const v = strength * falloff * falloff * falloff * smooth(falloff);
+        if (v > this.charge[k]) this.charge[k] = Math.min(1, v);
+      }
+    }
+
+    /** A vertical band crossing the plate — the tube striking / refreshing. */
+    sweep(progress: number, strength: number) {
+      const x = -0.2 * this.w + progress * 1.4 * this.w;
+      const n = this.xs.length;
+      const r = BEAM_R * 1.6;
+      for (let k = 0; k < n; k++) {
+        const dx = Math.abs(this.xs[k] - x);
+        if (dx >= r) continue;
+        const v = strength * smooth(1 - dx / r) * (0.55 + 0.45 * noise(this.xs[k] * 0.02, this.ys[k] * 0.02));
+        if (v > this.charge[k]) this.charge[k] = Math.min(1, v);
+      }
+    }
+
+    /* --- pointer --------------------------------------------------------- */
+
+    bindPointer() {
+      const toLocal = (e: PointerEvent) => {
+        const r = this.plate.getBoundingClientRect();
+        return [e.clientX - r.left, e.clientY - r.top] as const;
+      };
+
+      this.plate.addEventListener("pointermove", (e) => {
+        const [x, y] = toLocal(e);
+        if (e.pointerType !== "mouse" && e.buttons === 0 && e.pointerType === "touch") {
+          // Touch only writes while the finger is down.
+          return;
+        }
+        this.px = x;
+        this.py = y;
+        this.pointerInside = true;
+        this.pointerHasMoved = true;
+
+        if (this.specular) {
+          const r = this.plate.getBoundingClientRect();
+          this.specular.style.setProperty("--mx", `${((x / r.width) * 100).toFixed(1)}%`);
+          this.specular.style.setProperty("--my", `${((y / r.height) * 100).toFixed(1)}%`);
+        }
+        this.wake();
+      });
+
+      this.plate.addEventListener("pointerleave", () => {
+        this.pointerInside = false;
+      });
+
+      // Tapping a touch device still needs to say hello.
+      this.plate.addEventListener(
+        "touchstart",
+        (e) => {
+          const t = e.touches[0];
+          if (!t) return;
+          const r = this.plate.getBoundingClientRect();
+          this.px = t.clientX - r.left;
+          this.py = t.clientY - r.top;
+          this.pointerInside = true;
+          this.pointerHasMoved = true;
+          this.wake();
+        },
+        { passive: true },
+      );
+    }
+
+    /* --- loop ------------------------------------------------------------ */
+
+    watch() {
+      new IntersectionObserver(
+        ([entry]) => {
+          this.visible = entry.isIntersecting;
+          if (this.visible) {
+            if (!this.warmupDone) this.warmupStart = performance.now();
+            this.wake();
+          } else {
+            this.stop();
+          }
+        },
+        { threshold: 0.05 },
+      ).observe(this.plate);
+
+      new ResizeObserver(() => this.resize()).observe(this.plate);
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) this.stop();
+        else if (this.visible) this.wake();
+      });
+
+      // Re-read palette and rebuild the base when the theme flips — the dot
+      // alphas are theme-scaled, so the field itself must be re-laid-out.
+      new MutationObserver(() => {
+        this.readTheme();
+        this.layoutDots();
+        this.paintBase();
+        this.wake();
+      }).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
+    }
+
+    wake() {
+      if (reduceMotion.matches || !this.visible || document.hidden) {
+        this.paint();
+        return;
+      }
+      if (this.raf) return;
+      this.last = performance.now();
+      this.raf = requestAnimationFrame(this.tick);
+    }
+
+    stop() {
+      if (this.raf) cancelAnimationFrame(this.raf);
+      this.raf = 0;
+    }
+
+    tick = (now: number) => {
+      this.raf = 0;
+      const dt = Math.min(0.05, (now - this.last) / 1000);
+      this.last = now;
+
+      let energy = 0;
+
+      // Warm-up: one diagonal pass when the plate first appears.
+      if (!this.warmupDone && this.warmupStart) {
+        const p = (now - this.warmupStart) / WARMUP_MS;
+        if (p >= 1) {
+          this.warmupDone = true;
+          this.refreshAt = now + REFRESH_EVERY_MS;
+        } else {
+          this.sweep(p, 0.62);
+        }
+        energy = 1;
+      }
+
+      // Refresh band: keeps the surface from reading as a static image.
+      if (this.warmupDone) {
+        if (this.refreshAt && now >= this.refreshAt) {
+          this.refreshStart = now;
+          this.refreshAt = 0;
+        }
+        if (this.refreshStart) {
+          const p = (now - this.refreshStart) / REFRESH_MS;
+          if (p >= 1) {
+            this.refreshStart = 0;
+            this.refreshAt = now + REFRESH_EVERY_MS;
+          } else {
+            this.sweep(p, 0.2);
+            energy = 1;
+          }
+        }
+      }
+
+      // The pointer writes; the field holds what it wrote.
+      if (this.pointerInside && this.pointerHasMoved) {
+        if (this.lastPx < -1e3) {
+          this.chargeAt(this.px, this.py, this.px, this.py, 0.95);
+        } else {
+          this.chargeAt(this.lastPx, this.lastPy, this.px, this.py, 0.95);
+        }
+        this.lastPx = this.px;
+        this.lastPy = this.py;
+      }
+
+      // Exponential afterglow — this is the whole trick.
+      const decay = Math.exp(-dt / TAU);
+      for (let k = 0; k < this.charge.length; k++) {
+        if (this.charge[k] > 0.004) {
+          this.charge[k] *= decay;
+          energy = 1;
+        } else if (this.charge[k] !== 0) {
+          this.charge[k] = 0;
+        }
+      }
+
+      this.paint();
+
+      if (energy) {
+        this.raf = requestAnimationFrame(this.tick);
+      }
+    };
+
+    /* --- paint ----------------------------------------------------------- */
+
+    paint() {
+      const ctx = this.ctx;
+      const dpr = this.dpr;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.globalCompositeOperation = "source-over";
+      ctx.drawImage(this.base, 0, 0, this.w, this.h);
+
+      // Bloom pass: quarter scale, upscaled by the compositor into a soft halo.
+      const bc = this.bloom.getContext("2d")!;
+      bc.setTransform(1, 0, 0, 1, 0, 0);
+      bc.clearRect(0, 0, this.bloom.width, this.bloom.height);
+
+      ctx.globalCompositeOperation = "lighter";
+      ctx.fillStyle = "rgb(" + this.chargeRGB + ")";
+      bc.fillStyle = "rgb(" + this.chargeRGB + ")";
+
+      let painted = false;
+      for (let k = 0; k < this.charge.length; k++) {
+        const c = this.charge[k];
+        if (c <= 0.004) continue;
+        const x = this.xs[k];
+        const y = this.ys[k];
+
+        // Growth is kept small so lit dots stay separated on the 7px pitch.
+        // If they touch, the field reads as a soft blob and the dither — the
+        // point of the whole surface — disappears.
+        ctx.globalAlpha = Math.min(1, this.as[k] * 1.6 + c * 0.8);
+        ctx.beginPath();
+        ctx.arc(x, y, this.rs[k] + c * 1.35 * dpr, 0, Math.PI * 2);
+        ctx.fill();
+
+        bc.globalAlpha = c * 0.4;
+        bc.beginPath();
+        bc.arc(x / 3, y / 3, 0.6 + c * 1.5, 0, Math.PI * 2);
+        bc.fill();
+        painted = true;
+      }
+
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = "source-over";
+
+      if (painted) {
+        ctx.globalCompositeOperation = "lighter";
+        // Restrained bloom: enough to read as phosphor, not enough to erase
+        // the dot structure underneath it.
+        ctx.globalAlpha = 0.45;
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(this.bloom, 0, 0, this.w, this.h);
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = "source-over";
+      }
+    }
+  }
+
+  const boot = () => {
+    for (const el of document.querySelectorAll<HTMLElement>("[data-plate]")) {
+      if (!el.dataset.ready) {
+        el.dataset.ready = "1";
+        new Plate(el);
+      }
+    }
+  };
+
+  boot();
+  document.addEventListener("astro:page-load", boot);
+</script>

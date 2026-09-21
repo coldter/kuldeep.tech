@@ -1,29 +1,73 @@
+/* ==========================================================================
+   LACQUER & PHOSPHOR — design tokens
+   ==========================================================================
+   Two faces of one instrument:
+     light = bone panel, powered off  (matte plastic, engraving, daylight)
+     dark  = racing-green lacquer, powered on (clearcoat, phosphor afterglow)
+
+   The neutral ramp is a deliberate DUOTONE, not a gray scale: it runs from
+   green ink (~hue 140) at the dark end to warm bone (~hue 43) at the light
+   end. That is the Sennheiser panel read — green legend printed on cream —
+   and it is why no blue-gray survives anywhere in the system.
+
+   Scale is semantic, never literal: gray-0 is always the strongest ink and
+   gray-999 always the page ground, in BOTH themes.
+   ========================================================================== */
+
 /* Global variables */
 :root {
-  /* Colors */
-  --gray-0: #090b11;
-  --gray-50: #141925;
-  --gray-100: #283044;
-  --gray-200: #3d4663;
-  --gray-300: #505d84;
-  --gray-400: #6474a2;
-  --gray-500: #8490b5;
-  --gray-600: #a3acc8;
-  --gray-700: #c3cadb;
-  --gray-800: #e3e6ee;
-  --gray-900: #f3f4f7;
-  --gray-999-basis: 0, 0%, 100%;
-  --gray-999_40: hsla(var(--gray-999-basis), 0.4);
-  --gray-999: #ffffff;
+  /* --- Neutral ramp: green ink  ->  warm bone ---------------------------- */
+  --gray-0: #121f17; /* engraved green — headings */
+  --gray-50: #1d2e23;
+  --gray-100: #2a3f31;
+  --gray-200: #3d5344; /* body copy */
+  --gray-300: #4e6553;
+  /* 4.66:1 on --gray-999. Darker than it looks like it needs to be, but
+     meta copy and body text both land here and both must clear AA. */
+  --gray-400: #57695c;
+  --gray-500: #6f8374;
+  --gray-600: #9aaa9d;
+  --gray-700: #b9c4b9;
+  --gray-800: #cfc8b4; /* hairline borders */
+  --gray-900: #e1dbcc;
+  --gray-999-basis: 43, 30%, 88%; /* hsla() pair for --gray-999 */
+  --gray-999_40: hsla(var(--gray-999-basis), 0.55);
+  --gray-999: #eae5d8; /* page ground — bone */
 
-  --accent-light: #00e676;
-  --accent-regular: #00a152;
-  --accent-dark: #006b36;
-  --accent-overlay: hsla(151, 100%, 25%, 0.15);
-  --accent-subtle-overlay: hsla(151, 100%, 25%, 0.05);
-  --accent-text-over: var(--gray-999); /* White text on dark green buttons */
+  /* --- Lacquer: the racing green ----------------------------------------- */
+  --lacquer-deep: #16301f;
+  --lacquer: #1b4d31;
+  --lacquer-lit: #27643f;
+  --lacquer-rim: #0d2317;
 
-  /* Role tokens (semantic layer — components use these, never primitives directly) */
+  /* --- Bone / cream panel surfaces --------------------------------------- */
+  --bone: #e6e1d4;
+  --bone-dim: #d5cfbd;
+  --bone-hi: #f4f0e6;
+  /* Raised surface for chips and small keys. Always reads as sitting ON the
+     page ground in both themes, never as a hole in it. */
+  --surface-raised: #f4f0e6;
+  --surface-raised-border: #c9c2ad;
+
+  /* --- Phosphor: the screen ---------------------------------------------- */
+  --phosphor: #4e8f5a;
+  --phosphor-bright: #6fb26d;
+
+  /* --- Gold: hardware ONLY (crest, ticks, fasteners) ---------------------
+     Never used for body copy at size. --gold-ink is the AA-safe variant. */
+  --gold: #b08d3f;
+  --gold-hi: #d9c68a;
+  --gold-lo: #7a5d1f;
+  --gold-ink: #7a5d1f;
+
+  --accent-light: #2b6b43;
+  --accent-regular: #1b4d31;
+  --accent-dark: #123a24;
+  --accent-overlay: hsla(146, 48%, 21%, 0.18);
+  --accent-subtle-overlay: hsla(146, 48%, 21%, 0.07);
+  --accent-text-over: var(--bone-hi); /* cream text on lacquer buttons */
+
+  /* Role tokens (semantic layer — components use these, never primitives) */
   --color-text-body: var(--gray-200);
   --color-accent-text: var(--accent-dark);
   --color-accent-solid: var(--accent-dark);
@@ -36,12 +80,10 @@
   --gradient-stop-2: var(--accent-regular);
   --gradient-stop-3: var(--accent-dark);
 
-  /* Aurora stops. Dark mirrors the accent primitives; light uses the soft
-     pastel set (deliberate — vivid accent at 0.5 opacity is too loud in
-     light mode). Keep BaseLayout props and Aurora defaults in sync. */
-  --aurora-stop-1: #A7F3D0;
-  --aurora-stop-2: #34D399;
-  --aurora-stop-3: #10B981;
+  /* Aurora stops — retained for the existing backdrop component. */
+  --aurora-stop-1: #7fae86;
+  --aurora-stop-2: #2b6b43;
+  --aurora-stop-3: #16301f;
   --gradient-subtle: linear-gradient(150deg, var(--gray-900) 19%, var(--gray-999) 150%);
   --gradient-accent: linear-gradient(
     150deg,
@@ -50,19 +92,44 @@
     var(--gradient-stop-3)
   );
   --gradient-accent-secondary: linear-gradient(
-    150deg in oklab,
-    var(--accent-dark),
-    #004d27,
-    #00331a
+    155deg in oklab,
+    var(--lacquer-lit),
+    var(--lacquer),
+    var(--lacquer-deep)
   );
   --gradient-stroke: linear-gradient(180deg, var(--gray-900), var(--gray-700));
 
-  /* Shadows — tinted with palette hue for cohesion */
-  --shadow-sm: 0px 4px 8px hsla(225, 31%, 12%, 0.04), 0px 1px 2px hsla(225, 31%, 12%, 0.05);
+  /* --- Clearcoat: the automotive specular band ---------------------------- */
+  --clearcoat: linear-gradient(
+    168deg,
+    transparent 8%,
+    hsla(120, 30%, 88%, 0.1) 34%,
+    hsla(120, 26%, 74%, 0.04) 44%,
+    transparent 62%
+  );
+
+  /* --- Material edges -----------------------------------------------------
+     One light source, top-left, everywhere on the site. --engrave is the
+     highlight that catches the cut edge of recessed type. */
+  --bevel-raised: inset 0 1px 0 hsla(0, 0%, 100%, 0.65), inset 0 -1px 0 hsla(90, 20%, 30%, 0.14);
+  --engrave: 0 1px 0 hsla(0, 0%, 100%, 0.72);
+
+  /* Shadows — tinted to the green family, never neutral black */
+  --shadow-sm: 0px 2px 4px hsla(140, 28%, 12%, 0.07), 0px 1px 2px hsla(140, 28%, 12%, 0.05);
   --shadow-md:
-    0px 18px 30px -10px hsla(225, 31%, 12%, 0.06), 0px 6px 12px -4px hsla(225, 31%, 12%, 0.05);
+    0px 18px 30px -12px hsla(140, 28%, 12%, 0.16), 0px 6px 12px -4px hsla(140, 28%, 12%, 0.09);
   --shadow-lg:
-    0px 40px 60px -20px hsla(225, 31%, 12%, 0.08), 0px 16px 24px -8px hsla(225, 31%, 12%, 0.08);
+    0px 40px 60px -22px hsla(140, 28%, 12%, 0.2), 0px 16px 24px -8px hsla(140, 28%, 12%, 0.12);
+
+  /* Texture */
+  --tick: hsla(146, 30%, 25%, 0.35);
+  --scanline: hsla(146, 35%, 20%, 0.055);
+  --grain-opacity: 0.055;
+  --grain-blend: multiply;
+  /* Ambient wash behind large sections. Green reads as dirt over bone, so
+     the light theme spills warm gold instead — sun on the panel. */
+  --wash: #8a6f31;
+  --wash-opacity: 0.07;
 
   /* Text Sizes */
   --text-sm: 0.875rem;
@@ -74,42 +141,64 @@
   --text-3xl: 2.625rem;
   --text-4xl: 3.5rem;
   --text-5xl: 4.5rem;
+  --text-display: clamp(2.9rem, 7.6vw, 5.9rem); /* masthead only */
 
   /* Fonts */
   --font-system:
     system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
     "Open Sans", "Helvetica Neue", sans-serif;
   --font-body: "Public Sans Variable", var(--font-system);
-  --font-brand: "Rubik Variable", var(--font-system);
-  --font-mono:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
-    monospace;
+  --font-brand: "Space Grotesk Variable", var(--font-system);
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   /* Transitions */
   --theme-transition: 0.2s ease-in-out;
 }
 
 :root.theme-dark {
-  --gray-0: #ffffff;
-  --gray-50: #f3f4f7;
-  --gray-100: #e3e6ee;
-  --gray-200: #c3cadb;
-  --gray-300: #a3acc8;
-  --gray-400: #8490b5;
-  --gray-500: #6474a2;
-  --gray-600: #505d84;
-  --gray-700: #3d4663;
-  --gray-800: #283044;
-  --gray-900: #141925;
-  --gray-999-basis: 225, 31%, 5%;
-  --gray-999: #090b11;
+  /* Neutral ramp: near-black green  ->  bone */
+  --gray-0: #f2efe4; /* bone — the brightest ink */
+  --gray-50: #e6e1d4;
+  --gray-100: #dce4d6;
+  --gray-200: #c6d2c4; /* body copy */
+  --gray-300: #a9bcad;
+  --gray-400: #8fa394; /* meta copy */
+  --gray-500: #6a8271;
+  --gray-600: #4d6a57;
+  --gray-700: #2c4a36;
+  --gray-800: #1e3a29; /* hairline borders */
+  --gray-900: #0e2419;
+  --gray-999-basis: 146, 37%, 4%;
+  --gray-999_40: hsla(var(--gray-999-basis), 0.5);
+  --gray-999: #060d09; /* page ground — near-black green */
 
-  --accent-light: #004d27;
-  --accent-regular: #00e676;
-  --accent-dark: #69ffb4;
-  --accent-overlay: hsla(151, 100%, 50%, 0.2);
-  --accent-subtle-overlay: hsla(151, 100%, 50%, 0.1);
-  --accent-text-over: var(--gray-999); /* Dark text on neon green buttons */
+  /* Lacquer reads deeper and glossier with the machine powered on */
+  --lacquer-deep: #08190f;
+  --lacquer: #123c25;
+  --lacquer-lit: #1d5533;
+  --lacquer-rim: #04100a;
+
+  --bone: #e6e1d4;
+  --bone-dim: #b9b3a3;
+  --bone-hi: #f4f0e6;
+  --surface-raised: #0e2419;
+  --surface-raised-border: #2c4a36;
+
+  /* Phosphor is genuinely luminous in the dark */
+  --phosphor: #8ce07a;
+  --phosphor-bright: #b6f2a4;
+
+  --gold: #c9a961;
+  --gold-hi: #e8d9a4;
+  --gold-lo: #8a6f31;
+  --gold-ink: #c9a961;
+
+  --accent-light: #2b6b43;
+  --accent-regular: #8ce07a;
+  --accent-dark: #b6f2a4;
+  --accent-overlay: hsla(110, 60%, 55%, 0.2);
+  --accent-subtle-overlay: hsla(110, 60%, 55%, 0.09);
+  --accent-text-over: var(--gray-999); /* dark text on phosphor buttons */
 
   /* Role tokens (mirror :root; values resolve against this theme's primitives) */
   --color-text-body: var(--gray-200);
@@ -119,21 +208,45 @@
 
   --link-color: var(--color-accent-text);
 
-  --gradient-stop-1: #00331a;
+  --gradient-stop-1: #1d5533;
 
-  /* Aurora-compatible stops (match src/components/Aurora.astro defaults) */
-  --aurora-stop-1: #00a152;
-  --aurora-stop-2: #00e676;
-  --aurora-stop-3: #004d27;
+  --aurora-stop-1: #2b6b43;
+  --aurora-stop-2: #123c25;
+  --aurora-stop-3: #08190f;
   --gradient-subtle: linear-gradient(150deg, var(--gray-900) 19%, var(--gray-999) 81%);
-  --gradient-accent-secondary: linear-gradient(150deg in oklab, #69ffb4, #00e676, #00a152);
+  /* Powered on, the primary action is the phosphor itself: a luminous button
+     with dark ink. 14.1:1 at the bright end, 5.6:1 at the dark end. */
+  --gradient-accent-secondary: linear-gradient(
+    155deg in oklab,
+    var(--phosphor-bright),
+    var(--phosphor),
+    #4fa04a
+  );
   --gradient-stroke: linear-gradient(180deg, var(--gray-600), var(--gray-800));
 
-  --shadow-sm: 0px 4px 8px hsla(225, 31%, 3%, 0.45), 0px 1px 2px hsla(225, 31%, 3%, 0.5);
+  --clearcoat: linear-gradient(
+    168deg,
+    transparent 6%,
+    hsla(110, 45%, 82%, 0.14) 32%,
+    hsla(110, 40%, 70%, 0.05) 44%,
+    transparent 60%
+  );
+
+  --bevel-raised: inset 0 1px 0 hsla(110, 40%, 80%, 0.14), inset 0 -1px 0 hsla(150, 45%, 3%, 0.6);
+  --engrave: 0 -1px 0 hsla(150, 50%, 2%, 0.85);
+
+  --shadow-sm: 0px 2px 4px hsla(150, 45%, 2%, 0.5), 0px 1px 2px hsla(150, 45%, 2%, 0.45);
   --shadow-md:
-    0px 18px 30px -10px hsla(225, 31%, 3%, 0.55), 0px 6px 12px -4px hsla(225, 31%, 3%, 0.45);
+    0px 18px 30px -12px hsla(150, 45%, 1%, 0.7), 0px 6px 12px -4px hsla(150, 45%, 2%, 0.55);
   --shadow-lg:
-    0px 40px 60px -20px hsla(225, 31%, 3%, 0.6), 0px 16px 24px -8px hsla(225, 31%, 3%, 0.5);
+    0px 40px 60px -22px hsla(150, 45%, 1%, 0.8), 0px 16px 24px -8px hsla(150, 45%, 2%, 0.6);
+
+  --tick: hsla(110, 25%, 62%, 0.3);
+  --scanline: hsla(110, 60%, 60%, 0.028);
+  --grain-opacity: 0.07;
+  --grain-blend: overlay;
+  --wash: #1d5533;
+  --wash-opacity: 0.16;
 }
 
 /* Scrollbar Styles */
@@ -194,6 +307,25 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   line-height: 1.5;
+}
+
+/* Site-wide substrate: a single fixed grain plate over every surface.
+   Breaks the digital flatness without costing a layout box. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: url("/assets/backgrounds/noise.png") top center / 220px repeat;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: var(--grain-blend);
+}
+
+@media (forced-colors: active) {
+  body::before {
+    display: none;
+  }
 }
 
 *,
@@ -278,6 +410,25 @@ time,
 }
 
 /* Utilities */
+
+/* --- Material kit -------------------------------------------------------
+   The vocabulary every section shares. Keep these small and composable. */
+
+/* Recessed legend: type that looks cut into the panel, not printed on it. */
+.engraved {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-weight: 500;
+  color: var(--gray-400);
+  text-shadow: var(--engrave);
+}
+
+/* Etched measuring scale. Pure CSS, no image, scales to any width. */
+.tick-rule {
+  height: 7px;
+  background-image: repeating-linear-gradient(90deg, var(--tick) 0 1px, transparent 1px 9px);
+}
 
 .sr-only {
   position: absolute;
