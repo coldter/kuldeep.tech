@@ -10,11 +10,13 @@
  *   ours    an instrument at rest. Barely lit (floor 0.06), one phosphor hue
  *           in 10 quantised steps, 30px cells, masked to the masthead.
  *
- * The pointer behaviour is the part worth keeping: each pointer sample becomes
- * a "wake" point that throws an expanding excitation glow AND an expanding
- * front, measured in cells rather than pixels. What we add is persistence —
- * cells hold what they were given and decay, so the field is phosphor rather
- * than water.
+ * Interaction is CLICK-ONLY. A press drops a stone in the pond: one wake point
+ * that throws an expanding excitation glow and an expanding front, measured in
+ * cells rather than pixels, over cells that then hold and decay — phosphor,
+ * not water. Pointer movement does nothing at all. Hover-driven wake was
+ * removed deliberately: a field that lights up wherever the cursor happens to
+ * rest competes with the words it is behind, and no amount of damping made
+ * that worth it. One deliberate gesture reads better than constant chatter.
  *
  * Deliberately NOT wired to the soundtrack. The reference advertises audio
  * reactivity that does not exist (`live.bass = 0.35`, constants); building it
@@ -23,8 +25,8 @@
  *
  * Cost control: device-pixel aligned cells, the noise field is refreshed every
  * fifth frame, and only cells whose brightness bucket actually changed are
- * repainted. At rest that means a handful of fillRects per frame, not a
- * full-canvas redraw.
+ * repainted. With no pointer tracking, a resting page does a handful of
+ * fillRects per frame at most — usually none.
  */
 
 interface Props {
@@ -32,10 +34,18 @@ interface Props {
   cell?: number;
   /** Gap between cells in CSS px. The dark seam that reads as a screen. */
   gap?: number;
+  /**
+   * CSS selector for the elements the field must stay out of the way of.
+   * Anything matched gets a soft, geometry-derived quiet zone: excitation is
+   * heavily damped there so the field can never become the background behind
+   * live text. Derived from their real rects, so it follows the content's
+   * silhouette (and its wrapping) instead of boxing it.
+   */
+  quiet?: string;
   class?: string;
 }
 
-const { cell = 30, gap = 1, class: className } = Astro.props;
+const { cell = 30, gap = 1, quiet, class: className } = Astro.props;
 ---
 
 <div
@@ -47,15 +57,16 @@ const { cell = 30, gap = 1, class: className } = Astro.props;
     "--pg-pitch": `${cell}px`,
     "--pg-gap": `${gap}px`,
   }}
+  data-quiet={quiet}
   aria-hidden="true"
 >
   <canvas data-pg-canvas></canvas>
 </div>
 
 <style>
+  /* Positioning is the consumer's job (a backdrop layer here, but the
+     component must not assume a hero). */
   .phosphor-grid {
-    position: absolute;
-    inset: 0;
     overflow: hidden;
     pointer-events: none;
     /* Ink colours. Light mode prints dark green on bone; dark mode excites
@@ -63,12 +74,20 @@ const { cell = 30, gap = 1, class: className } = Astro.props;
     --pg-ink: #1b4d31;
     --pg-ink-hot: #0b2116;
     --pg-strength: 0.72;
+    /* Fraction of EXCITATION that survives inside the quiet zone. Low enough
+       that the field can never become the background behind live text. */
+    --pg-quiet: 0.14;
+    /* Unitless percent of the grid's height sitting behind the navbar. The
+       stylesheet dims the surface over this band and the script damps pointer
+       excitation across it, so both stay in step from one number. */
+    --pg-nav-band: 13;
   }
 
   :global(.theme-dark) .phosphor-grid {
     --pg-ink: #8ce07a;
     --pg-ink-hot: #b6f2a4;
     --pg-strength: 1;
+    --pg-quiet: 0.26;
   }
 
   canvas {
@@ -144,27 +163,45 @@ const { cell = 30, gap = 1, class: className } = Astro.props;
     fieldEvery: 5,
 
     // Wake
-    wakeMax: 26,
-    wakeGap: 0.55,
+    wakeMax: 14,
     wakeLife: 1.6,
     wakeDelay: 0.045,
     /** Excitation glow grows this many cells per second. */
     spreadBase: 0.45,
     spreadRate: 1.7,
-    glowGain: 0.5,
+    /**
+     * Excitation gains. Tuned for a click that reads clearly without ever
+     * becoming the background: peak energy at the impact lands mid-range, so a
+     * ripple is legible on lacquer and harmless behind type.
+     */
+    glowGain: 0.22,
     /** Front expands this many cells per second. */
     frontSpeed: 7,
     frontWidth: 0.9,
-    frontGain: 1.0,
+    frontGain: 0.42,
     /** Afterglow decay constant, seconds. Ours; the reference has no hold. */
     holdTau: 1.15,
     /** Cells are clamped here before quantising, so hits can overdrive. */
     ceiling: 1.0,
     buckets: 10,
+    /** Excitation falls to this fraction at the very top of the surface. */
+    navQuiet: 0.18,
+    /** Falloff shape across the navbar band. Above 1 the damping holds on
+     *  longer, which matters because brightness is quantised into buckets —
+     *  a linear ramp barely moves the peak down a single step. */
+    navCurve: 1.6,
+    /** Half-width of the quiet zone's skirt, in cells. */
+    quietRadius: 2.5,
   };
 
   /** Alpha per brightness bucket. Bucket 0 is fully unlit. */
   const RAMP = [0, 0.055, 0.09, 0.14, 0.2, 0.28, 0.38, 0.5, 0.64, 0.84];
+
+  /** Clicks landing on one of these are the control's business, not the field's. */
+  const INTERACTIVE = "a, button, input, select, textarea, summary, label";
+
+  /** Idle frame gap, ms. ~8fps is plenty for a field this slow. */
+  const IDLE_INTERVAL_MS = 125;
 
   const parseColor = (value: string): [number, number, number] | null => {
     const hex = value.trim();
@@ -201,17 +238,19 @@ const { cell = 30, gap = 1, class: className } = Astro.props;
     bucket = new Uint8Array(0);
 
     fills: string[] = [];
-    dashes: string[] = [];
 
-    /** Wake points, oldest first. */
+    /** Wake points, oldest first; `ws` is each point's strength. */
     wx = new Float32Array(CFG.wakeMax);
     wy = new Float32Array(CFG.wakeMax);
     wt = new Float32Array(CFG.wakeMax);
+    ws = new Float32Array(CFG.wakeMax);
     wcount = 0;
 
     clock = 0;
     frame = 0;
     raf = 0;
+    /** Pending idle setTimeout, so `stop()` can cancel the parked loop too. */
+    idleTimer = 0;
     last = 0;
     visible = false;
     forceAll = true;
@@ -220,14 +259,23 @@ const { cell = 30, gap = 1, class: className } = Astro.props;
     tmpX = new Float32Array(CFG.wakeMax);
     tmpY = new Float32Array(CFG.wakeMax);
     tmpT = new Float32Array(CFG.wakeMax);
+    tmpS = new Float32Array(CFG.wakeMax);
     tmpN = 0;
 
-    lastCx = -1e5;
-    lastCy = -1e5;
-    lastCt = -1e5;
+    /** Height of the navbar band, in rows. Set from --pg-nav-band in resize. */
+    navBandRows = 0;
+    navBandPct = 13;
+
+    /** Selector for elements the field keeps clear of. */
+    quietSel = "";
+    /** Per-cell 0..1 attenuation, softened. 0 outside the quiet zone. */
+    quietGain = new Float32Array(0);
+    /** Surviving fraction of excitation inside the zone, from --pg-quiet. */
+    quietFloor = 0.2;
 
     constructor(root: HTMLElement) {
       this.root = root;
+      this.quietSel = root.dataset.quiet ?? "";
       this.canvas = root.querySelector<HTMLCanvasElement>("[data-pg-canvas]")!;
       this.ctx = this.canvas.getContext("2d", { alpha: true })!;
       this.readPalette();
@@ -245,17 +293,19 @@ const { cell = 30, gap = 1, class: className } = Astro.props;
       // Dark ink on bone carries far more contrast per unit alpha than
       // phosphor on near-black, so the light theme is dialled back.
       const strength = Number(cs.getPropertyValue("--pg-strength")) || 1;
+      const navBand = Number(cs.getPropertyValue("--pg-nav-band"));
+      this.navBandPct = Number.isFinite(navBand) && navBand > 0 ? navBand : 13;
+      const quiet = Number(cs.getPropertyValue("--pg-quiet"));
+      this.quietFloor = Number.isFinite(quiet) && quiet >= 0 ? quiet : 0.2;
       const n = CFG.buckets;
       this.fills = [];
-      this.dashes = [];
       for (let b = 0; b < n; b++) {
         const t = b / (n - 1);
         const r = Math.round(base[0] + (hot[0] - base[0]) * t);
         const g = Math.round(base[1] + (hot[1] - base[1]) * t);
         const bl = Math.round(base[2] + (hot[2] - base[2]) * t);
         const a = Math.min(1, RAMP[b] * strength);
-        this.fills.push(a === 0 ? "rgba(0,0,0,0)" : `rgba(${r},${g},${bl},${a})`);
-        this.dashes.push(`rgba(${r},${g},${bl},0)`);
+        this.fills.push(`rgba(${r},${g},${bl},${a})`);
       }
       this.forceAll = true;
     }
@@ -293,12 +343,68 @@ const { cell = 30, gap = 1, class: className } = Astro.props;
       this.energy = new Float32Array(n);
       this.field = new Float32Array(n);
       this.bucket = new Uint8Array(n);
+      this.navBandRows = (this.rows * this.navBandPct) / 100;
       this.wcount = 0;
       this.clock = 0;
       this.frame = 0;
       this.forceAll = true;
+      this.buildQuiet();
       this.computeField();
       this.paintAll();
+    }
+
+    /**
+     * Rasterise the quiet zone from the real geometry of the protected
+     * elements. Built from their bounding rects rather than a hand-tuned
+     * region, so it tracks wrapping, breakpoints and the chip row without
+     * anyone maintaining a magic rectangle.
+     *
+     * The falloff is an exact distance field, not a blur. Blurring a mask
+     * dilutes its core in proportion to how small the shape is, which left the
+     * 15px-tall kicker at barely half protection while the 89px headline was
+     * fine. A distance field is full strength everywhere inside the rect and
+     * falls off smoothly outside over `quietRadius` cells — so short lines get
+     * the same guarantee as tall ones, and the rounded skirt means no box edge
+     * ever becomes visible.
+     */
+    buildQuiet() {
+      const n = this.cols * this.rows;
+      this.quietGain = new Float32Array(n);
+      if (!this.quietSel) return;
+      const root = this.root.getBoundingClientRect();
+      const pitch = this.cellPx / this.dpr;
+      if (!pitch) return;
+
+      const R = CFG.quietRadius;
+      for (const el of document.querySelectorAll(this.quietSel)) {
+        const r = el.getBoundingClientRect();
+        if (!r.width || !r.height) continue;
+        // Rect in cell units, then padded by the skirt radius.
+        const x0 = (r.left - root.left) / pitch;
+        const x1 = (r.right - root.left) / pitch;
+        const y0 = (r.top - root.top) / pitch;
+        const y1 = (r.bottom - root.top) / pitch;
+        const i0 = Math.max(0, Math.floor(x0 - R));
+        const i1 = Math.min(this.cols - 1, Math.ceil(x1 + R));
+        const j0 = Math.max(0, Math.floor(y0 - R));
+        const j1 = Math.min(this.rows - 1, Math.ceil(y1 + R));
+
+        for (let j = j0; j <= j1; j++) {
+          const cy = j + 0.5;
+          const dy = cy < y0 ? y0 - cy : cy > y1 ? cy - y1 : 0;
+          const row = j * this.cols;
+          for (let i = i0; i <= i1; i++) {
+            const cx = i + 0.5;
+            const dx = cx < x0 ? x0 - cx : cx > x1 ? cx - x1 : 0;
+            const d = Math.hypot(dx, dy);
+            if (d >= R) continue;
+            const t = 1 - d / R;
+            const q = t * t * (3 - 2 * t); // smoothstep shoulder
+            const k = row + i;
+            if (q > this.quietGain[k]) this.quietGain[k] = q;
+          }
+        }
+      }
     }
 
     /* --- field ------------------------------------------------------------ */
@@ -323,47 +429,50 @@ const { cell = 30, gap = 1, class: className } = Astro.props;
     /* --- pointer ---------------------------------------------------------- */
 
     bindPointer() {
-      const onMove = (e: PointerEvent) => {
-        const rect = this.root.getBoundingClientRect();
-        this.stamp(e.clientX - rect.left, e.clientY - rect.top);
-      };
-      // Listen on the hero, not the canvas: the canvas is pointer-events:none
-      // so that links and text above it stay fully interactive.
-      const host = this.root.parentElement ?? this.root;
-      host.addEventListener("pointermove", onMove, { passive: true });
-      host.addEventListener("pointerdown", (e: PointerEvent) => {
-        const rect = this.root.getBoundingClientRect();
-        this.stamp(e.clientX - rect.left, e.clientY - rect.top, true);
-      }, { passive: true });
+      // One gesture, one ripple. The surface sits behind everything and is
+      // pointer-events:none, so this listens at the document and maps the
+      // press into canvas space; anything outside the field is ignored.
+      //
+      // Clicks on links and controls are skipped: they have their own job, and
+      // a ripple under the theme toggle reads as a misfire rather than
+      // feedback.
+      document.addEventListener(
+        "pointerdown",
+        (e: PointerEvent) => {
+          if (e.target instanceof Element && e.target.closest(INTERACTIVE)) return;
+          const rect = this.root.getBoundingClientRect();
+          this.ripple(e.clientX - rect.left, e.clientY - rect.top);
+        },
+        { passive: true },
+      );
     }
 
-    stamp(cssX: number, cssY: number, force = false) {
+    /** Drop a ripple at a point, in canvas CSS pixels. */
+    ripple(cssX: number, cssY: number) {
       if (reduceMotion.matches) return;
-      const cw = this.cellPx / this.dpr;
-      const x = cssX / cw;
-      const y = cssY / cw;
+      const pitch = this.cellPx / this.dpr;
+      const x = cssX / pitch;
+      const y = cssY / pitch;
       if (x < 0 || y < 0 || x >= this.cols || y >= this.rows) return;
-      if (
-        !force &&
-        Math.hypot(x - this.lastCx, y - this.lastCy) < CFG.wakeGap &&
-        this.clock - this.lastCt < 0.035
-      ) {
-        return;
-      }
-      this.lastCx = x;
-      this.lastCy = y;
-      this.lastCt = this.clock;
 
       if (this.wcount === CFG.wakeMax) {
         // Drop the oldest by shifting in place.
         this.wx.copyWithin(0, 1);
         this.wy.copyWithin(0, 1);
         this.wt.copyWithin(0, 1);
+        this.ws.copyWithin(0, 1);
         this.wcount--;
       }
       this.wx[this.wcount] = x;
       this.wy[this.wcount] = y;
       this.wt[this.wcount] = this.clock;
+      // The navbar sits over the top band, so excitation is damped there: nav
+      // labels must never have to compete with cells lighting up behind them.
+      const band = this.navBandRows;
+      this.ws[this.wcount] =
+        y < band
+          ? CFG.navQuiet + (1 - CFG.navQuiet) * Math.pow(y / band, CFG.navCurve)
+          : 1;
       this.wcount++;
       this.wake();
     }
@@ -382,6 +491,15 @@ const { cell = 30, gap = 1, class: className } = Astro.props;
 
       const ro = new ResizeObserver(() => this.resize());
       ro.observe(this.root);
+
+      // Webfonts land after first paint and move the text; the quiet zone is
+      // measured from real rects, so it has to be re-measured once they do.
+      document.fonts?.ready.then(() => {
+        this.buildQuiet();
+        this.forceAll = true;
+        this.paintAll();
+        this.wake();
+      });
 
       document.addEventListener("visibilitychange", () => {
         if (document.hidden) this.stop();
@@ -410,21 +528,31 @@ const { cell = 30, gap = 1, class: className } = Astro.props;
     }
 
     wake() {
-      if (!this.visible || document.hidden) return;
-      if (reduceMotion.matches) return;
-      if (this.raf) return;
-      this.last = performance.now();
+      if (!this.visible || document.hidden || reduceMotion.matches) return;
+      if (this.raf) return; // already drawing this frame
+      // Parked on the idle timer: a ripple just landed, so come back now rather
+      // than at the next idle tick.
+      if (this.idleTimer) {
+        clearTimeout(this.idleTimer);
+        this.idleTimer = 0;
+      }
       this.raf = requestAnimationFrame(this.tick);
     }
 
     stop() {
       if (this.raf) cancelAnimationFrame(this.raf);
+      if (this.idleTimer) clearTimeout(this.idleTimer);
       this.raf = 0;
+      this.idleTimer = 0;
     }
 
     tick = (now: number) => {
       this.raf = 0;
-      const dt = Math.min(0.05, (now - this.last) / 1000);
+      // Exponential decay is unconditionally stable, so the real elapsed time
+      // can be used directly. Clamping hard at one frame would make the
+      // afterglow run in slow motion whenever the page idles at a low frame
+      // rate. The generous clamp only guards against a suspended tab.
+      const dt = this.last ? Math.min(0.5, (now - this.last) / 1000) : 0;
       this.last = now;
       this.clock += dt;
       this.frame++;
@@ -439,12 +567,14 @@ const { cell = 30, gap = 1, class: className } = Astro.props;
           this.tmpX[n] = this.wx[w];
           this.tmpY[n] = this.wy[w];
           this.tmpT[n] = this.wt[w];
+          this.tmpS[n] = this.ws[w];
           n++;
         }
       }
       this.wx.set(this.tmpX.subarray(0, n));
       this.wy.set(this.tmpY.subarray(0, n));
       this.wt.set(this.tmpT.subarray(0, n));
+      this.ws.set(this.tmpS.subarray(0, n));
       this.wcount = n;
 
       // Age the phosphor: this is the part the reference does not have.
@@ -458,9 +588,16 @@ const { cell = 30, gap = 1, class: className } = Astro.props;
 
       this.render();
 
-      // Idle: the field still drifts, so keep the clock running at half rate.
-      this.raf = requestAnimationFrame(this.tick);
-      void dt;
+      // Nothing is chasing the pointer any more, so once the last ripple has
+      // faded the only reason to keep drawing is the field's own drift — which
+      // is slower than a glacier. Drop to a crawl and give the CPU back.
+      // `dt` is real elapsed time, so the drift rate is unaffected.
+      this.raf = n
+        ? requestAnimationFrame(this.tick)
+        : (this.idleTimer = window.setTimeout(() => {
+            this.idleTimer = 0;
+            this.raf = requestAnimationFrame(this.tick);
+          }, IDLE_INTERVAL_MS));
     };
 
     /** Write excitation + expanding front from every live wake point. */
@@ -468,11 +605,13 @@ const { cell = 30, gap = 1, class: className } = Astro.props;
       const { spreadBase, spreadRate, glowGain, frontSpeed, frontWidth, frontGain, ceiling } = CFG;
       const e = this.energy;
       for (let w = 0; w < this.wcount; w++) {
+        const strength = this.ws[w];
+        if (strength <= 0.01) continue;
         const delayed = this.clock - this.wt[w] - CFG.wakeDelay;
         if (delayed < 0) continue;
         const life = 1 - delayed / CFG.wakeLife;
         if (life <= 0) continue;
-        const fade = life * life;
+        const fade = life * life * strength;
 
         const spread = spreadBase + delayed * spreadRate;
         const spreadInv = 1 / (spread * spread * 0.42);
@@ -518,7 +657,7 @@ const { cell = 30, gap = 1, class: className } = Astro.props;
       const n = this.cols * this.rows;
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      for (let k = 0; k < n; k++) this.paintCell(k, this.bucketOf(this.field[k] + this.energy[k]));
+      for (let k = 0; k < n; k++) this.paintCell(k, this.bucketOf(this.valueAt(k)));
       this.forceAll = false;
     }
 
@@ -526,17 +665,47 @@ const { cell = 30, gap = 1, class: className } = Astro.props;
       const ctx = this.ctx;
       const x = (k % this.cols) * this.cellPx;
       const y = ((k / this.cols) | 0) * this.cellPx;
-      if (this.forceAll) ctx.clearRect(x, y, this.cellPx, this.cellPx);
-      ctx.fillStyle = b === 0 ? this.dashes[0] : this.fills[b];
-      ctx.fillRect(x, y, this.tilePx, this.tilePx);
+      // Always clear the cell first.
+      //
+      // Source-over compositing means painting a DIMMER colour over a brighter
+      // one adds opacity rather than reducing it — and painting a fully
+      // transparent colour does nothing at all. Without this clear the field is
+      // one-way: every repaint can only make a cell brighter, so ripples never
+      // fade, the quiet zone never actually dims anything behind text, and the
+      // whole surface creeps toward white over a session.
+      ctx.clearRect(x, y, this.cellPx, this.cellPx);
       this.bucket[k] = b;
+      if (b === 0) return; // unlit: the cleared gap is the correct end state
+      ctx.fillStyle = this.fills[b];
+      ctx.fillRect(x, y, this.tilePx, this.tilePx);
+    }
+
+    /**
+     * Effective cell brightness: the resting field plus whatever excitation is
+     * still held, both cut back inside the quiet zone. One function so the
+     * full repaint and the incremental repaint can never disagree about what a
+     * cell should look like.
+     */
+    valueAt(k: number): number {
+      const q = this.quietGain[k];
+      if (q === 0) return this.field[k] + this.energy[k];
+      // ONLY excitation is damped; the resting field is left completely alone.
+      //
+      // Cutting the resting field as well would carve a permanently lighter
+      // (light theme) or darker (dark theme) rectangle behind the words even
+      // when nothing is happening — the exact pasted-on-panel look this zone
+      // exists to avoid. It also isn't needed: at rest the field tops out
+      // around bucket 2, which every hero text colour already clears AA
+      // against. So the zone stays completely invisible when idle and only
+      // shows as the ripple losing energy near the words.
+      return this.field[k] + this.energy[k] * (1 - q * (1 - this.quietFloor));
     }
 
     render() {
-      const { field, energy, bucket } = this;
-      const n = field.length;
+      const { bucket } = this;
+      const n = this.field.length;
       for (let k = 0; k < n; k++) {
-        const b = this.bucketOf(field[k] + energy[k]);
+        const b = this.bucketOf(this.valueAt(k));
         if (b !== bucket[k]) this.paintCell(k, b);
       }
     }

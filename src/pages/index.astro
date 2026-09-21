@@ -28,16 +28,32 @@ const projects = (await getCollection("work"))
 {/* The grid is the homepage's backdrop, so the aurora stands down here —
     two ambient effects chasing the same job made both read as noise. */}
 <BaseLayout aurora={false}>
+  <!-- The backdrop.
+       Absolute (not fixed) inside .backgrounds, so it is anchored to the top
+       of the DOCUMENT: it starts at the very top of the page — running behind
+       the navbar — and scrolls away with the masthead rather than following
+       the reader down the page. Homepage only; other pages keep the aurora.
+
+       `quiet` names the elements the field must never become the background
+       for. It measures their real rects, so the zone follows the text as it
+       wraps and reflows instead of being a hand-maintained box. -->
+  <PhosphorGrid
+    class="hero-grid"
+    quiet=".name__kicker, .name__subject, .name__tagline, .roles"
+  />
+
   <div class="stack gap-20 lg:gap-48">
     <main id="main-content" tabindex="-1" class="stack gap-20 lg:gap-48">
       <div class="stack gap-8 lg:gap-20">
-        <!-- The grid is the backdrop, not a component in a column: it spans
-             the viewport while the masthead stays inside the wrapper. -->
         <section class="hero-field">
-          <PhosphorGrid class="hero-grid" />
-          <div class="hero-field__fade" aria-hidden="true"></div>
 
-          <header class="masthead wrapper">
+          <!-- `.wrapper` centres and caps the column; `.masthead` caps the
+               measure inside it. They have to be separate elements: on one
+               element the masthead's max-width replaces the wrapper's, and
+               its margin-inline overrides the wrapper's auto-centring, which
+               pinned the hero to the viewport edge on wide screens. -->
+          <div class="wrapper hero-field__body">
+            <header class="masthead">
             <span class="stripe" aria-hidden="true"
               ><span></span><span></span><span></span></span
             >
@@ -58,7 +74,8 @@ const projects = (await getCollection("work"))
                 <Pill><Icon icon="lock" size="1.2em" /> Security</Pill>
               </li>
             </ul>
-          </header>
+            </header>
+          </div>
         </section>
 
         <div class="wrapper"><Skills /></div>
@@ -101,9 +118,9 @@ const projects = (await getCollection("work"))
 
 <style>
   /* --- Hero field --------------------------------------------------------
-     The grid is the backdrop for the whole masthead, bleeding to the viewport
-     edges, while the content stays inside the wrapper. One column now: the
-     right half is deliberately left to the field. */
+     One column, left-aligned, deliberately leaving the right half to the
+     backdrop. The field itself is a page-level layer, so this only owns the
+     masthead's rhythm. */
   .hero-field {
     position: relative;
     display: flex;
@@ -112,37 +129,53 @@ const projects = (await getCollection("work"))
     padding-block: 1rem 5rem;
   }
 
-  /* The field is dimmest where the words are and fullest where the layout is
-     empty, so a lit cell never fights the headline for attention. */
+  /* The surface.
+     Anchored to the top of the document, not to the viewport: reaching from
+     the page's first pixel (so the navbar sits on it) down through the
+     masthead, then gone. Absolute inside .backgrounds — itself a stacking
+     context — with z-index -1, so it lands behind the nav (z-index 50) and
+     behind all content, but above the page ground. */
   :global(.hero-grid) {
-    z-index: 0;
-    opacity: 0.9;
+    position: absolute;
+    top: 0;
+    inset-inline: 0;
+    /* Tall enough to clear nav + masthead on any viewport; the mask, not the
+       box, decides where the surface actually stops. */
+    height: max(100vh, 46rem);
+    z-index: -1;
+    opacity: 0.92;
+    /* One mask doing two jobs:
+       1. the top band sits directly behind the navbar, so it is held to a
+          third strength there — link labels stay crisp over it;
+       2. it reaches full strength across the masthead, then eases to nothing
+          well before the next section, so the page never reads as papered.
+       --pg-nav-band is shared with the script, which damps pointer excitation
+       over the same band. Keep the two in step. */
     mask-image: linear-gradient(
-      100deg,
-      rgba(0, 0, 0, 0.2) 0%,
-      rgba(0, 0, 0, 0.3) 28%,
-      rgba(0, 0, 0, 0.72) 58%,
-      rgba(0, 0, 0, 1) 100%
+      180deg,
+      rgba(0, 0, 0, 0.34) 0%,
+      rgba(0, 0, 0, 0.34) calc(var(--pg-nav-band) * 1%),
+      #000 26%,
+      #000 52%,
+      rgba(0, 0, 0, 0.7) 76%,
+      transparent 98%
     );
     -webkit-mask-image: linear-gradient(
-      100deg,
-      rgba(0, 0, 0, 0.2) 0%,
-      rgba(0, 0, 0, 0.3) 28%,
-      rgba(0, 0, 0, 0.72) 58%,
-      rgba(0, 0, 0, 1) 100%
+      180deg,
+      rgba(0, 0, 0, 0.34) 0%,
+      rgba(0, 0, 0, 0.34) calc(var(--pg-nav-band) * 1%),
+      #000 26%,
+      #000 52%,
+      rgba(0, 0, 0, 0.7) 76%,
+      transparent 98%
     );
   }
 
-  /* Dissolves the field into the page ground instead of ending on a hard row
-     of cells. Sits above the canvas, below the content. */
-  .hero-field__fade {
-    position: absolute;
-    inset-inline: 0;
-    bottom: 0;
-    height: 42%;
-    z-index: 1;
-    pointer-events: none;
-    background: linear-gradient(180deg, transparent, var(--gray-999) 90%);
+  /* Sits inside .wrapper, so it only caps the measure — it must not set its
+     own inline margins, or it escapes the page's content column. */
+  .hero-field__body {
+    position: relative;
+    z-index: 2;
   }
 
   .masthead {
@@ -189,7 +222,10 @@ const projects = (await getCollection("work"))
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.22em;
-    color: var(--gray-400);
+    /* Body ink, not meta ink. This 14px label sits over the field, where the
+       even a capped wake lifts the ground enough to sink --gray-400 below AA.
+       One step down buys the headroom rather than dimming the interaction. */
+    color: var(--color-text-body);
     text-shadow: var(--engrave);
   }
 
@@ -207,7 +243,13 @@ const projects = (await getCollection("work"))
     max-width: 40ch;
     font-size: var(--text-md);
     line-height: 1.55;
-    color: var(--gray-300);
+    /* Deliberately not --gray-300 like the rest of the meta copy. This is the
+       only body text on the site that sits over the field, and a wake at full
+       force lifts the ground to L 0.12 (dark) / 0.28 (light) directly under
+       the words — at --gray-300 that measured 3.1:1 dark and 2.0:1 light.
+       One step below the brightest ink clears 4.5:1 in both themes and leaves
+       the field at full force, which is the trade this hero wants. */
+    color: var(--gray-50);
     text-wrap: pretty;
   }
 
@@ -260,9 +302,10 @@ const projects = (await getCollection("work"))
 
   @media (min-width: 50em) {
     .masthead {
-      /* Capped and left-aligned so the field keeps the right half open. */
+      /* Capped and left-aligned so the field keeps the right half open. The
+         left edge comes from .wrapper, so this lines up with every other
+         section on the page at any viewport width. */
       max-width: 44rem;
-      margin-inline: 0;
       justify-items: start;
       text-align: start;
     }
@@ -281,13 +324,11 @@ const projects = (await getCollection("work"))
     }
   }
 
-  /* Centred text on small screens, so the directional mask no longer matches
-     the layout — dim the whole field evenly instead. */
+  /* Small screens: same surface, just quieter — the text sits directly on it
+     rather than beside it. */
   @media (max-width: 49.99em) {
     :global(.hero-grid) {
-      opacity: 0.8;
-      mask-image: none;
-      -webkit-mask-image: none;
+      opacity: 0.78;
     }
   }
 
