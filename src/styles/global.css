@@ -143,6 +143,16 @@
   --text-5xl: 4.5rem;
   --text-display: clamp(2.9rem, 7.6vw, 5.9rem); /* masthead only */
 
+  /* Layout containers. The nav and the footer measure against these too, so
+     every band on the page shares one pair of vertical rules. */
+  --content-max: 83rem;
+  --content-pad: 1.5rem;
+
+  /* Every icon control in the site chrome — socials, sound, theme, menu
+     trigger — is this tall. One number keeps the nav's right cluster on a
+     single line of measurement. */
+  --control-size: 2.125rem;
+
   /* Fonts */
   --font-system:
     system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
@@ -444,9 +454,9 @@ time,
 
 .wrapper {
   width: 100%;
-  max-width: 83rem;
+  max-width: var(--content-max);
   margin-inline: auto;
-  padding-inline: 1.5rem;
+  padding-inline: var(--content-pad);
 }
 
 .stack {
@@ -503,5 +513,15 @@ time,
   }
   .lg\:gap-48 {
     gap: 12rem;
+  }
+}
+
+/* Very small phones. Only the 320px class of device is affected: below ~347px
+   the nav's wordmark, control cluster and padding stop fitting side by side,
+   which pushed the menu trigger out of the viewport. Shrinking the shared
+   control size here keeps the bar intact without touching anything else. */
+@media (max-width: 22em) {
+  :root {
+    --control-size: 1.875rem;
   }
 }

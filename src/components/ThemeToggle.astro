@@ -28,13 +28,15 @@ import Icon from "./Icon.astro";
     box-shadow: 0 0 8px var(--accent-subtle-overlay);
   }
 
+  /* Sized off --control-size minus this button's own 1px border, so the two
+     icon halves add up to exactly the shared control height. */
   .icon {
     z-index: 1;
     position: relative;
     display: flex;
     padding: 0.5rem;
-    width: 2rem;
-    height: 2rem;
+    width: calc(var(--control-size) - 2px);
+    height: calc(var(--control-size) - 2px);
     font-size: 1rem;
     color: var(--gray-400);
     transition: color var(--theme-transition);

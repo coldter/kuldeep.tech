@@ -75,13 +75,15 @@
     display: flex;
   }
 
-  /* Same control language as ThemeToggle, so the two read as a pair. */
+  /* Same control language as ThemeToggle, so the two read as a pair. Height
+     matches the nav's --control token (and ThemeToggle's 34px outer box) so
+     the whole right cluster sits on one line of measurement. */
   .sound {
     align-items: center;
     justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    min-width: 2rem;
+    width: var(--control-size);
+    height: var(--control-size);
+    min-width: var(--control-size);
     padding: 0;
     border: 1px solid var(--gray-800);
     border-radius: 999rem;
@@ -119,8 +121,8 @@
 
   .sound__icon {
     display: none;
-    width: 1rem;
-    height: 1rem;
+    width: 1.125rem;
+    height: 1.125rem;
   }
 
   .sound__icon svg {
