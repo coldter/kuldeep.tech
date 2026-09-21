@@ -24,6 +24,15 @@ const { title, description, aurora = true } = Astro.props;
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <!-- Ambient bed. `transition:persist` keeps this exact media element (and
+         its playback position) alive across ClientRouter navigations, so the
+         soundtrack survives page changes instead of restarting.
+         preload="none": nothing is fetched until sound is switched on. -->
+    <audio id="site-audio" preload="none" loop transition:persist>
+      <source src="/audio/ambient-432hz.webm" type="audio/webm" />
+      <source src="/audio/ambient-432hz.m4a" type="audio/mp4" />
+    </audio>
     <!-- Aurora hero section wrapper -->
     {
       aurora && (
@@ -60,6 +69,10 @@ const { title, description, aurora = true } = Astro.props;
       }
       .skip-link:focus-visible {
         top: 1rem;
+      }
+
+      #site-audio {
+        display: none;
       }
 
       /* Aurora container - subtle accent at the top only */

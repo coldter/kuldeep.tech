@@ -1,0 +1,556 @@
+---
+/**
+ * PhosphorGrid — the homepage backdrop.
+ * ====================================
+ * A full-bleed cell field of individually lit squares, separated by 1px gaps.
+ * Mechanic borrowed from shreygups/shreygups, temperament inverted:
+ *
+ *   theirs  a light wall. Always lit (floor 0.55), 11-stop orange→yellow
+ *           palette, 20px cells, covers the whole viewport.
+ *   ours    an instrument at rest. Barely lit (floor 0.06), one phosphor hue
+ *           in 10 quantised steps, 30px cells, masked to the masthead.
+ *
+ * The pointer behaviour is the part worth keeping: each pointer sample becomes
+ * a "wake" point that throws an expanding excitation glow AND an expanding
+ * front, measured in cells rather than pixels. What we add is persistence —
+ * cells hold what they were given and decay, so the field is phosphor rather
+ * than water.
+ *
+ * Deliberately NOT wired to the soundtrack. The reference advertises audio
+ * reactivity that does not exist (`live.bass = 0.35`, constants); building it
+ * for real is easy, but pulsing light driven by a drone is the fastest way to
+ * feel cheap, and the field already breathes on its own slow noise.
+ *
+ * Cost control: device-pixel aligned cells, the noise field is refreshed every
+ * fifth frame, and only cells whose brightness bucket actually changed are
+ * repainted. At rest that means a handful of fillRects per frame, not a
+ * full-canvas redraw.
+ */
+
+interface Props {
+  /** Cell pitch in CSS px, including the gap. */
+  cell?: number;
+  /** Gap between cells in CSS px. The dark seam that reads as a screen. */
+  gap?: number;
+  class?: string;
+}
+
+const { cell = 30, gap = 1, class: className } = Astro.props;
+---
+
+<div
+  class:list={["phosphor-grid", className]}
+  style={{
+    /* Geometry. Named distinctly from the colour tokens below: these once
+       shared the name --pg-cell, and the inline pitch silently shadowed the
+       palette, which is a bug that hides well. */
+    "--pg-pitch": `${cell}px`,
+    "--pg-gap": `${gap}px`,
+  }}
+  aria-hidden="true"
+>
+  <canvas data-pg-canvas></canvas>
+</div>
+
+<style>
+  .phosphor-grid {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    /* Ink colours. Light mode prints dark green on bone; dark mode excites
+       phosphor on lacquer. */
+    --pg-ink: #1b4d31;
+    --pg-ink-hot: #0b2116;
+    --pg-strength: 0.72;
+  }
+
+  :global(.theme-dark) .phosphor-grid {
+    --pg-ink: #8ce07a;
+    --pg-ink-hot: #b6f2a4;
+    --pg-strength: 1;
+  }
+
+  canvas {
+    display: block;
+    /* Sized in JS to a whole number of cells so no cell is ever clipped
+       mid-square — the parent's overflow hides the remainder. */
+    width: 100%;
+    height: 100%;
+  }
+
+  @media (forced-colors: active) {
+    .phosphor-grid {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  type Ctx = CanvasRenderingContext2D;
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  /* --- Field ------------------------------------------------------------- */
+
+  const hash3 = (x: number, y: number, z: number): number => {
+    let n = (Math.imul(x, 374761393) + Math.imul(y, 668265263) + Math.imul(z, 1440662683)) | 0;
+    n = Math.imul(n ^ (n >>> 13), 1274126177);
+    n ^= n >>> 16;
+    return (n >>> 0) / 4294967296;
+  };
+
+  const noise3 = (x: number, y: number, z: number): number => {
+    const xi = Math.floor(x);
+    const yi = Math.floor(y);
+    const zi = Math.floor(z);
+    const fx = x - xi;
+    const fy = y - yi;
+    const fz = z - zi;
+    const u = fx * fx * (3 - 2 * fx);
+    const v = fy * fy * (3 - 2 * fy);
+    const w = fz * fz * (3 - 2 * fz);
+    const mix = (a: number, b: number, t: number) => a + (b - a) * t;
+    const x00 = mix(hash3(xi, yi, zi), hash3(xi + 1, yi, zi), u);
+    const x10 = mix(hash3(xi, yi + 1, zi), hash3(xi + 1, yi + 1, zi), u);
+    const x01 = mix(hash3(xi, yi, zi + 1), hash3(xi + 1, yi, zi + 1), u);
+    const x11 = mix(hash3(xi, yi + 1, zi + 1), hash3(xi + 1, yi + 1, zi + 1), u);
+    return mix(mix(x00, x10, v), mix(x01, x11, v), w);
+  };
+
+  const fbm = (x: number, y: number, z: number) =>
+    0.62 * noise3(x, y, z) + 0.38 * noise3(x * 2.17 + 11.3, y * 2.17 + 7.9, z * 2.17 + 3.1);
+
+  /* --- Tuning ------------------------------------------------------------ */
+
+  const CFG = {
+    // Field: slow, large-scale cloud so the resting screen is never static.
+    fieldScale: 0.062,
+    driftX: 0.016,
+    driftY: 0.011,
+    evolve: 0.026,
+    /** Clamps the low tail of the noise so the field stays sparse. */
+    threshold: 0.26,
+    gamma: 1.0,
+    /**
+     * Ceiling of the resting field, as a fraction of `ceiling`. This is the
+     * whole "at rest" decision: enough that the screen is visibly a screen,
+     * low enough that the headline stays the brightest thing on the page.
+     * Tuned so the resting field lands in buckets 0-3 and a full hit lands on
+     * 9 — roughly a 6x range between idling and excited.
+     */
+    floor: 0.3,
+    /** The noise field is recomputed every Nth frame, not every frame. */
+    fieldEvery: 5,
+
+    // Wake
+    wakeMax: 26,
+    wakeGap: 0.55,
+    wakeLife: 1.6,
+    wakeDelay: 0.045,
+    /** Excitation glow grows this many cells per second. */
+    spreadBase: 0.45,
+    spreadRate: 1.7,
+    glowGain: 0.5,
+    /** Front expands this many cells per second. */
+    frontSpeed: 7,
+    frontWidth: 0.9,
+    frontGain: 1.0,
+    /** Afterglow decay constant, seconds. Ours; the reference has no hold. */
+    holdTau: 1.15,
+    /** Cells are clamped here before quantising, so hits can overdrive. */
+    ceiling: 1.0,
+    buckets: 10,
+  };
+
+  /** Alpha per brightness bucket. Bucket 0 is fully unlit. */
+  const RAMP = [0, 0.055, 0.09, 0.14, 0.2, 0.28, 0.38, 0.5, 0.64, 0.84];
+
+  const parseColor = (value: string): [number, number, number] | null => {
+    const hex = value.trim();
+    const m = /^#?([0-9a-f]{6})$/i.exec(hex);
+    if (m) {
+      const n = parseInt(m[1], 16);
+      return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+    }
+    const rgb = /rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/i.exec(hex);
+    if (rgb) return [Number(rgb[1]), Number(rgb[2]), Number(rgb[3])];
+    // Never fall back silently: a wrong-but-plausible colour is far harder to
+    // spot than a loud one. (This exact silence once masked a token collision
+    // that painted the light theme phosphor-green instead of ink.)
+    console.warn(`[PhosphorGrid] unparseable colour token: "${hex}"`);
+    return null;
+  };
+
+  class Grid {
+    root: HTMLElement;
+    canvas: HTMLCanvasElement;
+    ctx: Ctx;
+
+    dpr = 1;
+    cols = 0;
+    rows = 0;
+    cellPx = 0;
+    tilePx = 0;
+
+    /** Per-cell retained brightness (the phosphor). */
+    energy = new Float32Array(0);
+    /** Cached noise field, refreshed every CFG.fieldEvery frames. */
+    field = new Float32Array(0);
+    /** Last painted bucket per cell, so only changes are repainted. */
+    bucket = new Uint8Array(0);
+
+    fills: string[] = [];
+    dashes: string[] = [];
+
+    /** Wake points, oldest first. */
+    wx = new Float32Array(CFG.wakeMax);
+    wy = new Float32Array(CFG.wakeMax);
+    wt = new Float32Array(CFG.wakeMax);
+    wcount = 0;
+
+    clock = 0;
+    frame = 0;
+    raf = 0;
+    last = 0;
+    visible = false;
+    forceAll = true;
+
+    /* Scratch buffer reused while ageing the wake list. */
+    tmpX = new Float32Array(CFG.wakeMax);
+    tmpY = new Float32Array(CFG.wakeMax);
+    tmpT = new Float32Array(CFG.wakeMax);
+    tmpN = 0;
+
+    lastCx = -1e5;
+    lastCy = -1e5;
+    lastCt = -1e5;
+
+    constructor(root: HTMLElement) {
+      this.root = root;
+      this.canvas = root.querySelector<HTMLCanvasElement>("[data-pg-canvas]")!;
+      this.ctx = this.canvas.getContext("2d", { alpha: true })!;
+      this.readPalette();
+      this.resize();
+      this.watch();
+      this.bindPointer();
+    }
+
+    /* --- palette ---------------------------------------------------------- */
+
+    readPalette() {
+      const cs = getComputedStyle(this.root);
+      const base = parseColor(cs.getPropertyValue("--pg-ink")) ?? [140, 224, 122];
+      const hot = parseColor(cs.getPropertyValue("--pg-ink-hot")) ?? base;
+      // Dark ink on bone carries far more contrast per unit alpha than
+      // phosphor on near-black, so the light theme is dialled back.
+      const strength = Number(cs.getPropertyValue("--pg-strength")) || 1;
+      const n = CFG.buckets;
+      this.fills = [];
+      this.dashes = [];
+      for (let b = 0; b < n; b++) {
+        const t = b / (n - 1);
+        const r = Math.round(base[0] + (hot[0] - base[0]) * t);
+        const g = Math.round(base[1] + (hot[1] - base[1]) * t);
+        const bl = Math.round(base[2] + (hot[2] - base[2]) * t);
+        const a = Math.min(1, RAMP[b] * strength);
+        this.fills.push(a === 0 ? "rgba(0,0,0,0)" : `rgba(${r},${g},${bl},${a})`);
+        this.dashes.push(`rgba(${r},${g},${bl},0)`);
+      }
+      this.forceAll = true;
+    }
+
+    /* --- geometry --------------------------------------------------------- */
+
+    resize() {
+      const rect = this.root.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+
+      // Narrow viewports get a lower pixel density: the 1px seam still reads,
+      // and a 60fps full-bleed canvas is expensive on phone-class GPUs.
+      const cap = window.matchMedia("(min-width: 50em)").matches ? 2 : 1.5;
+      this.dpr = Math.min(window.devicePixelRatio || 1, cap);
+      const cell =
+        parseFloat(getComputedStyle(this.root).getPropertyValue("--pg-pitch")) || 30;
+      const gapCss = parseFloat(getComputedStyle(this.root).getPropertyValue("--pg-gap")) || 1;
+
+      // Whole cells only, rounded up; the parent's overflow clips the excess.
+      this.cols = Math.max(1, Math.ceil(rect.width / cell));
+      this.rows = Math.max(1, Math.ceil(rect.height / cell));
+
+      const cssW = this.cols * cell;
+      const cssH = this.rows * cell;
+      this.canvas.style.width = `${cssW}px`;
+      this.canvas.style.height = `${cssH}px`;
+      this.canvas.width = Math.round(cssW * this.dpr);
+      this.canvas.height = Math.round(cssH * this.dpr);
+
+      const gapPx = Math.max(1, Math.round(gapCss * this.dpr));
+      this.cellPx = Math.round(cell * this.dpr);
+      this.tilePx = Math.max(2, this.cellPx - gapPx);
+
+      const n = this.cols * this.rows;
+      this.energy = new Float32Array(n);
+      this.field = new Float32Array(n);
+      this.bucket = new Uint8Array(n);
+      this.wcount = 0;
+      this.clock = 0;
+      this.frame = 0;
+      this.forceAll = true;
+      this.computeField();
+      this.paintAll();
+    }
+
+    /* --- field ------------------------------------------------------------ */
+
+    computeField() {
+      const { fieldScale, driftX, driftY, evolve, threshold, gamma, floor } = CFG;
+      const t = this.clock;
+      const ox = t * driftX;
+      const oy = t * driftY;
+      const oz = t * evolve + 47.1;
+      for (let j = 0; j < this.rows; j++) {
+        const y = j * fieldScale + oy;
+        for (let i = 0; i < this.cols; i++) {
+          let b = fbm(i * fieldScale + ox, y, oz);
+          b = (b - threshold) / (1 - threshold);
+          b = b < 0 ? 0 : Math.pow(b, gamma);
+          this.field[j * this.cols + i] = floor * (b > 1 ? 1 : b);
+        }
+      }
+    }
+
+    /* --- pointer ---------------------------------------------------------- */
+
+    bindPointer() {
+      const onMove = (e: PointerEvent) => {
+        const rect = this.root.getBoundingClientRect();
+        this.stamp(e.clientX - rect.left, e.clientY - rect.top);
+      };
+      // Listen on the hero, not the canvas: the canvas is pointer-events:none
+      // so that links and text above it stay fully interactive.
+      const host = this.root.parentElement ?? this.root;
+      host.addEventListener("pointermove", onMove, { passive: true });
+      host.addEventListener("pointerdown", (e: PointerEvent) => {
+        const rect = this.root.getBoundingClientRect();
+        this.stamp(e.clientX - rect.left, e.clientY - rect.top, true);
+      }, { passive: true });
+    }
+
+    stamp(cssX: number, cssY: number, force = false) {
+      if (reduceMotion.matches) return;
+      const cw = this.cellPx / this.dpr;
+      const x = cssX / cw;
+      const y = cssY / cw;
+      if (x < 0 || y < 0 || x >= this.cols || y >= this.rows) return;
+      if (
+        !force &&
+        Math.hypot(x - this.lastCx, y - this.lastCy) < CFG.wakeGap &&
+        this.clock - this.lastCt < 0.035
+      ) {
+        return;
+      }
+      this.lastCx = x;
+      this.lastCy = y;
+      this.lastCt = this.clock;
+
+      if (this.wcount === CFG.wakeMax) {
+        // Drop the oldest by shifting in place.
+        this.wx.copyWithin(0, 1);
+        this.wy.copyWithin(0, 1);
+        this.wt.copyWithin(0, 1);
+        this.wcount--;
+      }
+      this.wx[this.wcount] = x;
+      this.wy[this.wcount] = y;
+      this.wt[this.wcount] = this.clock;
+      this.wcount++;
+      this.wake();
+    }
+
+    /* --- loop ------------------------------------------------------------- */
+
+    watch() {
+      new IntersectionObserver(
+        ([entry]) => {
+          this.visible = entry.isIntersecting;
+          if (this.visible) this.wake();
+          else this.stop();
+        },
+        { threshold: 0 },
+      ).observe(this.root);
+
+      const ro = new ResizeObserver(() => this.resize());
+      ro.observe(this.root);
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) this.stop();
+        else if (this.visible) this.wake();
+      });
+
+      new MutationObserver(() => {
+        this.readPalette();
+        this.computeField();
+        this.paintAll();
+        this.wake();
+      }).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class"],
+      });
+
+      reduceMotion.addEventListener("change", () => {
+        if (reduceMotion.matches) {
+          this.stop();
+          this.computeField();
+          this.paintAll();
+        } else {
+          this.wake();
+        }
+      });
+    }
+
+    wake() {
+      if (!this.visible || document.hidden) return;
+      if (reduceMotion.matches) return;
+      if (this.raf) return;
+      this.last = performance.now();
+      this.raf = requestAnimationFrame(this.tick);
+    }
+
+    stop() {
+      if (this.raf) cancelAnimationFrame(this.raf);
+      this.raf = 0;
+    }
+
+    tick = (now: number) => {
+      this.raf = 0;
+      const dt = Math.min(0.05, (now - this.last) / 1000);
+      this.last = now;
+      this.clock += dt;
+      this.frame++;
+
+      if (this.frame % CFG.fieldEvery === 0) this.computeField();
+
+      // Age the wake list.
+      const { wakeLife } = CFG;
+      let n = 0;
+      for (let w = 0; w < this.wcount; w++) {
+        if (this.clock - this.wt[w] <= wakeLife) {
+          this.tmpX[n] = this.wx[w];
+          this.tmpY[n] = this.wy[w];
+          this.tmpT[n] = this.wt[w];
+          n++;
+        }
+      }
+      this.wx.set(this.tmpX.subarray(0, n));
+      this.wy.set(this.tmpY.subarray(0, n));
+      this.wt.set(this.tmpT.subarray(0, n));
+      this.wcount = n;
+
+      // Age the phosphor: this is the part the reference does not have.
+      const decay = Math.exp(-dt / CFG.holdTau);
+      const energy = this.energy;
+      for (let k = 0; k < energy.length; k++) {
+        energy[k] = energy[k] > 0.004 ? energy[k] * decay : 0;
+      }
+
+      if (n) this.excite();
+
+      this.render();
+
+      // Idle: the field still drifts, so keep the clock running at half rate.
+      this.raf = requestAnimationFrame(this.tick);
+      void dt;
+    };
+
+    /** Write excitation + expanding front from every live wake point. */
+    excite() {
+      const { spreadBase, spreadRate, glowGain, frontSpeed, frontWidth, frontGain, ceiling } = CFG;
+      const e = this.energy;
+      for (let w = 0; w < this.wcount; w++) {
+        const delayed = this.clock - this.wt[w] - CFG.wakeDelay;
+        if (delayed < 0) continue;
+        const life = 1 - delayed / CFG.wakeLife;
+        if (life <= 0) continue;
+        const fade = life * life;
+
+        const spread = spreadBase + delayed * spreadRate;
+        const spreadInv = 1 / (spread * spread * 0.42);
+        const front = delayed * frontSpeed;
+        const wInv = 1 / (frontWidth * frontWidth);
+
+        const cx = this.wx[w];
+        const cy = this.wy[w];
+        // Bounding box: glow reaches ~2.5 spreads, plus the front's radius.
+        const reach = Math.max(spread * 2.6, front + frontWidth * 3) + 1;
+        const i0 = Math.max(0, Math.floor(cx - reach));
+        const i1 = Math.min(this.cols - 1, Math.ceil(cx + reach));
+        const j0 = Math.max(0, Math.floor(cy - reach));
+        const j1 = Math.min(this.rows - 1, Math.ceil(cy + reach));
+
+        for (let j = j0; j <= j1; j++) {
+          const dy = j - cy;
+          const row = j * this.cols;
+          for (let i = i0; i <= i1; i++) {
+            const dx = i - cx;
+            const d2 = dx * dx + dy * dy;
+            const glow = glowGain * Math.exp(-d2 * spreadInv);
+            const ring = Math.sqrt(d2) - front;
+            const wave = frontGain * Math.exp(-(ring * ring) * wInv);
+            const v = fade * (glow + wave);
+            const k = row + i;
+            if (v > e[k]) e[k] = Math.min(ceiling, v);
+          }
+        }
+      }
+    }
+
+    /* --- paint ------------------------------------------------------------ */
+
+    bucketOf(v: number) {
+      const t = v >= CFG.ceiling ? 1 : v / CFG.ceiling;
+      const b = (t * (CFG.buckets - 1) + 0.5) | 0;
+      return b < 0 ? 0 : b >= CFG.buckets ? CFG.buckets - 1 : b;
+    }
+
+    paintAll() {
+      const ctx = this.ctx;
+      const n = this.cols * this.rows;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      for (let k = 0; k < n; k++) this.paintCell(k, this.bucketOf(this.field[k] + this.energy[k]));
+      this.forceAll = false;
+    }
+
+    paintCell(k: number, b: number) {
+      const ctx = this.ctx;
+      const x = (k % this.cols) * this.cellPx;
+      const y = ((k / this.cols) | 0) * this.cellPx;
+      if (this.forceAll) ctx.clearRect(x, y, this.cellPx, this.cellPx);
+      ctx.fillStyle = b === 0 ? this.dashes[0] : this.fills[b];
+      ctx.fillRect(x, y, this.tilePx, this.tilePx);
+      this.bucket[k] = b;
+    }
+
+    render() {
+      const { field, energy, bucket } = this;
+      const n = field.length;
+      for (let k = 0; k < n; k++) {
+        const b = this.bucketOf(field[k] + energy[k]);
+        if (b !== bucket[k]) this.paintCell(k, b);
+      }
+    }
+  }
+
+  const boot = () => {
+    for (const el of document.querySelectorAll<HTMLElement>(".phosphor-grid")) {
+      if (!el.dataset.ready) {
+        el.dataset.ready = "1";
+        new Grid(el);
+      }
+    }
+  };
+
+  boot();
+  document.addEventListener("astro:page-load", boot);
+</script>

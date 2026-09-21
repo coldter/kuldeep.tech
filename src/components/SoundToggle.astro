@@ -1,0 +1,393 @@
+---
+/**
+ * SoundToggle — the ambient soundtrack control.
+ * =============================================
+ * Renders the button only. The matching <audio id="site-audio"> lives in
+ * BaseLayout so it can carry `transition:persist`, which keeps the same media
+ * element (and its playback position) alive across ClientRouter navigations.
+ * If that element is missing the button hides itself rather than lying.
+ *
+ * The behaviour follows shreygups/shreygups for the gesture-fallback pattern:
+ * ignore the toggle itself and bare "m" so the control cannot trigger its own
+ * autostart, honour Save-Data, and pause when the tab is hidden.
+ *
+ * Sound is ON unless the visitor mutes it. We attempt playback on load;
+ * browsers only permit that once an origin has earned it (a crossed Media
+ * Engagement Index, an installed PWA, or an explicit autoplay permission), so
+ * the attempt is best-effort and a refusal falls back to the first gesture.
+ */
+---
+
+<sound-toggle>
+  <button
+    class="sound"
+    type="button"
+    aria-pressed="true"
+    aria-label="Turn sound off"
+    title="Turn sound off (M)"
+    data-state="armed"
+  >
+    <span class="sound__icon sound__icon--on" aria-hidden="true">
+      <svg viewBox="0 0 256 256" fill="none" stroke="currentColor">
+        <path
+          d="M56 88h48l48-32v144l-48-32H56z"
+          stroke-width="16"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+        <path
+          d="M184 96a44 44 0 0 1 0 64"
+          stroke-width="16"
+          stroke-linecap="round"></path>
+        <path
+          d="M210 70a82 82 0 0 1 0 116"
+          stroke-width="16"
+          stroke-linecap="round"></path>
+      </svg>
+    </span>
+    <span class="sound__icon sound__icon--off" aria-hidden="true">
+      <svg viewBox="0 0 256 256" fill="none" stroke="currentColor">
+        <path
+          d="M56 88h48l48-32v144l-48-32H56z"
+          stroke-width="16"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+        <path
+          d="m186 100 52 52m0-52-52 52"
+          stroke-width="16"
+          stroke-linecap="round"></path>
+      </svg>
+    </span>
+  </button>
+</sound-toggle>
+
+<style>
+  sound-toggle {
+    display: contents;
+  }
+
+  /* Hidden until the custom element upgrades. With JS off this button could
+     never work, so it must not appear as a dead control. */
+  sound-toggle > .sound {
+    display: none;
+  }
+
+  sound-toggle:defined > .sound {
+    display: flex;
+  }
+
+  /* Same control language as ThemeToggle, so the two read as a pair. */
+  .sound {
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    min-width: 2rem;
+    padding: 0;
+    border: 1px solid var(--gray-800);
+    border-radius: 999rem;
+    background-color: var(--gray-999_40);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: var(--gray-400);
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      color var(--theme-transition),
+      border-color var(--theme-transition),
+      box-shadow var(--theme-transition);
+  }
+
+  .sound:hover {
+    color: var(--gray-100);
+    border-color: var(--gray-600);
+  }
+
+  /* Armed: enabled, waiting for the browser to permit playback. Dimmer than
+     live, so "waiting" and "playing" are distinguishable at a glance. */
+  .sound[data-state="armed"] {
+    color: var(--color-accent-text);
+    border-color: color-mix(in srgb, var(--color-accent-text) 32%, transparent);
+  }
+
+  /* Playing reads as an indicator lamp: lit, with a little bloom. */
+  .sound[data-state="playing"] {
+    color: var(--color-accent-text);
+    border-color: color-mix(in srgb, var(--color-accent-text) 55%, transparent);
+    box-shadow: 0 0 10px -1px var(--accent-overlay);
+  }
+
+  .sound__icon {
+    display: none;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .sound__icon svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .sound:not([data-state="off"]) .sound__icon--on {
+    display: block;
+  }
+
+  .sound[data-state="off"] .sound__icon--off {
+    display: block;
+  }
+
+  @media (forced-colors: active) {
+    .sound[data-state="armed"],
+    .sound[data-state="playing"] {
+      color: SelectedItem;
+      border-color: SelectedItem;
+    }
+  }
+</style>
+
+<script>
+  /**
+   * Ambient soundtrack control.
+   *
+   * Two values hold all the state:
+   *
+   *   muted       the visitor's persisted intent; never chosen means on
+   *   el.paused   whether sound is actually running right now
+   *
+   * render() derives everything visible from those two. That is only possible
+   * because start and stop are immediate — an earlier version ramped volume
+   * over 1.6s, which left the element reporting `paused === false` after we had
+   * logically stopped, and needed an `attempting` flag, a `generation` counter
+   * and a separate `playing` flag to paper over the window. The audio opens
+   * from near-silence (first 120ms peaks at -40 dB, RMS -52 dB) and its loop
+   * point is crossfaded, so the ramp bought nothing audible at this level.
+   *
+   * Listeners are split by lifetime, because ClientRouter replaces the <nav> on
+   * every navigation while `transition:persist` keeps the <audio> node. Anything
+   * bound to the button must be delegated from document, or the control goes
+   * dead the moment the visitor leaves the first page.
+   */
+  const SOUND_LEVEL = 0.275;
+  const PREF_KEY = "kuldeep-sound";
+  const AUDIO_ID = "site-audio";
+  const TOGGLE = "sound-toggle > button.sound";
+
+  let muted = stored() === "off";
+  /** A first-gesture fallback is installed, waiting for the browser to allow it. */
+  let armed = false;
+  /** Sound was playing when the tab was hidden, so it should resume. */
+  let resumeOnShow = false;
+  /** Document-level listeners are attached once for the life of the page. */
+  let docBound = false;
+  /** The audio node the media listeners are currently attached to. */
+  let boundAudio: HTMLAudioElement | null = null;
+  let refusalLogged = false;
+
+  function stored(): string | null {
+    try {
+      return localStorage.getItem(PREF_KEY);
+    } catch {
+      return null; // private mode / storage disabled
+    }
+  }
+
+  function persist(value: "on" | "off") {
+    try {
+      localStorage.setItem(PREF_KEY, value);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  const audioEl = () => document.getElementById(AUDIO_ID) as HTMLAudioElement | null;
+
+  const buttonEl = () => document.querySelector(TOGGLE) as HTMLButtonElement | null;
+
+  /** Save-Data: don't start on our own initiative on a metered connection. */
+  function metered() {
+    const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
+    return Boolean(nav.connection?.saveData);
+  }
+
+  /**
+   * Should sound be running without the visitor asking? `muted` is their word on
+   * the matter. The Save-Data exception applies only until they express one, and
+   * is overridden the moment they do — an explicit choice is stored, so the
+   * `stored() === null` guard below stops applying.
+   */
+  function enabled() {
+    return !muted && !(stored() === null && metered());
+  }
+
+  function render() {
+    const b = buttonEl();
+    if (!b) return;
+    const on = enabled();
+    const label = on ? "Turn sound off" : "Turn sound on";
+    b.setAttribute("aria-pressed", String(on));
+    b.setAttribute("aria-label", label);
+    b.title = `${label} (M)`;
+    b.dataset.state = !on ? "off" : audioEl()?.paused === false ? "playing" : "armed";
+  }
+
+  /** Start, unless already started. Safe to call from every entry point. */
+  function play() {
+    const el = audioEl();
+    if (!el || !enabled() || !el.paused) return;
+    // Set the level first so it never sounds at full volume, even briefly.
+    el.volume = SOUND_LEVEL;
+    // play() is what triggers the fetch; preload="none" on the element means a
+    // visitor who keeps sound muted never downloads the file at all.
+    const attempt = el.play();
+    if (attempt?.catch) {
+      attempt.catch((err: unknown) => {
+        // Not a fault to repair — this is autoplay policy. Logged once so the
+        // reason is discoverable in DevTools, then retried on a real gesture.
+        if (!refusalLogged) {
+          refusalLogged = true;
+          console.info(
+            "[sound] playback held back until the visitor interacts:",
+            (err as { name?: string } | undefined)?.name ?? err,
+          );
+        }
+        arm();
+      });
+    }
+  }
+
+  function pause() {
+    const el = audioEl();
+    if (el && !el.paused) el.pause();
+  }
+
+  function toggle() {
+    if (enabled()) {
+      muted = true;
+      persist("off");
+      pause();
+      disarm();
+    } else {
+      muted = false;
+      persist("on");
+      play();
+    }
+    render();
+  }
+
+  function inEditable(target: EventTarget | null) {
+    return (
+      target instanceof Element &&
+      Boolean(
+        target.closest(
+          'input, textarea, select, [contenteditable]:not([contenteditable="false"])',
+        ),
+      )
+    );
+  }
+
+  /*
+   * Delegated from document on purpose. ClientRouter swaps the whole <nav> on
+   * navigation, so a listener on the button itself would be discarded with the
+   * old node and the control would stop responding after the first page change.
+   */
+  function onDocumentClick(event: MouseEvent) {
+    if (event.target instanceof Element && event.target.closest(TOGGLE)) toggle();
+  }
+
+  function onGesture(event: Event) {
+    if (event.type === "keydown") {
+      const key = event as KeyboardEvent;
+      if (key.repeat || key.metaKey || key.ctrlKey || key.altKey) return;
+      if (key.key.toLowerCase() === "m") return; // the shortcut owns that key
+      if (inEditable(key.target)) return;
+    }
+    // The toggle handles its own activation; starting playback here too would
+    // fight the click that is about to flip the state.
+    if (event.target instanceof Element && event.target.closest(TOGGLE)) return;
+    disarm();
+    play();
+  }
+
+  function arm() {
+    const el = audioEl();
+    // Nothing to wait for once sound is running, or if it was muted.
+    if (armed || !enabled() || !el || !el.paused) return;
+    armed = true;
+    document.addEventListener("pointerdown", onGesture, { capture: true, passive: true });
+    document.addEventListener("keydown", onGesture, true);
+  }
+
+  function disarm() {
+    if (!armed) return;
+    armed = false;
+    document.removeEventListener("pointerdown", onGesture, true);
+    document.removeEventListener("keydown", onGesture, true);
+  }
+
+  function onShortcut(event: KeyboardEvent) {
+    if (event.repeat || event.metaKey || event.ctrlKey || event.altKey) return;
+    if (event.key.toLowerCase() !== "m" || inEditable(event.target)) return;
+    event.preventDefault();
+    toggle();
+  }
+
+  function onVisibility() {
+    const el = audioEl();
+    if (!el) return;
+    if (document.hidden) {
+      resumeOnShow = !el.paused;
+      el.pause();
+    } else if (resumeOnShow) {
+      resumeOnShow = false;
+      play();
+    }
+  }
+
+  function onMediaChange() {
+    // Running sound needs no gesture fallback.
+    if (!audioEl()?.paused) disarm();
+    render();
+  }
+
+  function boot() {
+    const el = audioEl();
+    const btn = buttonEl();
+    if (!el || !btn) {
+      btn?.setAttribute("hidden", "");
+      return;
+    }
+    if (!docBound) {
+      docBound = true;
+      document.addEventListener("click", onDocumentClick);
+      document.addEventListener("keydown", onShortcut);
+      document.addEventListener("visibilitychange", onVisibility);
+    }
+    // Re-point the media listeners if the element was ever replaced, rather
+    // than trusting transition:persist to hold on to it.
+    if (el !== boundAudio) {
+      boundAudio?.removeEventListener("play", onMediaChange);
+      boundAudio?.removeEventListener("pause", onMediaChange);
+      boundAudio = el;
+      el.addEventListener("play", onMediaChange);
+      el.addEventListener("pause", onMediaChange);
+    }
+    render();
+    // Start immediately if the browser permits it; arm() is the fallback for
+    // when it doesn't, so the first click or keypress starts playback instead.
+    arm();
+    play();
+  }
+
+  /*
+   * Declared so the `:defined` selector in the stylesheet can keep the button
+   * hidden until this script is ready. Without a definition, :defined never
+   * matches and the guard would hide the control permanently.
+   */
+  if (!customElements.get("sound-toggle")) {
+    customElements.define("sound-toggle", class extends HTMLElement {});
+  }
+
+  boot();
+  document.addEventListener("astro:page-load", boot);
+</script>

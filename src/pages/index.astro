@@ -8,7 +8,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import CallToAction from "../components/CallToAction.astro";
 import Grid from "../components/Grid.astro";
 import Icon from "../components/Icon.astro";
-import PhosphorPlate from "../components/PhosphorPlate.astro";
+import PhosphorGrid from "../components/PhosphorGrid.astro";
 import Pill from "../components/Pill.astro";
 import PortfolioPreview from "../components/PortfolioPreview.astro";
 
@@ -25,12 +25,19 @@ const projects = (await getCollection("work"))
 // https://docs.astro.build/core-concepts/astro-components/
 ---
 
-<BaseLayout>
+{/* The grid is the homepage's backdrop, so the aurora stands down here —
+    two ambient effects chasing the same job made both read as noise. */}
+<BaseLayout aurora={false}>
   <div class="stack gap-20 lg:gap-48">
-    <main id="main-content" tabindex="-1" class="wrapper stack gap-20 lg:gap-48">
+    <main id="main-content" tabindex="-1" class="stack gap-20 lg:gap-48">
       <div class="stack gap-8 lg:gap-20">
-        <header class="masthead">
-          <div class="masthead__legend">
+        <!-- The grid is the backdrop, not a component in a column: it spans
+             the viewport while the masthead stays inside the wrapper. -->
+        <section class="hero-field">
+          <PhosphorGrid class="hero-grid" />
+          <div class="hero-field__fade" aria-hidden="true"></div>
+
+          <header class="masthead wrapper">
             <span class="stripe" aria-hidden="true"
               ><span></span><span></span><span></span></span
             >
@@ -51,41 +58,41 @@ const projects = (await getCollection("work"))
                 <Pill><Icon icon="lock" size="1.2em" /> Security</Pill>
               </li>
             </ul>
-          </div>
+          </header>
+        </section>
 
-          <PhosphorPlate class="masthead__plate" discipline="Software Engineer" model="KP-01" />
-        </header>
-
-        <Skills />
+        <div class="wrapper"><Skills /></div>
       </div>
 
-      <section class="section with-background with-cta">
-        <header class="section-header stack gap-2 lg:gap-4">
-          <h3>Selected Work</h3>
-          <p>
-            A collection of my recent projects, backend solutions, and infrastructure deployments.
-          </p>
-        </header>
+      <div class="wrapper">
+        <section class="section with-background with-cta">
+          <header class="section-header stack gap-2 lg:gap-4">
+            <h3>Selected Work</h3>
+            <p>
+              A collection of my recent projects, backend solutions, and infrastructure deployments.
+            </p>
+          </header>
 
-        <div class="gallery">
-          <Grid variant="offset">
-            {
-              projects.map((project) => (
-                <li>
-                  <PortfolioPreview project={project} loading={"lazy"} />
-                </li>
-              ))
-            }
-          </Grid>
-        </div>
+          <div class="gallery">
+            <Grid variant="offset">
+              {
+                projects.map((project) => (
+                  <li>
+                    <PortfolioPreview project={project} loading={"lazy"} />
+                  </li>
+                ))
+              }
+            </Grid>
+          </div>
 
-        <div class="cta">
-          <CallToAction href="/work/">
-            View all work
-            <Icon icon="arrow-right" size="1.2em" />
-          </CallToAction>
-        </div>
-      </section>
+          <div class="cta">
+            <CallToAction href="/work/">
+              View all work
+              <Icon icon="arrow-right" size="1.2em" />
+            </CallToAction>
+          </div>
+        </section>
+      </div>
     </main>
 
     <ContactCTA />
@@ -93,18 +100,56 @@ const projects = (await getCollection("work"))
 </BaseLayout>
 
 <style>
-  /* --- Masthead ----------------------------------------------------------
-     Two columns: the legend (what this is) and the plate (the object).
-     Every word here is real content; the plate beside it is decorative. */
-  .masthead {
-    display: grid;
-    gap: clamp(3rem, 7vw, 4.5rem);
+  /* --- Hero field --------------------------------------------------------
+     The grid is the backdrop for the whole masthead, bleeding to the viewport
+     edges, while the content stays inside the wrapper. One column now: the
+     right half is deliberately left to the field. */
+  .hero-field {
+    position: relative;
+    display: flex;
     align-items: center;
+    min-height: clamp(26rem, 58vh, 40rem);
+    padding-block: 1rem 5rem;
   }
 
-  .masthead__legend {
+  /* The field is dimmest where the words are and fullest where the layout is
+     empty, so a lit cell never fights the headline for attention. */
+  :global(.hero-grid) {
+    z-index: 0;
+    opacity: 0.9;
+    mask-image: linear-gradient(
+      100deg,
+      rgba(0, 0, 0, 0.2) 0%,
+      rgba(0, 0, 0, 0.3) 28%,
+      rgba(0, 0, 0, 0.72) 58%,
+      rgba(0, 0, 0, 1) 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      100deg,
+      rgba(0, 0, 0, 0.2) 0%,
+      rgba(0, 0, 0, 0.3) 28%,
+      rgba(0, 0, 0, 0.72) 58%,
+      rgba(0, 0, 0, 1) 100%
+    );
+  }
+
+  /* Dissolves the field into the page ground instead of ending on a hard row
+     of cells. Sits above the canvas, below the content. */
+  .hero-field__fade {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 42%;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent, var(--gray-999) 90%);
+  }
+
+  .masthead {
+    position: relative;
+    z-index: 2;
     display: grid;
-    gap: 1.5rem;
+    gap: clamp(1.25rem, 2.4vw, 1.75rem);
     justify-items: center;
     text-align: center;
   }
@@ -181,8 +226,7 @@ const projects = (await getCollection("work"))
   .name__kicker,
   .name__subject,
   .name__tagline,
-  .roles,
-  .masthead__plate {
+  .roles {
     animation: rise 620ms cubic-bezier(0.22, 0.68, 0.35, 1) both;
     animation-delay: var(--enter-delay, 0ms);
   }
@@ -202,9 +246,6 @@ const projects = (await getCollection("work"))
   .roles {
     --enter-delay: 330ms;
   }
-  .masthead__plate {
-    --enter-delay: 180ms;
-  }
 
   @keyframes rise {
     from {
@@ -219,12 +260,9 @@ const projects = (await getCollection("work"))
 
   @media (min-width: 50em) {
     .masthead {
-      grid-template-columns: 6fr 4fr;
-      gap: clamp(2.5rem, 4vw, 4rem);
-    }
-
-    .masthead__legend {
-      gap: 1.75rem;
+      /* Capped and left-aligned so the field keeps the right half open. */
+      max-width: 44rem;
+      margin-inline: 0;
       justify-items: start;
       text-align: start;
     }
@@ -240,6 +278,16 @@ const projects = (await getCollection("work"))
 
     .roles {
       justify-content: flex-start;
+    }
+  }
+
+  /* Centred text on small screens, so the directional mask no longer matches
+     the layout — dim the whole field evenly instead. */
+  @media (max-width: 49.99em) {
+    :global(.hero-grid) {
+      opacity: 0.8;
+      mask-image: none;
+      -webkit-mask-image: none;
     }
   }
 

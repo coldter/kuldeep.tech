@@ -1,5 +1,11 @@
 ---
 const currentYear = new Date().getFullYear();
+
+/** Kept deliberately short: profile links live in the header. */
+const links: { label: string; href: string; external?: boolean }[] = [
+  { label: "GitHub", href: "https://github.com/coldter", external: true },
+  { label: "Site admin", href: "/admin/" },
+];
 ---
 
 <footer>
@@ -8,16 +14,19 @@ const currentYear = new Date().getFullYear();
       <p>&copy; <time class="tabular">{currentYear}</time> Kuldeep Parmar</p>
     </div>
     <ul class="socials">
-      <li>
-        <a
-          href="https://github.com/coldter"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          GitHub</a
-        >
-      </li>
-      <li><a href="/admin/">Site admin</a></li>
+      {
+        links.map(({ label, href, external }) => (
+          <li>
+            <a
+              href={href}
+              target={external ? "_blank" : undefined}
+              rel={external ? "noopener noreferrer" : undefined}
+            >
+              {label}
+            </a>
+          </li>
+        ))
+      }
     </ul>
   </div>
 </footer>
@@ -65,8 +74,8 @@ const currentYear = new Date().getFullYear();
   .socials {
     display: flex;
     justify-content: center;
-    gap: 1.5rem;
     flex-wrap: wrap;
+    gap: 1.25rem;
     font-weight: 500;
     list-style: none;
     margin: 0;
