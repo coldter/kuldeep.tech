@@ -28,7 +28,17 @@ const { title, description, aurora = true } = Astro.props;
     <!-- Ambient bed. `transition:persist` keeps this exact media element (and
          its playback position) alive across ClientRouter navigations, so the
          soundtrack survives page changes instead of restarting.
-         preload="none": nothing is fetched until sound is switched on. -->
+         preload="none": nothing is fetched until sound is switched on.
+
+         The two sources are the same seamless loop, encoded once each. Loop,
+         not playlist: the element repeats whatever the file contains, so the
+         asset must carry music end to end — no trailing silence, no fade to
+         nothing at the tail — and its seam must be crossfaded. A 90s master
+         with 30s of zeros shipped here once and read to every visitor as "the
+         music stops for half a minute"; a waveform view scaled to the file's
+         own length hides exactly that. Check any replacement with
+             ffmpeg -i <file> -af silencedetect=noise=-70dB:d=0.25 -f null -
+         before dropping it in. -->
     <audio id="site-audio" preload="none" loop transition:persist>
       <source src="/audio/ambient-432hz.webm" type="audio/webm" />
       <source src="/audio/ambient-432hz.m4a" type="audio/mp4" />

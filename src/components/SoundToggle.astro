@@ -161,9 +161,10 @@
    * because start and stop are immediate — an earlier version ramped volume
    * over 1.6s, which left the element reporting `paused === false` after we had
    * logically stopped, and needed an `attempting` flag, a `generation` counter
-   * and a separate `playing` flag to paper over the window. The audio opens
-   * from near-silence (first 120ms peaks at -40 dB, RMS -52 dB) and its loop
-   * point is crossfaded, so the ramp bought nothing audible at this level.
+   * and a separate `playing` flag to paper over the window. There is nothing
+   * for a ramp to hide either: the asset is a seamless crossfaded loop whose
+   * seam sits on a zero crossing, so the first play and every loop after it
+   * begin at the same level, mid-drone.
    *
    * Listeners are split by lifetime, because ClientRouter replaces the <nav> on
    * every navigation while `transition:persist` keeps the <audio> node. Anything
