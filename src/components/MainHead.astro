@@ -12,15 +12,24 @@ import "../styles/global.css";
 interface Props {
   title?: string | undefined;
   description?: string | undefined;
+  /** Social share image, site-relative or absolute. Defaults to /og-image.png. */
+  image?: string | undefined;
+  imageAlt?: string | undefined;
+  imageWidth?: number | undefined;
+  imageHeight?: number | undefined;
 }
 
 const {
   title = "Kuldeep Parmar",
   description = "The personal site of Kuldeep Parmar",
+  image = "/og-image.png",
+  imageAlt = "Kuldeep Parmar — Software Engineer building scalable backend systems and robust cloud infrastructure.",
+  imageWidth = 1200,
+  imageHeight = 630,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
-const ogImageURL = new URL("/og-image.png", Astro.site).toString();
+const ogImageURL = new URL(image, Astro.site).toString();
 ---
 
 <meta charset="UTF-8" />
@@ -34,9 +43,9 @@ const ogImageURL = new URL("/og-image.png", Astro.site).toString();
 <meta property="og:type" content="website" />
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:image" content={ogImageURL} />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content="Kuldeep Parmar — Software Engineer building scalable backend systems and robust cloud infrastructure." />
+<meta property="og:image:width" content={String(imageWidth)} />
+<meta property="og:image:height" content={String(imageHeight)} />
+<meta property="og:image:alt" content={imageAlt} />
 <meta property="og:site_name" content="Kuldeep Parmar" />
 
 <!-- Twitter card -->

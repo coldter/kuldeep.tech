@@ -25,7 +25,15 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 ---
 
-<BaseLayout title={entry.data.title} description={entry.data.description} aurora={false}>
+<BaseLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  aurora={false}
+  image={entry.data.img.src}
+  imageAlt={entry.data.img_alt ?? entry.data.description}
+  imageWidth={entry.data.img.width}
+  imageHeight={entry.data.img.height}
+>
   <div class="work-container">
     <div class="stack gap-20">
       <main id="main-content" tabindex="-1" class="stack gap-8">

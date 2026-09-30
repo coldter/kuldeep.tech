@@ -13,14 +13,34 @@ interface Props {
   description?: string | undefined;
   /** Render the aurora glow at the top of the page. Defaults to true. */
   aurora?: boolean;
+  /** Social share image, site-relative or absolute. Defaults to /og-image.png. */
+  image?: string | undefined;
+  imageAlt?: string | undefined;
+  imageWidth?: number | undefined;
+  imageHeight?: number | undefined;
 }
 
-const { title, description, aurora = true } = Astro.props;
+const {
+  title,
+  description,
+  aurora = true,
+  image,
+  imageAlt,
+  imageWidth,
+  imageHeight,
+} = Astro.props;
 ---
 
 <html lang="en">
   <head>
-    <MainHead title={title} description={description} />
+    <MainHead
+      title={title}
+      description={description}
+      image={image}
+      imageAlt={imageAlt}
+      imageWidth={imageWidth}
+      imageHeight={imageHeight}
+    />
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
